@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sphoorthy Masa — Skills & Contact</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <script src="./theme.js"></script>
+</head>
+<body class="antialiased">
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="content-container">
+    <!-- Header -->
+    <header class="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
+      <a class="text-2xl font-bold text-gray-800" href="./index.html">Sphoorthy Masa</a>
+      <nav class="panel px-4 py-2 rounded-lg">
+        <a class="px-3 py-2 hover:text-pink-500" href="./index.html#about">About</a>
+        <a class="px-3 py-2 hover:text-pink-500" href="./index.html#portfolio">Portfolio</a>
+        <a class="px-3 py-2 hover:text-pink-500" href="#skills">Skills</a>
+        <a class="px-3 py-2 hover:text-pink-500" href="#contact">Contact</a>
+        <a class="px-3 py-2 hover:text-pink-500" href="#testimonials">Testimonials</a>
+      </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 pt-24 relative z-10 main-container">
+      <!-- Skills -->
+      <section id="skills" class="py-12 reveal">
+        <div class="text-center mb-8">
+          <h3 class="text-4xl font-bold text-gray-800">Skills & Expertise</h3>
+          <p class="text-lg text-gray-600 mt-2">A comprehensive look at my research methodologies, tools, and frameworks.</p>
+        </div>
+        <div class="flex flex-col md:flex-row gap-8">
+          <div class="panel p-8 flex-1">
+            <h4 class="text-2xl font-semibold mb-6" style="color:var(--accent-pink-dark)">Research Methodologies</h4>
+            <div class="space-y-6">
+              <div>
+                <h5 class="text-lg font-bold text-gray-800 mb-3">Quantitative Methods</h5>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag-badge">Surveys</span><span class="tag-badge">A/B Testing</span>
+                  <span class="tag-badge">Competitive Analysis</span><span class="tag-badge">Data Analysis</span>
+                  <span class="tag-badge">First-click Testing</span><span class="tag-badge">Heat Maps</span>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-lg font-bold text-gray-800 mb-3">Qualitative Methods</h5>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag-badge">User Interviews</span><span class="tag-badge">Usability testing</span>
+                  <span class="tag-badge">User Observations</span><span class="tag-badge">Card Sorting</span>
+                  <span class="tag-badge">Contextual Interviews</span><span class="tag-badge">Focus Groups</span>
+                  <span class="tag-badge">Heuristic Evaluation</span><span class="tag-badge">Journey mapping</span>
+                  <span class="tag-badge">Personas</span><span class="tag-badge">Ethnography</span>
+                  <span class="tag-badge">Stakeholder Interviews</span><span class="tag-badge">Competitor Analysis</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel p-8 flex-1">
+            <h4 class="text-2xl font-semibold mb-6" style="color:var(--accent-pink-dark)">Tools, Metrics & Frameworks</h4>
+            <div class="space-y-6">
+              <div>
+                <h5 class="text-lg font-bold text-gray-800 mb-3">Tools & Software</h5>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag-badge">UserZoom</span><span class="tag-badge">UserTesting</span>
+                  <span class="tag-badge">Qualtrics</span><span class="tag-badge">Airtable</span>
+                  <span class="tag-badge">Quantum Metric</span><span class="tag-badge">Figma</span>
+                  <span class="tag-badge">Hotjar</span><span class="tag-badge">Dovetail</span><span class="tag-badge">Lookback</span>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-lg font-bold text-gray-800 mb-3">UX Metrics</h5>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag-badge">SUS</span><span class="tag-badge">UMUX-Lite</span>
+                  <span class="tag-badge">Task Success Rate</span><span class="tag-badge">Time-on-Task</span>
+                  <span class="tag-badge">User Error Rate</span>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-lg font-bold text-gray-800 mb-3">Process & Frameworks</h5>
+                <div class="flex flex-wrap gap-2">
+                  <span class="tag-badge">Agile</span><span class="tag-badge">Dual-track Agile</span>
+                  <span class="tag-badge">JTBD</span><span class="tag-badge">Lean UX</span><span class="tag-badge">Design Thinking</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact / Why Me -->
+      <section id="contact" class="py-12 reveal">
+        <div class="panel p-12 flex flex-col md:flex-row items-center gap-12">
+          <div class="md:w-1/2 text-left">
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">Why Me?</h3>
+            <div class="text-lg text-gray-700 space-y-4 max-w-prose">
+              <p>Good research doesn't just inform. It transforms how teams think, build, and connect with their users. I focus on turning insights into action and action into impact.</p>
+              <p class="font-semibold text-2xl mt-6 text-gray-800">User insights shouldn't be boring. And neither should your researcher.</p>
+            </div>
+          </div>
+          <div class="md:w-px h-full bg-black/10 md:block hidden"></div>
+          <div class="md:w-1/2 text-center">
+            <h3 class="text-4xl font-bold text-gray-800 mb-4">Let's Build Something Meaningful</h3>
+            <p class="text-lg text-gray-700 mb-8">If you're building a team where research plays a strategic role, I'd love the opportunity to contribute.</p>
+            <a href="mailto:sphoorthymasa@outlook.com" class="inline-block font-bold py-4 px-10 text-lg bg-[#D8A0A8] text-white rounded-lg shadow-lg transition hover:bg-[#C7909A]">Get In Touch</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section id="testimonials" class="py-12 reveal">
+        <div class="text-center pb-12"><h3 class="text-4xl font-bold text-gray-800">Testimonials</h3></div>
+        <div id="testimonial-scroller" class="testimonial-scroller"></div>
+      </section>
+    </main>
+
+    <footer class="text-center py-6">
+      <p class="text-gray-500">&copy; <span id="year"></span> Sphoorthy Masa. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const testimonials = [
+      { quote: "I had the privilege of working with Sphoorthy... She helped us gain tremendous consumer insights and improved the velocity and prioritization of our product development roadmap.", author: "Gary S.", company: "EVP & Group President, Video Services", featured: true },
+      { quote: "I had the pleasure of working with Sphoorthy at Sling... Her research was always thorough, actionable, and aligned with both user needs and business goals.", author: "AL Shanmugam", company: "Head of Product | AI & Growth", featured: true },
+      { quote: "Sphoorthy was an invaluable asset... As a mentor in user research, she elevated the team's expertise.", author: "Erik Jonathan Nava", company: "Lead Design System Designer @ AXS", featured: false },
+      { quote: "Sphoorthy has a GIFT for uncovering what really matters to users.", author: "Anish Raul", company: "Generative AI & Personalisation Leader", featured: true },
+      { quote: "Second to none at synthesizing complex data into clear narratives.", author: "Emily K.", company: "Director of Product Management", featured: true },
+      { quote: "Consistently championed the user's voice, leading to resonant features.", author: "Michael B.", company: "Senior Product Designer", featured: false }
+    ];
+
+    function createTestimonialScroller() {
+      const scroller = document.getElementById('testimonial-scroller');
+      if (!scroller) return;
+      scroller.innerHTML = '';
+      const inner = document.createElement('div');
+      inner.className = 'scroller-inner';
+      const cards = testimonials.map(t => {
+        const badge = t.featured ? `<span class="absolute top-4 right-4 bg-[#D8A0A8] text-white text-xs font-bold px-3 py-1 rounded-full">Leadership</span>` : '';
+        return `<div class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full">
+          ${badge}
+          <p class="text-base italic text-gray-700">"${t.quote}"</p>
+          <p class="font-semibold not-italic text-gray-800 mt-4">- ${t.author}</p>
+          <p class="text-sm text-gray-500">${t.company}</p>
+        </div>`;
+      }).join('');
+      inner.innerHTML = cards + cards; // loop
+      scroller.appendChild(inner);
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      createTestimonialScroller();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>
