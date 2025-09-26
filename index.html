@@ -11,13 +11,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         :root {
-            --hue: 100; /* Neon Green Hue */
+            --bg: #f7f4ff;
+            --bg-secondary: #fdfaff;
+            --card: rgba(255, 255, 255, 0.85);
+            --card-strong: rgba(255, 255, 255, 0.95);
+            --accent: #d4a4f4;
+            --accent-hover: #bf8ee3;
+            --accent-soft: rgba(212, 164, 244, 0.2);
+            --accent-border: rgba(212, 164, 244, 0.4);
+            --text: #2f2938;
+            --text-muted: #5a4b63;
+            --shadow: rgba(72, 49, 97, 0.15);
         }
-        
+
         body {
             font-family: 'Inter', sans-serif;
-            color: #E5E7EB;
-            background-color: #050505;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
         }
 
         #bg-canvas {
@@ -34,22 +44,32 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .font-script {
             font-family: 'Great Vibes', cursive;
         }
 
+        header nav a {
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: var(--accent-hover);
+        }
+
         .panel {
-            background: rgba(17, 24, 39, 0.6);
+            background-color: var(--card);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-border);
+            box-shadow: 0 8px 24px 0 var(--shadow);
+            color: var(--text);
             transition: box-shadow 0.3s ease;
         }
         .panel:hover {
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 12px 36px 0 var(--shadow);
         }
 
         header { transition: transform 0.4s ease-out; }
@@ -87,6 +107,12 @@
             border-radius: 20px;
             flex-shrink: 0;
             width: 100%;
+        }
+
+        .project-tile.panel {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: none;
         }
 
         .project-tile:hover {
@@ -130,7 +156,7 @@
         }
 
         .metric-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-strong);
             border-radius: 12px;
             padding: 1.5rem;
             text-align: center;
@@ -139,34 +165,34 @@
             font-size: 2.5rem;
             line-height: 1;
             font-weight: 800;
-            color: #a3e635; /* Lime-400 */
+            color: var(--accent);
         }
         .metric-card-label {
             font-size: 0.9rem;
-            color: #d1d5db; /* Gray-300 */
+            color: var(--text-muted);
         }
 
         .details-tabs button {
             padding: 0.5rem 1rem;
             font-weight: 600;
-            color: #9ca3af; /* Gray-400 */
+            color: var(--text-muted);
             border-radius: 8px;
             transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, border-color 0.3s;
             border: 1px solid transparent;
         }
         .details-tabs button.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            box-shadow: 0 0 20px -3px rgba(163, 230, 53, 0.4);
-            border-color: rgba(163, 230, 53, 0.4);
+            background-color: var(--accent-soft);
+            color: var(--accent-hover);
+            box-shadow: 0 0 20px -3px var(--shadow);
+            border-color: var(--accent-border);
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .stat-card {
-            background: rgba(0,0,0,0.2);
-            border-left: 4px solid #84cc16; /* Lime-500 */
+            background: var(--card-strong);
+            border-left: 4px solid var(--accent);
             padding: 1rem;
             border-radius: 8px;
             text-align: center;
@@ -177,19 +203,21 @@
         .stat-card .stat-number {
             font-size: 2.25rem;
             font-weight: 800;
-            color: #a3e635; /* Lime-400 */
+            color: var(--accent);
             line-height: 1;
         }
         .stat-card .stat-description {
             font-size: 0.875rem;
             margin-top: 0.5rem;
+            color: var(--text-muted);
         }
 
         .insight-card {
-            background: rgba(0,0,0,0.2);
+            background: var(--card-strong);
             padding: 1rem 1.5rem;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid var(--accent-border);
+            color: var(--text);
         }
 
         .testimonial-scroller { max-width: 1200px; margin: auto; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent); mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent); }
@@ -199,13 +227,13 @@
         @keyframes scroll { to { transform: translateX(calc(-50% - 0.75rem)); } }
 
         .tag-badge {
-            background-color: rgba(163, 230, 53, 0.2); /* Lime-400 with opacity */
-            color: #a3e635; /* Lime-400 */
+            background-color: var(--accent-soft);
+            color: var(--accent);
             font-size: 0.75rem;
             font-weight: 500;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            border: 1px solid rgba(163, 230, 53, 0.4);
+            border: 1px solid var(--accent-border);
         }
 
         .main-container {
@@ -231,32 +259,32 @@
         }
 
         .skills-card {
-            background: rgba(17, 24, 39, 0.4);
+            background: var(--card-strong);
             border-radius: 12px;
             padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent-border);
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
-        
+
         .skills-card h4 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #a3e635;
+            color: var(--accent);
             margin-bottom: 1rem;
         }
 
         .skills-card p {
-            color: #d1d5db;
+            color: var(--text-muted);
             font-size: 0.9rem;
             line-height: 1.5;
         }
-        
+
         .skills-card strong {
             font-weight: bold;
-            color: #a3e635;
+            color: var(--accent);
         }
 
         .methodology-container {
@@ -266,29 +294,29 @@
         }
 
         .methodology-item {
-            background: rgba(17, 24, 39, 0.4);
+            background: var(--card-strong);
             border-radius: 12px;
             padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent-border);
             position: relative;
         }
 
         .methodology-item h5 {
             font-weight: 700;
             font-size: 1.125rem;
-            color: #a3e635; /* Lime-400 */
+            color: var(--accent);
             margin-bottom: 0.5rem;
         }
 
         .methodology-item p {
             font-size: 0.875rem;
-            color: #d1d5db; /* Gray-300 */
+            color: var(--text-muted);
         }
-        
+
         .divider {
             height: 2rem;
             width: 1px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--accent-border);
             margin: 0 auto;
         }
 
@@ -363,8 +391,8 @@
         }
 
         .carousel-button {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: var(--accent-soft);
+            color: var(--accent);
             padding: 0.5rem;
             border-radius: 9999px;
             cursor: pointer;
@@ -372,13 +400,13 @@
         }
 
         .carousel-button:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(212, 164, 244, 0.35);
         }
 
         .carousel-button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--accent-soft);
         }
         
         @keyframes pulse {
@@ -388,10 +416,95 @@
         
         .background-leaf {
             position: absolute;
-            opacity: 0.15;
-            filter: drop-shadow(0 0 5px rgba(163, 230, 53, 0.5));
+            opacity: 0.2;
+            filter: drop-shadow(0 0 10px rgba(212, 164, 244, 0.4));
             animation: pulse 5s infinite ease-in-out;
-            color: #a3e635; /* give stroke a neon lime tone */
+            color: var(--accent);
+        }
+
+        .accent-text {
+            color: var(--accent);
+        }
+
+        .accent-border {
+            border-color: var(--accent-border);
+        }
+
+        .accent-chip {
+            background-color: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid var(--accent-border);
+        }
+
+        .muted-text {
+            color: var(--text-muted);
+        }
+
+        .accent-button {
+            background-color: var(--accent);
+            color: var(--text);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .accent-button:hover {
+            background-color: var(--accent-hover);
+            color: var(--text);
+            box-shadow: 0 12px 30px var(--shadow);
+        }
+
+        .accent-label {
+            color: var(--accent);
+        }
+
+        .accent-tag-dark {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--accent);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(2px);
+        }
+
+        .accent-pill {
+            background-color: var(--accent);
+            color: var(--text);
+            border-radius: 9999px;
+        }
+
+        .accent-divider {
+            background-color: var(--accent-border);
+        }
+
+        .text-lime-400,
+        .text-lime-200 {
+            color: var(--accent) !important;
+        }
+
+        .bg-lime-400,
+        .bg-lime-500 {
+            background-color: var(--accent) !important;
+            color: var(--text) !important;
+        }
+
+        .border-lime-400\/40 {
+            border-color: var(--accent-border) !important;
+        }
+
+        .panel:not(.project-tile) .text-white {
+            color: var(--text) !important;
+        }
+
+        .panel:not(.project-tile) .text-gray-200,
+        .panel:not(.project-tile) .text-gray-300,
+        .panel:not(.project-tile) .text-gray-400 {
+            color: var(--text-muted) !important;
+        }
+
+        .bg-black\/20 {
+            background-color: var(--card-strong) !important;
+            color: var(--text) !important;
+        }
+
+        .border-white\/10 {
+            border-color: var(--accent-border) !important;
         }
     </style>
 </head>
@@ -403,20 +516,20 @@
     <div class="content-container">
         <header class="container mx-auto px-6 py-4 fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-7xl z-30">
             <div class="panel flex justify-between items-center p-4">
-                <h1 class="text-4xl font-script text-white">Sphoorthy Masa</h1>
-                <nav class="hidden md:flex space-x-8 text-base font-medium items-center text-gray-200">
-                    <a href="#portfolio" class="hover:text-lime-400 transition-colors">Portfolio</a>
-                    <a href="#about" class="hover:text-lime-400 transition-colors">About</a>
-                    <a href="#skills" class="hover:text-lime-400 transition-colors">Skills</a>
-                    <a href="#why-me-contact" class="hover:text-lime-400 transition-colors">Contact</a>
+                <h1 class="text-4xl font-script text-slate-900">Sphoorthy Masa</h1>
+                <nav class="hidden md:flex space-x-8 text-base font-medium items-center">
+                    <a href="#portfolio">Portfolio</a>
+                    <a href="#about">About</a>
+                    <a href="#skills">Skills</a>
+                    <a href="#why-me-contact">Contact</a>
                 </nav>
             </div>
         </header>
 
         <main class="container mx-auto px-6 py-12 pt-32 relative z-10 main-container">
             <section id="hero-section" class="text-center py-20 reveal">
-                <h2 class="text-5xl md:text-7xl font-extrabold text-white leading-tight">Senior UX Researcher</h2>
-                <p class="text-xl md:text-2xl mt-4 text-gray-300 max-w-3xl mx-auto">Bringing <span class="text-lime-400 font-semibold">clarity to complexity</span> through user-centric insights that drive product strategy and business growth.</p>
+                <h2 class="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight">Senior UX Researcher</h2>
+                <p class="text-xl md:text-2xl mt-4 text-slate-600 max-w-3xl mx-auto">Bringing <span class="accent-text font-semibold">clarity to complexity</span> through user-centric insights that drive product strategy and business growth.</p>
             </section>
 
             <section id="portfolio" class="py-12 reveal">
@@ -488,27 +601,27 @@
                 <div class="panel p-12">
                     <div class="grid md:grid-cols-5 gap-12 items-center">
                         <div class="md:col-span-3">
-                            <h3 class="text-3xl font-bold text-white mb-4">About Me</h3>
-                            <div class="text-lg text-gray-300 space-y-4">
+                            <h3 class="text-3xl font-bold text-slate-900 mb-4">About Me</h3>
+                            <div class="text-lg text-slate-600 space-y-4">
                                 <p>Hello, I'm Sphoorthy, a Senior UX Researcher with over a decade of experience turning ambiguous questions into sharp insights that address both user pain points and business strategy.</p>
                                 <p>Most recently, I led UX Research at Sling TV, where I worked across product areas such as onboarding, content discovery, and interactive experiences. My goal is to help product, design, and engineering teams build experiences people love using.</p>
                             </div>
                         </div>
                         <div class="md:col-span-2">
-                            <h4 class="text-xl font-bold text-white mb-4">Core Competencies</h4>
+                            <h4 class="text-xl font-bold text-slate-900 mb-4">Core Competencies</h4>
                             <div class="flex flex-wrap gap-3">
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">User Interviews</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Survey Design</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Journey Mapping</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Usability Testing</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">A/B Testing</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Data Analysis</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Prototyping</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Workshop Facilitation</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Quantitative Analysis</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Strategic Planning</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Mentoring</span>
-                                <span class="bg-white/10 text-lime-400 text-sm font-medium px-4 py-2 rounded-full border border-lime-400/40">Design Thinking</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">User Interviews</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Survey Design</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Journey Mapping</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Usability Testing</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">A/B Testing</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Data Analysis</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Prototyping</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Workshop Facilitation</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Quantitative Analysis</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Strategic Planning</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Mentoring</span>
+                                <span class="accent-chip text-sm font-medium px-4 py-2 rounded-full">Design Thinking</span>
                             </div>
                         </div>
                     </div>
@@ -518,15 +631,15 @@
             <section id="skills" class="py-12 reveal">
                 <div class="panel p-12">
                     <div class="text-center mb-8">
-                        <h3 class="text-4xl font-bold text-white">Skills & Expertise</h3>
-                        <p class="text-lg text-gray-400 mt-2">A comprehensive look at my research methodologies, tools, and frameworks.</p>
+                        <h3 class="text-4xl font-bold text-slate-900">Skills & Expertise</h3>
+                        <p class="text-lg text-slate-600 mt-2">A comprehensive look at my research methodologies, tools, and frameworks.</p>
                     </div>
                     <div class="flex flex-col md:flex-row gap-8">
-                        <div class="flex-1 p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                            <h4 class="text-2xl font-semibold text-white mb-4">Research Methodologies</h4>
+                        <div class="flex-1 skills-card">
+                            <h4 class="text-2xl font-semibold text-slate-900 mb-4">Research Methodologies</h4>
                             <div class="space-y-4">
                                 <div>
-                                    <h5 class="text-lg font-bold text-white mb-2">Quantitative Research Methods</h5>
+                                    <h5 class="text-lg font-bold text-slate-900 mb-2">Quantitative Research Methods</h5>
                                     <div class="flex flex-wrap gap-2">
                                         <span class="tag-badge">Surveys</span>
                                         <span class="tag-badge">A/B Testing</span>
@@ -537,7 +650,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h5 class="text-lg font-bold text-white mb-2">Qualitative Research Methods</h5>
+                                    <h5 class="text-lg font-bold text-slate-900 mb-2">Qualitative Research Methods</h5>
                                     <div class="flex flex-wrap gap-2">
                                         <span class="tag-badge">User Interviews</span>
                                         <span class="tag-badge">Usability testing</span>
@@ -556,8 +669,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-1 p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                            <h4 class="text-2xl font-semibold text-white mb-4">Tools & Software</h4>
+                        <div class="flex-1 skills-card">
+                            <h4 class="text-2xl font-semibold text-slate-900 mb-4">Tools & Software</h4>
                             <div class="flex flex-wrap gap-2">
                                 <span class="tag-badge">UserZoom</span>
                                 <span class="tag-badge">UserTesting</span>
@@ -572,7 +685,7 @@
                                 <span class="tag-badge">SurveyMonkey</span>
                             </div>
 
-                            <h4 class="text-2xl font-semibold text-white mt-8 mb-4">UX Metrics</h4>
+                            <h4 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">UX Metrics</h4>
                             <div class="flex flex-wrap gap-2">
                                 <span class="tag-badge">System Usability Scale (SUS)</span>
                                 <span class="tag-badge">UMUX-Lite</span>
@@ -584,7 +697,7 @@
                                 <span class="tag-badge">Test Satisfaction</span>
                             </div>
 
-                            <h4 class="text-2xl font-semibold text-white mt-8 mb-4">Process & Frameworks</h4>
+                            <h4 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Process & Frameworks</h4>
                             <div class="flex flex-wrap gap-2">
                                 <span class="tag-badge">Agile</span>
                                 <span class="tag-badge">Waterfall</span>
@@ -601,29 +714,29 @@
             <section id="why-me-contact" class="py-12 reveal">
                 <div class="panel p-12 flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2 text-left">
-                        <h3 class="text-3xl font-bold text-white mb-4">Why Me?</h3>
-                        <div class="text-lg text-gray-300 space-y-4 max-w-prose">
+                        <h3 class="text-3xl font-bold text-slate-900 mb-4">Why Me?</h3>
+                        <div class="text-lg text-slate-600 space-y-4 max-w-prose">
                             <p>Good research doesn't just inform. It transforms how teams think, build, and connect with their users. I focus on turning insights into action and action into impact.</p>
-                            <p class="font-semibold text-2xl mt-6 text-white">User insights shouldn't be boring. And neither should your researcher.</p>
+                            <p class="font-semibold text-2xl mt-6 text-slate-900">User insights shouldn't be boring. And neither should your researcher.</p>
                         </div>
                     </div>
-                    <div class="md:w-px h-full bg-white/10 md:block hidden"></div>
+                    <div class="md:w-px h-full accent-divider md:block hidden"></div>
                     <div class="md:w-1/2 text-center">
-                        <h3 class="text-4xl font-bold text-white mb-4">Let's Build Something Meaningful</h3>
-                        <p class="text-lg text-gray-300 mb-8">If you're building a team where research plays a strategic role, I'd love the opportunity to contribute.</p>
-                        <a href="mailto:sphoorthy.masa@example.com" class="inline-block font-bold py-4 px-10 text-lg bg-lime-400 text-gray-900 rounded-lg shadow-lg transition hover:bg-lime-300">Get In Touch</a>
+                        <h3 class="text-4xl font-bold text-slate-900 mb-4">Let's Build Something Meaningful</h3>
+                        <p class="text-lg text-slate-600 mb-8">If you're building a team where research plays a strategic role, I'd love the opportunity to contribute.</p>
+                        <a href="mailto:sphoorthy.masa@example.com" class="inline-block font-bold py-4 px-10 text-lg rounded-lg shadow-lg transition accent-button">Get In Touch</a>
                     </div>
                 </div>
             </section>
             
             <section id="testimonials" class="py-12 reveal">
-                <div class="text-center pb-12"><h3 class="text-4xl font-bold text-white">Testimonials</h3></div>
+                <div class="text-center pb-12"><h3 class="text-4xl font-bold text-slate-900">Testimonials</h3></div>
                 <div id="testimonial-scroller" class="testimonial-scroller"></div>
             </section>
 
         </main>
 
-        <footer class="text-center py-6"><p class="text-gray-400">&copy; 2019 Sphoorthy Masa. All Rights Reserved.</p></footer>
+        <footer class="text-center py-6"><p class="text-slate-500">&copy; 2019 Sphoorthy Masa. All Rights Reserved.</p></footer>
     </div>
     
     <script>
@@ -1150,9 +1263,9 @@
                     <div class="project-tile-content">
                         <h4 class="text-2xl font-bold text-white mb-2">${p.title}</h4>
                         <p class="text-gray-300 mb-3">${p.hook}</p>
-                        <p class="font-bold text-lime-400 mb-4">${p.outcome}</p>
+                        <p class="font-bold accent-text mb-4">${p.outcome}</p>
                         <div class="flex flex-wrap gap-2 my-2">
-                            ${p.tags.map(tag => `<span class="bg-white/10 text-lime-400 text-xs font-medium px-3 py-1 rounded-full border border-lime-400/40">${tag}</span>`).join('')}
+                            ${p.tags.map(tag => `<span class="accent-tag-dark text-xs font-medium px-3 py-1 rounded-full">${tag}</span>`).join('')}
                         </div>
                     </div>
                 `;
@@ -1172,8 +1285,8 @@
             const scrollerInner = document.createElement('div');
             scrollerInner.className = 'scroller-inner';
             const testimonialContent = testimonials.map(t => {
-                let featuredBadge = t.featured ? `<span class="absolute top-4 right-4 bg-lime-500 text-white text-xs font-bold px-3 py-1 rounded-full">Leadership</span>` : '';
-                return `<div class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full">${featuredBadge}<p class="text-base italic text-gray-300">"${t.quote}"</p><p class="font-semibold not-italic text-white mt-4">- ${t.author}</p><p class="text-sm text-gray-400">${t.company}</p></div>`;
+                let featuredBadge = t.featured ? `<span class="absolute top-4 right-4 accent-pill text-xs font-bold px-3 py-1 shadow">Leadership</span>` : '';
+                return `<div class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full">${featuredBadge}<p class="text-base italic text-slate-600">"${t.quote}"</p><p class="font-semibold not-italic accent-text mt-4">- ${t.author}</p><p class="text-sm muted-text">${t.company}</p></div>`;
             }).join('');
             scrollerInner.innerHTML = testimonialContent + testimonialContent;
             scroller.appendChild(scrollerInner);
@@ -1211,7 +1324,7 @@
                 <div class="tab-content" data-tab-content="results">${project.content.results}</div>
                 <div class="tab-content" data-tab-content="media">${project.content.media}</div>
                 <div class="text-center pt-6 mt-6 border-t border-white/10">
-                    <button class="close-details-btn text-lime-400 font-semibold hover:text-white transition-colors flex items-center gap-2 mx-auto">
+                    <button class="close-details-btn accent-text font-semibold hover:text-slate-900 transition-colors flex items-center gap-2 mx-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
                         Collapse
                     </button>
