@@ -1,7 +1,7 @@
 // theme.js — inject Magnolia theme styles + WebGL background (Three.js must be loaded on the page)
 
 (function () {
-  // Inject global styles
+  // Inject global styles immediately so the page paints with the theme colors.
   const style = document.createElement('style');
   style.textContent = `
   :root {
@@ -37,28 +37,42 @@
   `;
   document.head.appendChild(style);
 
-  // Add the canvas (if not already present)
-  if (!document.getElementById('bg-canvas')) {
+  const runWhenReady = (fn) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn, { once: true });
+    } else {
+      fn();
+    }
+  };
+
+  function ensureCanvas() {
+    if (document.getElementById('bg-canvas')) return;
     const canvas = document.createElement('canvas');
     canvas.id = 'bg-canvas';
     document.body.prepend(canvas);
   }
 
-  // Simple reveal-on-scroll
-  const onReady = () => {
-    const obs = new IntersectionObserver((entries)=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.1});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-  };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', onReady);
-  } else { onReady(); }
+  function setupRevealObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
 
-  // Particle background (requires THREE global)
-  function initParticles(){
-    if (!window.THREE) return; // if three.js not loaded, skip gracefully
+    document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
+  }
+
+  function initParticles() {
+    if (!window.THREE) return;
     const canvas = document.getElementById('bg-canvas');
-    let scene,camera,renderer,particles,time=0,mouse=new THREE.Vector2(0.5,0.5);
-    const vShader = `
+    if (!canvas) return;
+
+    let scene, camera, renderer, particles, time = 0;
+    const mouse = new THREE.Vector2(0.5, 0.5);
+
+    const vertexShader = `
       uniform float uTime; uniform float uHue; uniform vec2 uMouse; uniform float uScreenWidth;
       attribute float aRandom; attribute float aSize; attribute float aPhase; varying vec3 vColor;
       void main(){
@@ -71,8 +85,7 @@
         float bf = smoothstep(0.4,0.0,dist);
         float hue = uHue; float s = 0.7 + bf*0.3; float l = 0.65;
         vec3 rgb;
-        if (s==0.0){ rgb = vec3(l);}
-        else{
+        if (s==0.0){ rgb = vec3(l);} else{
           float q = l < 0.5 ? l*(1.0+s) : l + s - l*s;
           float p = 2.0*l - q;
           vec3 t = vec3(hue+1.0/3.0, hue, hue-1.0/3.0);
@@ -84,31 +97,84 @@
         vColor = rgb;
         gl_PointSize = (aSize*2.0)*(1.0 + bf*3.0)*(uScreenWidth/1920.0)*(1.0 / -gl_Position.z);
       }`;
-    const fShader = `varying vec3 vColor; void main(){ vec2 c=2.0*gl_PointCoord-1.0; float r=dot(c,c); float d=fwidth(r); float a=1.0 - smoothstep(1.0,1.0+d,r); gl_FragColor=vec4(vColor,a*0.9);} `;
-    scene=new THREE.Scene();
-    camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
-    camera.position.z=50;
-    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-    renderer.setSize(window.innerWidth,window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio||1);
-    const n=10000, pos=new Float32Array(n*3), rnd=new Float32Array(n), siz=new Float32Array(n), ph=new Float32Array(n);
-    for(let i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*100;pos[i*3+1]=(Math.random()-.5)*100;pos[i*3+2]=(Math.random()-.5)*100;rnd[i]=Math.random();siz[i]=Math.random()*1.5+1;ph[i]=Math.random()*Math.PI*2;}
-    const geo=new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-    geo.setAttribute('aRandom', new THREE.BufferAttribute(rnd,1));
-    geo.setAttribute('aSize', new THREE.BufferAttribute(siz,1));
-    geo.setAttribute('aPhase', new THREE.BufferAttribute(ph,1));
-    const mat=new THREE.ShaderMaterial({uniforms:{uTime:{value:0},uHue:{value:0},uMouse:{value:new THREE.Vector2(.5,.5)},uScreenWidth:{value:window.innerWidth}},vertexShader:vShader,fragmentShader:fShader,transparent:true});
-    particles=new THREE.Points(geo,mat); scene.add(particles);
-    function animate(){ requestAnimationFrame(animate); time+=0.005; mat.uniforms.uTime.value=time; mat.uniforms.uHue.value=0.94+(Math.sin(time*0.2)*0.04); renderer.render(scene,camera); }
-    function onResize(){ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); mat.uniforms.uScreenWidth.value=window.innerWidth; }
-    function onMouse(e){ mat.uniforms.uMouse.value.set((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1); }
+
+    const fragmentShader = `varying vec3 vColor; void main(){ vec2 c=2.0*gl_PointCoord-1.0; float r=dot(c,c); float d=fwidth(r); float a=1.0 - smoothstep(1.0,1.0+d,r); gl_FragColor=vec4(vColor,a*0.9);} `;
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 50;
+
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+
+    const count = 10000;
+    const positions = new Float32Array(count * 3);
+    const randoms = new Float32Array(count);
+    const sizes = new Float32Array(count);
+    const phases = new Float32Array(count);
+
+    for (let i = 0; i < count; i += 1) {
+      positions[i * 3] = (Math.random() - 0.5) * 100;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+      randoms[i] = Math.random();
+      sizes[i] = Math.random() * 1.5 + 1;
+      phases[i] = Math.random() * Math.PI * 2;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+    geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+    geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uHue: { value: 0 },
+        uMouse: { value: mouse },
+        uScreenWidth: { value: window.innerWidth }
+      },
+      vertexShader,
+      fragmentShader,
+      transparent: true
+    });
+
+    particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      time += 0.005;
+      material.uniforms.uTime.value = time;
+      material.uniforms.uHue.value = 0.94 + Math.sin(time * 0.2) * 0.04;
+      renderer.render(scene, camera);
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      material.uniforms.uScreenWidth.value = window.innerWidth;
+    }
+
+    function onMouse(event) {
+      material.uniforms.uMouse.value.set(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+      );
+    }
+
     window.addEventListener('resize', onResize, false);
     window.addEventListener('mousemove', onMouse, false);
+
     animate();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initParticles);
-  } else { initParticles(); }
+  runWhenReady(() => {
+    ensureCanvas();
+    setupRevealObserver();
+    initParticles();
+  });
 })();

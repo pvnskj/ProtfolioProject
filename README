@@ -34,3 +34,15 @@ GitHub will build and deploy the site. After a few minutes, a banner at the top 
 
 ## 5. Keep iterating on the site
 Whenever you update your HTML (or supporting CSS/JS assets), commit and push the changes. GitHub Pages will automatically redeploy and refresh the live site. Remember to update links (like the email CTA) with your own details so visitors can reach you.
+
+
+## Local assets
+
+Load the shared scripts from the repository when you build new pages:
+
+```html
+<script src="./theme.js"></script>
+<script src="./projects.js"></script>
+```
+
+Place these tags just before your closing </body> tag so the DOM exists before the scripts run. 
