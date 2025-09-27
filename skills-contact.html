@@ -11,7 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
-  <script src="./theme.js"></script>
 </head>
 <body class="antialiased">
   <canvas id="bg-canvas"></canvas>
@@ -125,38 +124,17 @@
     </footer>
   </div>
 
+  <script src="./theme.js"></script>
+  <script src="./projects.js"></script>
   <script>
-    const testimonials = [
-      { quote: "I had the privilege of working with Sphoorthy... She helped us gain tremendous consumer insights and improved the velocity and prioritization of our product development roadmap.", author: "Gary S.", company: "EVP & Group President, Video Services", featured: true },
-      { quote: "I had the pleasure of working with Sphoorthy at Sling... Her research was always thorough, actionable, and aligned with both user needs and business goals.", author: "AL Shanmugam", company: "Head of Product | AI & Growth", featured: true },
-      { quote: "Sphoorthy was an invaluable asset... As a mentor in user research, she elevated the team's expertise.", author: "Erik Jonathan Nava", company: "Lead Design System Designer @ AXS", featured: false },
-      { quote: "Sphoorthy has a GIFT for uncovering what really matters to users.", author: "Anish Raul", company: "Generative AI & Personalisation Leader", featured: true },
-      { quote: "Second to none at synthesizing complex data into clear narratives.", author: "Emily K.", company: "Director of Product Management", featured: true },
-      { quote: "Consistently championed the user's voice, leading to resonant features.", author: "Michael B.", company: "Senior Product Designer", featured: false }
-    ];
-
-    function createTestimonialScroller() {
-      const scroller = document.getElementById('testimonial-scroller');
-      if (!scroller) return;
-      scroller.innerHTML = '';
-      const inner = document.createElement('div');
-      inner.className = 'scroller-inner';
-      const cards = testimonials.map(t => {
-        const badge = t.featured ? `<span class="absolute top-4 right-4 bg-[#D8A0A8] text-white text-xs font-bold px-3 py-1 rounded-full">Leadership</span>` : '';
-        return `<div class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full">
-          ${badge}
-          <p class="text-base italic text-gray-700">"${t.quote}"</p>
-          <p class="font-semibold not-italic text-gray-800 mt-4">- ${t.author}</p>
-          <p class="text-sm text-gray-500">${t.company}</p>
-        </div>`;
-      }).join('');
-      inner.innerHTML = cards + cards; // loop
-      scroller.appendChild(inner);
-    }
-
-    document.addEventListener('DOMContentLoaded', ()=>{
-      createTestimonialScroller();
-      document.getElementById('year').textContent = new Date().getFullYear();
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderTestimonials) {
+        window.renderTestimonials('#testimonial-scroller');
+      }
+      const yearEl = document.getElementById('year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
     });
   </script>
 </body>
