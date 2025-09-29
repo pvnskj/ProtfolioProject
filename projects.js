@@ -38,7 +38,7 @@
     /* Left tile ↔ right details alignment */
     .active-project-panel{margin:0}
     .active-project-panel .panel{padding:var(--panel-pad)}
-    .panel-rail{max-width:1100px;margin-inline:auto}
+    .panel-rail{max-width:1250px;margin-inline:auto}
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
     /* Tabs (pills) */
@@ -79,30 +79,170 @@
     }
     @media (prefers-color-scheme: dark){ .project-details-content .tab-content{ color:var(--fg-d) } }
 
-    /* Make long sections scannable by “carding” their subsections */
-    .tab-content .text-left.space-y-6 > div,
-    .tab-content .text-left.text-sm.space-y-6 > div,
-    .tab-content .space-y-8 > div{
-      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.5));
+    /* Structured tab layout */
+    .project-details-content h4{font-weight:800;font-size: clamp(1.05rem,1rem + .2vw,1.18rem);margin:.1rem 0 .4rem}
+    .project-details-content h5{font-weight:700;margin:.15rem 0;font-size:1rem}
+    .project-details-content p{margin:.25rem 0;color:var(--muted);word-break:break-word;hyphens:auto}
+    .project-details-content .tab-section strong{color:var(--fg);}
+
+    .tab-section{display:flex;flex-direction:column;gap:1.75rem}
+    .tab-section__header{display:flex;flex-direction:column;gap:.6rem}
+    .tab-section__header + .tab-section__header{margin-top:1.25rem}
+    .tab-eyebrow{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);}
+    .tab-section__lede{color:var(--muted);font-size:clamp(.88rem,.86rem + .1vw,.96rem);max-width:60ch}
+
+    .tab-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+    .tab-card{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      gap:.55rem;
+      padding:1rem 1.15rem;
+      border-radius:16px;
       border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px 16px;
-      box-shadow: var(--glow);
+      background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.66));
+      box-shadow:var(--glow);
+    }
+    .tab-card::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:4px;
+      border-radius:0 0 16px 16px;
+      background:linear-gradient(90deg, rgba(236,72,153,.55), rgba(168,85,247,.45));
+      opacity:.85;
+    }
+    .tab-card h5{color:var(--fg);font-weight:800;font-size:1rem}
+    .tab-card__meta{font-size:.82rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+
+    .tab-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+    .tab-list li{display:flex;gap:.55rem;align-items:flex-start;color:var(--muted);font-size:.9rem}
+    .tab-list li::before{content:"•";color:var(--accent);font-weight:700;line-height:1;margin-top:.1rem}
+
+    .tab-chip-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}
+    .tab-chip-row .tag-badge{margin:0;font-size:.72rem;padding:.24rem .6rem;border-radius:var(--chip-br);border:1px solid var(--border);background:rgba(255,255,255,.72)}
+
+    .timeline{position:relative;display:flex;flex-direction:column;gap:1rem;counter-reset:timeline}
+    .timeline::before{content:"";position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg, rgba(236,72,153,.2), rgba(168,85,247,.25))}
+    .timeline-step{
+      position:relative;
+      margin-left:0;
+      padding:1rem 1.2rem 1rem 3.5rem;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.7));
+      box-shadow:var(--glow);
+      display:flex;
+      flex-direction:column;
+      gap:.5rem;
+    }
+    .timeline-step::before{
+      counter-increment:timeline;
+      content:counter(timeline);
+      position:absolute;
+      left:0;
+      top:1rem;
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#fff;
+      background:linear-gradient(135deg, rgba(236,72,153,.9), rgba(168,85,247,.9));
+      box-shadow:0 6px 16px rgba(236,72,153,.3);
+    }
+
+    .insight-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .insight-card{
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));
+      padding:1rem 1.15rem;
+      box-shadow:var(--glow);
+    }
+    .insight-card h5{font-weight:700;font-size:.98rem;color:var(--fg);margin-bottom:.3rem}
+    .insight-card p{font-size:.9rem;color:var(--muted)}
+
+    .result-board{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+    .result-card{
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
+      box-shadow:var(--glow);
+      padding:1.1rem 1.25rem;
+      display:flex;
+      flex-direction:column;
+      gap:.45rem;
+      text-align:center;
+    }
+    .result-card__label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+    .result-card__value{font-size:1.3rem;font-weight:800;color:var(--accent)}
+    .result-card__hint{font-size:.85rem;color:var(--muted)}
+
+    .callout-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+    .callout-card{border-radius:18px;border:1px solid var(--border);padding:1rem 1.2rem;background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.68));box-shadow:var(--glow);display:flex;flex-direction:column;gap:.6rem}
+    .callout-card ul{margin:0;padding-left:1rem;display:flex;flex-direction:column;gap:.35rem;color:var(--muted)}
+
+    @media (prefers-color-scheme: dark){
+      .tab-card,
+      .timeline-step,
+      .insight-card,
+      .result-card,
+      .callout-card{background:linear-gradient(180deg, rgba(31,41,55,.88), rgba(31,41,55,.64));border-color:var(--border-d)}
+      .tab-card::after{background:linear-gradient(90deg, rgba(236,72,153,.55), rgba(168,85,247,.55));opacity:.6}
+      .tab-chip-row .tag-badge{background:rgba(255,255,255,.08);border-color:var(--border-d)}
+      .timeline::before{background:linear-gradient(180deg, rgba(236,72,153,.28), rgba(168,85,247,.32))}
+      .project-details-content p{color:var(--fg-d)}
+      .tab-list li{color:var(--fg-d)}
+      .insight-card p,
+      .callout-card ul{color:var(--fg-d)}
+      .result-card__hint{color:var(--fg-d)}
+      .result-card__label{color:var(--muted-d)}
+    }
+
+    /* Long-form content toggles */
+    .collapsible-block{
+      position:relative;
+      max-height:360px;
+      overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    .collapsible-block::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:96px;
+      background:linear-gradient(180deg, rgba(250,248,245,0), rgba(250,248,245,.94));
+      pointer-events:none;
+      transition:opacity .25s ease;
     }
     @media (prefers-color-scheme: dark){
-      .tab-content .text-left.space-y-6 > div,
-      .tab-content .text-left.text-sm.space-y-6 > div,
-      .tab-content .space-y-8 > div{
-        background:linear-gradient(180deg, rgba(31,41,55,.75), rgba(31,41,55,.55));
-        border-color:var(--border-d);
+      .collapsible-block::after{
+        background:linear-gradient(180deg, rgba(17,24,39,0), rgba(17,24,39,.9));
       }
     }
-    .project-details-content h4{font-weight:800;font-size: clamp(1.05rem,1rem + .2vw,1.2rem);margin:.25rem 0 .35rem}
-    .project-details-content h5{font-weight:800;margin:.25rem 0 .125rem;font-size:1rem}
-    .project-details-content p,.project-details-content li{margin:.3rem 0; word-break:break-word; hyphens:auto}
-    .project-details-content ul{padding-left:1.15rem}
-    .project-details-content .insight-card,
-    .project-details-content .stat-card{ border-radius:14px }
+    .collapsible-block.expanded{max-height:none; overflow:visible;}
+    .collapsible-block.expanded::after{opacity:0;}
+
+    .collapsible-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      margin-top:.85rem;
+      padding:.45rem .85rem;
+      border-radius:999px;
+      border:1px solid rgba(236,72,153,.35);
+      background:linear-gradient(180deg, rgba(236,72,153,.08), rgba(168,85,247,.08));
+      color:var(--accent);
+      font-weight:700;
+      font-size:.88rem;
+      transition:transform .12s ease, box-shadow .15s ease, background .2s ease;
+    }
+    .collapsible-toggle:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
+    .collapsible-toggle svg{width:16px;height:16px;transition:transform .2s ease;}
+    .collapsible-toggle[aria-expanded="true"] svg{ transform:rotate(180deg); }
 
     /* Metrics row (fits text nicely) */
     .metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
@@ -162,6 +302,44 @@
   document.documentElement.classList.add('theme-jelly');
 })();
 
+const COLLAPSIBLE_LIMIT = 360;
+
+function ensureCollapsibleForTab(tab){
+  if (!tab) return;
+  const block = tab.querySelector('.leading-relaxed');
+  if (!block) return;
+
+  const existingToggle = block.nextElementSibling;
+  if (existingToggle && existingToggle.classList.contains('collapsible-toggle')) {
+    existingToggle.remove();
+  }
+  block.classList.remove('collapsible-block', 'expanded');
+
+  const schedule = window.requestAnimationFrame || function(cb){ return setTimeout(cb, 16); };
+  schedule(()=>{
+    if (block.scrollHeight <= COLLAPSIBLE_LIMIT + 32) return;
+
+    block.classList.add('collapsible-block');
+    const toggle = document.createElement('button');
+    const collapsedText = 'Show full details';
+    const expandedText = 'Show less';
+    toggle.type = 'button';
+    toggle.className = 'collapsible-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.innerHTML = `<span class="collapsible-toggle-label">${collapsedText}</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor"><path d="M10 13.5a1 1 0 0 1-.7-.29l-5-5a1 1 0 1 1 1.4-1.42L10 11.09l4.3-4.3a1 1 0 0 1 1.4 1.42l-5 5a1 1 0 0 1-.7.29Z"/></svg>`;
+    toggle.addEventListener('click', ()=>{
+      const expanded = block.classList.toggle('expanded');
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      const label = toggle.querySelector('.collapsible-toggle-label');
+      if (label) {
+        label.textContent = expanded ? expandedText : collapsedText;
+      }
+    });
+    block.after(toggle);
+  });
+}
+
 // 2) ---- Rendering (alignment-aware + readable) ----
 function renderProjectDetails(project, container) {
   if (!project || !project.content) { container.innerHTML = ''; return; }
@@ -196,6 +374,7 @@ function renderProjectDetails(project, container) {
 
   container.innerHTML = '';
   container.appendChild(panel);
+  ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
 
   // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
@@ -206,7 +385,10 @@ function renderProjectDetails(project, container) {
     btn.classList.add('active');
     const tab = btn.getAttribute('data-tab');
     panel.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
-    panel.querySelector(`.tab-content[data-tab-content="${tab}"]`)?.classList.add('active');
+    const targetTab = panel.querySelector(`.tab-content[data-tab-content="${tab}"]`);
+    if (!targetTab) return;
+    targetTab.classList.add('active');
+    ensureCollapsibleForTab(targetTab);
   });
 }
 
@@ -284,101 +466,158 @@ window.projects = [
         { value: "90%", label: "Target Task Success Rate" },
         { value: "12%", label: "Reduction in CX Complaints" }
       ],
-      overview: `<div class="text-left space-y-6">
-        <div>
-          <h5 class="font-bold text-white text-lg">Background</h5>
-          <p class="text-gray-300 mt-1">The guide sits at the heart of content discovery, but had evolved in parallel across Sling TV and Dish TV, creating fragmented experiences.</p>
-        </div>
-        <div>
-          <h5 class="font-bold text-white text-lg">The Challenge</h5>
-          <p class="text-gray-300 mt-1">How can we unify the guide experience to enhance usability and personalization without alienating loyal users on two very different platforms?</p>
-        </div>
-        <div>
-          <h5 class="font-bold text-white text-lg">Key Objectives</h5>
-          <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
-            <li>Identify user frustrations and unmet needs across both platforms.</li>
-            <li>Uncover shared pain points to guide a unified design strategy.</li>
-            <li>Deliver actionable recommendations that balance user needs and business goals.</li>
-          </ul>
-        </div>
-      </div>`,
-      methodology: `<h4>My Research Process & Tools</h4>
-        <div class="methodology-container mt-6">
-          <div class="methodology-item">
-            <h5>1. Discovery & Planning</h5>
-            <p>Stakeholder Interviews, Data Analysis, and Defining Project Scope.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserZoom</span><span class="tag-badge">Google Analytics</span><span class="tag-badge">JIRA</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>2. Generative Research</h5>
-            <p>In-depth User Interviews to uncover behaviors and motivations.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">User Interviews</span><span class="tag-badge">Lookback</span><span class="tag-badge">Google Meet</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>3. Synthesis & Ideation</h5>
-            <p>Mapping insights and collaborating with design and product teams.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Miro</span><span class="tag-badge">Figma</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>4. Validation & Delivery</h5>
-            <p>Usability Testing and Handoff to Engineering teams.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserTesting.com</span><span class="tag-badge">Figma Prototypes</span><span class="tag-badge">Confluence</span></div>
-          </div>
-        </div>`,
-      analysis: `<h4>Target Audience & Segments</h4>
-        <div class="flex flex-col md:flex-row gap-4 mt-4 text-left">
-          <div class="flex-1 p-4 bg-black/20 rounded-lg border border-white/10">
-            <h5 class="font-bold text-white">DISH TV Subscribers (65+)</h5>
-            <p class="text-sm text-gray-300">Tolerate outdated UI but struggle with hidden features; often have accessibility needs.</p>
-          </div>
-          <div class="flex-1 p-4 bg-black/20 rounded-lg border border-white/10">
-            <h5 class="font-bold text-white">Sling TV Subscribers (~35)</h5>
-            <p class="text-sm text-gray-300">Tech-savvy, expect fast, intuitive interfaces and quick content access.</p>
-          </div>
-        </div>
-        <h4 class="mt-8">Key Quantitative Insights</h4>
-        <div class="grid md:grid-cols-2 gap-4 mt-4 text-gray-300 text-left">
-          <div class="insight-card">
-            <h5>1. High Engagement, Low Conversion</h5>
-            <ul class="text-sm list-disc list-inside my-2 space-y-1">
-              <li><b>Sling TV:</b> 79% engagement &rarr; 56% playback</li>
-              <li><b>DISH TV:</b> 86% engagement &rarr; 48% playback</li>
+      overview: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Project Snapshot</p>
+          <h4>Unified guide for Sling &amp; DISH</h4>
+          <p class="tab-section__lede">Customers bounced between two incompatible guide layouts. We reset the experience around a single blueprint that feels native on both platforms.</p>
+        </header>
+        <div class="tab-grid">
+          <article class="tab-card">
+            <h5>Background</h5>
+            <ul class="tab-list">
+              <li>The live TV guide is the default home for both services.</li>
+              <li>Separate roadmaps created inconsistent navigation behaviors.</li>
             </ul>
-            <p class="text-sm text-lime-200">🔍 Insight: Strong adoption, but poor discoverability leads to drop-offs.</p>
-          </div>
-          <div class="insight-card">
-            <h5>2. Underutilized Features</h5>
-            <ul class="text-sm list-disc list-inside my-2 space-y-1">
-              <li>73% of sessions used the default "ALL" filter.</li>
-              <li>"Favorites" users had a 64% playback rate vs. 55% for others.</li>
+          </article>
+          <article class="tab-card">
+            <h5>Core challenge</h5>
+            <ul class="tab-list">
+              <li>Blend DISH’s trusted workflows with Sling’s speed and personalization.</li>
+              <li>Roll out change without eroding confidence in the familiar grid.</li>
             </ul>
-            <p class="text-sm text-lime-200">🔍 Insight: Personalization improves engagement but is underused.</p>
-          </div>
-          <div class="insight-card">
-            <h5>3. High Drop-Offs in Short Sessions</h5>
-            <ul class="text-sm list-disc list-inside my-2 space-y-1">
-              <li>44% of Sling guide sessions ended without playback.</li>
-              <li>Most of these non-playback sessions lasted &lt;20 seconds.</li>
+          </article>
+          <article class="tab-card">
+            <h5>Focus for research</h5>
+            <ul class="tab-list">
+              <li>Map shared frustrations and accessibility gaps across audiences.</li>
+              <li>Quantify the usability wins that would unlock measurable value.</li>
+              <li>Translate findings into a playbook for design, product, and engineering.</li>
             </ul>
-            <p class="text-sm text-lime-200">🔍 Insight: Users abandon quickly, suggesting poor content surfacing.</p>
-          </div>
-          <div class="insight-card">
-            <h5>4. Habitual Navigation (DISH)</h5>
-            <ul class="text-sm list-disc list-inside my-2 space-y-1">
-              <li>46% of users navigated vertically by habit.</li>
-              <li>Only 8% used faster horizontal navigation by time.</li>
+          </article>
+        </div>
+      </section>`,
+      methodology: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Approach</p>
+          <h4>Layered research to de-risk a unified release</h4>
+          <p class="tab-section__lede">Each round framed where to converge, when to localize, and which bets delivered the biggest lift.</p>
+        </header>
+        <div class="timeline">
+          <article class="timeline-step">
+            <h5>Discovery &amp; alignment</h5>
+            <p>Partnered with product, marketing, and data science to define success metrics and understand platform constraints.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Stakeholder Interviews</span>
+              <span class="tag-badge">Data Audit</span>
+              <span class="tag-badge">JIRA</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Generative interviews</h5>
+            <p>Met with Sling and DISH households to surface behaviors, device context, and the root causes of guide abandonment.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Remote Interviews</span>
+              <span class="tag-badge">Lookback</span>
+              <span class="tag-badge">Google Meet</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Synthesis &amp; co-design</h5>
+            <p>Mapped patterns into opportunity areas and co-led prioritization workshops with design and product.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Miro</span>
+              <span class="tag-badge">Figma</span>
+              <span class="tag-badge">Ideation Workshops</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Validation &amp; rollout</h5>
+            <p>Ran iterative concept tests and delivered evidence-backed requirements for engineering handoff.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">UserTesting</span>
+              <span class="tag-badge">Figma Prototypes</span>
+              <span class="tag-badge">Confluence</span>
+            </div>
+          </article>
+        </div>
+      </section>`,
+      analysis: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Who we designed for</p>
+          <h4>Two audiences aligned by shared frustrations</h4>
+          <p class="tab-section__lede">Research revealed that both groups valued speed, clarity, and control, even though their habits differed.</p>
+        </header>
+        <div class="tab-grid">
+          <article class="tab-card">
+            <span class="tab-card__meta">DISH loyalists · 65+</span>
+            <h5>Accessibility-first navigation</h5>
+            <ul class="tab-list">
+              <li>Prefer predictable vertical scrolling rooted in muscle memory.</li>
+              <li>Requested higher contrast presets and better surfacing of hidden actions.</li>
             </ul>
-            <p class="text-sm text-lime-200">🔍 Insight: Users may not be aware of more efficient navigation options.</p>
-          </div>
-        </div>`,
-      results: `<p class="text-center text-lg">The research insights directly led to iterative design improvements, validating each solution through rigorous testing to ensure it met user needs and business goals.</p>
-        <h4 class="mt-8">Financial Impact</h4>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-gray-300">
-          <div class="stat-card"><div class="stat-number">~$5.83M</div><div class="stat-description">from Increased Retention</div></div>
-          <div class="stat-card"><div class="stat-number">~$1.94M</div><div class="stat-description">from Feature Upsells</div></div>
-          <div class="stat-card"><div class="stat-number">~$193k</div><div class="stat-description">from Ad Revenue</div></div>
-          <div class="stat-card"><div class="stat-number">~$63k</div><div class="stat-description">from Ops Savings</div></div>
-        </div>`,
+          </article>
+          <article class="tab-card">
+            <span class="tab-card__meta">Sling streamers · mid-30s</span>
+            <h5>Fast personalization</h5>
+            <ul class="tab-list">
+              <li>Expected quick filters and contextual recommendations.</li>
+              <li>Abandoned sessions when the grid felt noisy or repetitive.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="tab-section__header">
+          <p class="tab-eyebrow">Quantitative signals</p>
+          <h4>Behavioral metrics guided the roadmap</h4>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h5>High engagement, lower conversion</h5>
+            <p>Sling: 79% guide engagement but only 56% playback. DISH: 86% to 48%. Users explored but struggled to start watching.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Personalization underused</h5>
+            <p>73% of sessions stayed on the default “ALL” filter, yet favorite users enjoyed a 9pt higher playback rate.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Short sessions stalled</h5>
+            <p>44% of Sling sessions ended within 20 seconds without playback, pointing to overwhelming density.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Navigation learned behavior</h5>
+            <p>46% of DISH viewers scrolled vertically by habit, while only 8% leveraged the faster horizontal jump controls.</p>
+          </article>
+        </div>
+      </section>`,
+      results: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Outcome</p>
+          <h4>Evidence that unlocked a confident go-to-market</h4>
+          <p class="tab-section__lede">Research distilled into a shared roadmap that balanced familiarity with modernization.</p>
+        </header>
+        <div class="result-board">
+          <article class="result-card">
+            <span class="result-card__label">Annual value impact</span>
+            <span class="result-card__value">~$5.83M</span>
+            <span class="result-card__hint">Retention gains tied to a cleaner guide.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Feature upsell</span>
+            <span class="result-card__value">~$1.94M</span>
+            <span class="result-card__hint">Personalized surfaces improved cross-sell moments.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Ad revenue</span>
+            <span class="result-card__value">~$193K</span>
+            <span class="result-card__hint">Contextual placements benefitted from better targeting.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Operational savings</span>
+            <span class="result-card__value">~$63K</span>
+            <span class="result-card__hint">Reduced support contacts thanks to clarified flows.</span>
+          </article>
+        </div>
+      </section>`,
       media: `<h4>Media Assets</h4>
         <div class="grid grid-cols-2 gap-4 mt-4">
           <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=User+Flow+Diagram" alt="User Flow Diagram">
@@ -399,226 +638,297 @@ window.projects = [
         { value: "36%", label: "Refill Volume through App" },
         { value: "$702k+", label: "Annual Labor Cost Savings" }
       ],
-      overview: `<div class="text-left space-y-6">
-        <div>
-          <h5 class="font-bold text-white text-lg">Background</h5>
-          <p class="text-gray-300 mt-1">The pharmacy app was designed to simplify and modernize the prescription refill experience. It aimed to reduce the repetitive, manual burden on pharmacists and empower patients with self-service medication management.</p>
-        </div>
-        <div>
-          <h5 class="font-bold text-white text-lg">Research Goals</h5>
-          <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
-            <li><b>Boost Adoption:</b> Achieve 10,000+ active app users within 6 months.</li>
-            <li><b>Drive Prescription Orders:</b> Convert 25% of monthly refills (11,250 orders) through the app.</li>
-            <li><b>Automate Communications:</b> Deliver 10,000+ refill reminders & status messages monthly.</li>
-            <li><b>Reduce Staff Burden:</b> Decrease pharmacist time spent on refill calls by 50%, and reduce medical staff back-and-forth.</li>
-            <li><b>Cost Optimization:</b> Recover up to $1M/year in lost labor time.</li>
-          </ul>
-        </div>
-      </div>`,
-      methodology: `<div class="space-y-6">
-        <p class="text-sm text-gray-300">Our research was a blend of qualitative and quantitative methods to understand both the user experience and the internal workflow challenges.</p>
-        <h4 class="font-bold text-white text-lg mb-2">Manual Workflow </h4>
-        <p class="text-sm text-gray-300">The manual process was time-consuming and inefficient. Pharmacists spent an average of 3.5 minutes per refill, totaling over 2,600 hours/month, which translated to significant lost labor time.</p>
-        <div class="methodology-container mt-4">
-          <div class="methodology-item">
-            <h5>1. Workflow & Stakeholder Analysis</h5>
-            <p>Interviews with pharmacists, RNs, and MAs to map the manual refill process.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Stakeholder Interviews</span><span class="tag-badge">Process Mapping</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>2. Usability & Heuristic Evaluation</h5>
-            <p>Tested the existing app with both patients and staff to identify pain points and opportunities.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Heuristic Analysis</span><span class="tag-badge">Usability Testing</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>3. Discovery & Synthesis</h5>
-            <p>Uuncovered a key problem: most patients were unaware the app existed. This shifted our focus from product improvement to a marketing and awareness strategy.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Patient Interviews</span><span class="tag-badge">Journey Mapping</span></div>
-          </div>
-        </div>
-      </div>`,
-      analysis: `<div class="space-y-8">
-        <div>
-          <h4 class="font-bold text-white text-lg mb-4">Key Insights from Analysis</h4>
-          <div class="grid md:grid-cols-2 gap-4 mt-4 text-left">
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Minimalist UI & High Usability</h5>
-              <p class="text-sm text-gray-300">The app's core functionality was clear, allowing users to refill prescriptions with ease. <b>Task success rate was 95%.</b></p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Unexpected Awareness Gap</h5>
-              <p class="text-sm text-gray-300">A major finding: many patients were simply <b>unaware the app existed.</b> This shifted our focus from product improvement to a marketing and awareness strategy.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Low Emotional Engagement</h5>
-              <p class="text-sm text-gray-300">A SUS Score of 78 indicated solid usability but highlighted a <b>lack of emotional engagement</b> due to the app's basic visual design.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Automated Communications</h5>
-              <p class="text-sm text-gray-300">The system lacked features to reduce the repetitive, manual burden on pharmacists and their outbound calls.</p>
-            </div>
-          </div>
-        </div>
-      </div>`,
-      results: `<div class="space-y-8">
-        <p class="text-center text-lg text-gray-300">Our research led to a strategic awareness campaign that directly addressed the adoption problem and produced significant business impact.</p>
-        <h4 class="font-bold text-white text-lg">Key Outcomes</h4>
-        <div class="overflow-x-auto relative rounded-lg border border-white/10 mt-4">
-          <table class="w-full text-sm text-left text-gray-400">
-            <thead class="text-xs text-gray-200 uppercase bg-gray-800/50">
-              <tr>
-                <th scope="col" class="py-3 px-6 text-center">Metric</th>
-                <th scope="col" class="py-3 px-6 text-center">Outcome</th>
-                <th scope="col" class="py-3 px-6 text-center">Target</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="bg-gray-900/40 border-b border-gray-700">
-                <th scope="row" class="py-4 px-6 font-medium text-white whitespace-nowrap">Active App Users</th>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">12,334</td>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">10,000+</td>
-              </tr>
-              <tr class="bg-gray-900/40 border-b border-gray-700">
-                <th scope="row" class="py-4 px-6 font-medium text-white whitespace-nowrap">Monthly Refills via App</th>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">16,476</td>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">11,250</td>
-              </tr>
-              <tr class="bg-gray-900/40">
-                <th scope="row" class="py-4 px-6 font-medium text-white whitespace-nowrap">Annual Labor Savings</th>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">$702,000+</td>
-                <td class="py-4 px-6 text-center font-bold text-lime-400">$1M</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="text-center text-lg mt-8 text-gray-300">By shifting our focus from product development to an awareness campaign, the app's adoption skyrocketed, resulting in significant cost savings and improved patient satisfaction.</p>
-      </div>`,
-      media: `<h4>Media Assets</h4>
-        <div class="grid grid-cols-2 gap-4 mt-4">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=Awareness+Campaign+Flyer" alt="Awareness Campaign Flyer">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=App+Screenshots" alt="App Screenshots">
-        </div>
-        <p class="mt-4 text-sm text-center text-gray-400">Key visuals and campaign materials from the project.</p>`
-    }
-  },
-  {
-    id: 'live-rooms',
-    title: "Validating 'Live Rooms'",
-    hook: "An exciting concept for social TV viewing promised to make live content more engaging with chat, reactions, and interactive features. But before investing in building it, we needed to validate whether this idea aligned with how people actually watch live TV today.",
-    outcome: "Guided 'Go/No-Go' Decision",
-    images: ["https://images.unsplash.com/photo-1549419143-41c6f39d2c20?q=80&w=2070&auto=format&fit=crop"],
-    content: {
-      metrics: [
-        { value: "87%", label: "Liked interactive features" },
-        { value: "76%", label: "Preferred second-screen" },
-        { value: "56%", label: "Liked emoji reactions" },
-        { value: "41%", label: "Liked quizzes" }
-      ],
-      overview: `<div class="text-left text-sm space-y-6">
-        <div>
-          <h5 class="font-bold text-white text-lg">Background</h5>
-          <p class="text-gray-300 mt-1">Live Rooms is a conceptual feature aimed at enhancing real-time TV viewing with interactive social experiences. The idea is to allow users to chat, react with emojis, and participate in live trivia while watching their favorite shows or sport.</p>
-        </div>
-        <div>
-          <h5 class="font-bold text-white text-lg">Research Goals</h5>
-          <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
-            <li><b>Evaluate whether the Live Rooms concept resonates with users.</b></li>
-            <li><b>Understand if real-time interaction can increase emotional investment, social connection, and engagement.</b></li>
-            <li><b>Ensure these interactions do not disrupt the core viewing experience.</b></li>
-            <li><b>Explore how users organically adopt these features across different content types (e.g., sports vs. reality shows).</b></li>
-            <li><b>Explore adoption across different platforms (TV vs. mobile).</b></li>
-          </ul>
-        </div>
-      </div>`,
-      methodology: `<h4>My Research Process & Tools</h4>
-        <div class="methodology-container mt-6">
-          <div class="methodology-item">
-            <h5>1. Concept Testing</h5>
-            <p>4 Participants with experience in interactive streaming like Twitch, Youtube Live, etc. 4 Participants with no experience in interactive streaming.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">User Interviews</span><span class="tag-badge">UserZoom</span><span class="tag-badge">Invision</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>2. Live Product Test - Round 1 (NBA Game)</h5>
-            <p>79 participants with varying age range. 95% participants responded to the feedback survey.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">LiveLike</span><span class="tag-badge">UserZoom</span></div>
-          </div>
-          <div class="methodology-item">
-            <h5>3. Live Product Test - Round 2 (Reality TV)</h5>
-            <p>35 participants with 98% survey response rate.</p>
-            <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">LiveLike</span><span class="tag-badge">UserZoom</span></div>
-          </div>
-        </div>`,
-      analysis: `<div class="space-y-8">
-        <div>
-          <h4 class="font-bold text-white text-lg mb-4">Initial Concept Insights</h4>
-          <div class="grid md:grid-cols-2 gap-4 mt-4 text-left">
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Interest in Social Features</h5>
-              <p class="text-sm text-gray-300">Users showed interest, but the ideal level and format of interaction remained unclear.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Second-Screen Behavior</h5>
-              <p class="text-sm text-gray-300">There is potential value in second-screen experiences, but we need to explore when and how users naturally engage.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Role of Interactive Elements</h5>
-              <p class="text-sm text-gray-300">Reactions and quizzes were received positively, but their role in sustained engagement is unknown.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">User Behavior & Content Type</h5>
-              <p class="text-sm text-gray-300">The concept raised questions about how different user types would navigate this experience.</p>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h4 class="font-bold text-white text-lg mb-4">Live Testing Insights</h4>
-          <div class="grid md:grid-cols-2 gap-4 mt-4 text-left">
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Control is Key</h5>
-              <p class="text-sm text-gray-300"><b>87%</b> of users liked interactive features but wanted control, like turning chat on/off.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Second-Screen Experience</h5>
-              <p class="text-sm text-gray-300"><b>76%</b> preferred using their phone to interact while watching on TV.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Positive Feedback on Interactive Elements</h5>
-              <p class="text-sm text-gray-300">Emoji reactions (<b>56%</b>) and quizzes (<b>41%</b>) boosted engagement and made the experience more fun.</p>
-            </div>
-            <div class="insight-card p-4">
-              <h5 class="font-bold text-white mb-2">Usability & Content Adaptation</h5>
-              <p class="text-sm text-gray-300"><b>40%</b> felt chat was overwhelming. Sports fans liked fast chat, while reality TV fans preferred polls and quizzes.</p>
-            </div>
-          </div>
-        </div>
-      </div>`,
-      results: `<div class="space-y-8">
-        <p class="text-center text-lg text-gray-300">The Live Rooms concept was a clear win with high user engagement. The experience proved that interactive features can meaningfully enhance live TV viewing.</p>
-        <h4 class="font-bold text-white text-lg">Business Impact</h4>
-        <div class="grid md:grid-cols-3 gap-4 mt-4 text-gray-300 text-sm">
-          <div class="panel p-4">
-            <h5 class="font-bold text-white text-base mb-2 text-center">Jersey Shore Family Vacation</h5>
-            <ul class="list-disc pl-5 space-y-1.5">
-              <li>Validated polls + reactions as playful drivers for reality TV.</li>
-              <li>Opt-in chat preferred; background chatter muted by default.</li>
+      overview: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Project Snapshot</p>
+          <h4>Modernizing refill experiences</h4>
+          <p class="tab-section__lede">Patients wanted quick, self-serve refills while pharmacists needed relief from repetitive calls. Research reframed adoption as the critical lever.</p>
+        </header>
+        <div class="tab-grid">
+          <article class="tab-card">
+            <h5>Context</h5>
+            <ul class="tab-list">
+              <li>Legacy refill workflows consumed 3.5 minutes per order and more than 2,600 staff hours each month.</li>
+              <li>Manual phone updates frustrated both patients and pharmacy teams.</li>
             </ul>
-          </div>
-          <div class="panel p-4">
-            <h5 class="font-bold text-white text-base mb-2 text-center">NBA Live Test</h5>
-            <ul class="list-disc pl-5 space-y-1.5">
-              <li>Fast chat acceptable; highlights-based prompts worked better.</li>
-              <li>Second-screen usage reduced on-TV clutter and distraction.</li>
+          </article>
+          <article class="tab-card">
+            <h5>Business goals</h5>
+            <ul class="tab-list">
+              <li>Reach 10K+ active app users inside six months.</li>
+              <li>Shift at least 25% of monthly refills into the digital flow.</li>
             </ul>
-          </div>
-          <div class="panel p-4">
-            <h5 class="font-bold text-white text-base mb-2 text-center">Design Principles</h5>
-            <ul class="list-disc pl-5 space-y-1.5">
-              <li>Give users control (mute/hide/switch device).</li>
-              <li>Tailor interactivity to content tempo and audience.</li>
+          </article>
+          <article class="tab-card">
+            <h5>Experience goals</h5>
+            <ul class="tab-list">
+              <li>Automate refill reminders and status updates.</li>
+              <li>Cut pharmacist phone time in half and improve satisfaction scores.</li>
             </ul>
-          </div>
+          </article>
         </div>
-      </div>`,
+      </section>`,
+      methodology: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Approach</p>
+          <h4>Mixed-method research anchored in operations</h4>
+          <p class="tab-section__lede">We paired workflow analysis with usability evaluation to understand both staff pain and patient perception.</p>
+        </header>
+        <div class="timeline">
+          <article class="timeline-step">
+            <h5>Workflow immersion</h5>
+            <p>Shadowed pharmacists, RNs, and medical assistants to document the manual process and quantify lost time.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Ride-alongs</span>
+              <span class="tag-badge">Process Mapping</span>
+              <span class="tag-badge">Service Blueprint</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Usability diagnostics</h5>
+            <p>Evaluated the existing app with patients and staff to surface friction in navigation, messaging, and trust.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Heuristic Review</span>
+              <span class="tag-badge">Moderated Tests</span>
+              <span class="tag-badge">SUS Survey</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Awareness discovery</h5>
+            <p>Identified that the largest barrier was awareness, prompting collaboration with marketing to reposition the launch.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">Patient Interviews</span>
+              <span class="tag-badge">Journey Mapping</span>
+              <span class="tag-badge">Channel Strategy</span>
+            </div>
+          </article>
+        </div>
+        <div class="callout-grid">
+          <article class="callout-card">
+            <h5>Manual workflow snapshot</h5>
+            <ul>
+              <li>Average of 3.5 minutes per refill multiplied to 2,600+ hours each month.</li>
+              <li>Patients called repeatedly for updates because messaging was not automated.</li>
+            </ul>
+          </article>
+        </div>
+      </section>`,
+      analysis: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Key findings</p>
+          <h4>What unlocked adoption and loyalty</h4>
+          <p class="tab-section__lede">Insights revealed that usability was strong; awareness and emotional reassurance were missing.</p>
+        </header>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h5>Usability already solid</h5>
+            <p>Task success reached 95% with minimal coaching. The app solved the core job once patients discovered it.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Awareness gap</h5>
+            <p>Most patients simply did not know the app existed, redirecting the roadmap to marketing and onboarding.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Emotion drives trust</h5>
+            <p>A SUS score of 78 showed strong usability but a need for warmer confirmation moments.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Automation opportunity</h5>
+            <p>Automated status updates were the fastest lever to cut call volume and free clinical staff.</p>
+          </article>
+        </div>
+      </section>`,
+      results: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Outcome</p>
+          <h4>Campaign &amp; product adjustments that delivered</h4>
+          <p class="tab-section__lede">Reframing the challenge as awareness plus reassurance led to rapid adoption and measurable savings.</p>
+        </header>
+        <div class="result-board">
+          <article class="result-card">
+            <span class="result-card__label">Active app users</span>
+            <span class="result-card__value">12,334+</span>
+            <span class="result-card__hint">Exceeded the 10K target within six months.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Monthly refills via app</span>
+            <span class="result-card__value">16,476</span>
+            <span class="result-card__hint">Outperformed the 25% goal once awareness campaigns launched.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Annual labor savings</span>
+            <span class="result-card__value">$702K+</span>
+            <span class="result-card__hint">Automation reduced call volume and manual reconciliation.</span>
+          </article>
+        </div>
+        <div class="callout-grid">
+          <article class="callout-card">
+            <h5>What changed</h5>
+            <ul>
+              <li>Launched proactive SMS/email updates for every refill milestone.</li>
+              <li>Refreshed onboarding with in-clinic signage and clinician scripts.</li>
+              <li>Measured satisfaction lift through follow-up surveys and support tickets.</li>
+            </ul>
+          </article>
+        </div>
+      </section>`,
+      overview: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Project Snapshot</p>
+          <h4>Designing interactive Live Rooms</h4>
+          <p class="tab-section__lede">We explored how live chats, reactions, and trivia could enhance viewing without overwhelming audiences.</p>
+        </header>
+        <div class="tab-grid">
+          <article class="tab-card">
+            <h5>Context</h5>
+            <ul class="tab-list">
+              <li>Concept introduced to extend live TV engagement with social touchpoints.</li>
+              <li>Needed to balance lean-back viewing with optional participation.</li>
+            </ul>
+          </article>
+          <article class="tab-card">
+            <h5>Research goals</h5>
+            <ul class="tab-list">
+              <li>Validate desirability of co-viewing features across sports and reality programming.</li>
+              <li>Ensure interactivity never blocks the core video experience.</li>
+              <li>Understand device preferences between TV and mobile.</li>
+            </ul>
+          </article>
+          <article class="tab-card">
+            <h5>Success signals</h5>
+            <ul class="tab-list">
+              <li>High survey favorability for interactive elements.</li>
+              <li>Clear preferences for control, pacing, and notification tone.</li>
+            </ul>
+          </article>
+        </div>
+      </section>`,
+      methodology: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Approach</p>
+          <h4>Progressive validation from concept to live pilots</h4>
+          <p class="tab-section__lede">We combined evaluative research and live event pilots to measure desirability, usability, and social dynamics.</p>
+        </header>
+        <div class="timeline">
+          <article class="timeline-step">
+            <h5>Concept lab</h5>
+            <p>Interviewed experienced and new interactive streaming users to gauge expectations and vocabulary.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">User Interviews</span>
+              <span class="tag-badge">UserZoom</span>
+              <span class="tag-badge">InVision</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Live pilot · NBA</h5>
+            <p>Ran a real-time watch party with 79 participants to stress-test pace, chat volume, and reactions.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">LiveLike</span>
+              <span class="tag-badge">Surveys</span>
+            </div>
+          </article>
+          <article class="timeline-step">
+            <h5>Live pilot · Reality TV</h5>
+            <p>Followed with 35 participants and a 98% survey completion rate to compare slower-tempo programming.</p>
+            <div class="tab-chip-row">
+              <span class="tag-badge">LiveLike</span>
+              <span class="tag-badge">UserZoom</span>
+            </div>
+          </article>
+        </div>
+      </section>`,
+      analysis: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Insight themes</p>
+          <h4>Clarity and control keep social TV delightful</h4>
+          <p class="tab-section__lede">Participants wanted energy and connection, but only when they could decide how much interaction to invite.</p>
+        </header>
+        <div class="tab-section__header">
+          <p class="tab-eyebrow">Concept exploration</p>
+          <h4>Early reactions to the idea</h4>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h5>Interest in connection</h5>
+            <p>Viewers loved the promise of co-viewing, especially during tentpole moments.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Second screen advantage</h5>
+            <p>Participants frequently referenced using phones for chat to protect the TV screen.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Role of mini-interactions</h5>
+            <p>Emoji reactions and trivia quizzes were easy wins, but timing and prompts mattered.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Audience nuance</h5>
+            <p>Sports fans and reality fans envisioned different cadences for polls, prompts, and chat.</p>
+          </article>
+        </div>
+        <div class="tab-section__header">
+          <p class="tab-eyebrow">Live pilots</p>
+          <h4>What changed once the feature shipped</h4>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h5>Control is non-negotiable</h5>
+            <p>87% enjoyed interactivity when they could toggle chat, reactions, and notifications.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Mobile companion wins</h5>
+            <p>76% preferred managing interactions on their phone while the TV stayed focused on video.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Reactions boost fun</h5>
+            <p>Emoji reactions (56%) and quizzes (41%) ranked highest for sustaining participation.</p>
+          </article>
+          <article class="insight-card">
+            <h5>Tempo matters</h5>
+            <p>40% felt chat was overwhelming during fast play. Sports fans liked rapid highlights; reality fans wanted curated polls.</p>
+          </article>
+        </div>
+      </section>`,
+      results: `<section class="tab-section">
+        <header class="tab-section__header">
+          <p class="tab-eyebrow">Outcome</p>
+          <h4>Clear guidance for an interactive MVP</h4>
+          <p class="tab-section__lede">Research shaped feature priorities and guardrails for social viewing without derailing core playback.</p>
+        </header>
+        <div class="result-board">
+          <article class="result-card">
+            <span class="result-card__label">Feature appeal</span>
+            <span class="result-card__value">87% liked interactivity</span>
+            <span class="result-card__hint">Validated demand with opt-in controls.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Second screen</span>
+            <span class="result-card__value">76% mobile-first</span>
+            <span class="result-card__hint">Informed dual-screen design requirements.</span>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Engagement boosts</span>
+            <span class="result-card__value">56% reactions</span>
+            <span class="result-card__hint">Emoji & quizzes drove repeat taps.</span>
+          </article>
+        </div>
+        <div class="callout-grid">
+          <article class="callout-card">
+            <h5>Design principles</h5>
+            <ul>
+              <li>Give viewers persistent controls to hide or switch devices.</li>
+              <li>Tailor prompts to content tempo (sports vs. reality).</li>
+              <li>Keep on-screen messaging lightweight to protect the video.</li>
+            </ul>
+          </article>
+          <article class="callout-card">
+            <h5>Program takeaways</h5>
+            <ul>
+              <li>Reality TV leaned into polls and reactions as playful pacing.</li>
+              <li>NBA tests favored highlight-triggered prompts over constant chat.</li>
+            </ul>
+          </article>
+        </div>
+      </section>`,
       media: `<h4>Media Assets</h4>
         <div class="grid grid-cols-2 gap-4 mt-4">
           <img class="project-image rounded-lg" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop" alt="Streaming logos">
