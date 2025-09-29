@@ -589,8 +589,6 @@
     }
   `;
   document.head.appendChild(style);
-  // enable theme by default
-  document.documentElement.classList.add('theme-jelly');
 })();
 
 const mediaCarouselMotion = (() => {
@@ -615,6 +613,63 @@ const mediaCarouselMotion = (() => {
     getBehavior: () => behavior
   };
 })();
+
+function animateMetricValue(el, targetText) {
+  if (!el) return;
+  const match = targetText.trim().match(/^([^0-9+-]*)([0-9.,+-]+)(.*)$/);
+  if (!match) {
+    el.textContent = targetText;
+    return;
+  }
+
+  const [, prefix, numeric, suffix] = match;
+  const cleanNumber = parseFloat(numeric.replace(/,/g, ''));
+  if (Number.isNaN(cleanNumber)) {
+    el.textContent = targetText;
+    return;
+  }
+
+  const decimals = (numeric.split('.')[1] || '').length;
+  const start = performance.now();
+  const duration = 1600;
+  const card = el.closest('.metric-card');
+  card?.classList.add('is-animating');
+
+  const step = (now) => {
+    const progress = Math.min(1, (now - start) / duration);
+    const eased = progress < 0.5
+      ? 2 * progress * progress
+      : -1 + (4 - 2 * progress) * progress;
+    const value = cleanNumber * eased;
+    const formatted = value.toFixed(decimals);
+    const withCommas = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    el.textContent = `${prefix}${withCommas}${suffix}`;
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = targetText;
+      setTimeout(() => card?.classList.remove('is-animating'), 1200);
+    }
+  };
+
+  requestAnimationFrame(step);
+}
+
+function animateMetricCards(panel) {
+  if (!panel) return;
+  const values = panel.querySelectorAll('.metric-card-value');
+  values.forEach((el, index) => {
+    const target = el.textContent;
+    el.textContent = '0';
+    setTimeout(() => animateMetricValue(el, target), index * 160);
+  });
+}
+
+function elementCenterPoint(el) {
+  if (!el || typeof el.getBoundingClientRect !== 'function') return null;
+  const rect = el.getBoundingClientRect();
+  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+}
 
 function setupMediaCarousels(root = document) {
   if (!root || typeof root.querySelectorAll !== 'function') return;
@@ -781,6 +836,12 @@ function renderProjectDetails(project, container) {
   container.appendChild(panel);
   setupMediaCarousels(panel);
   ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
+  animateMetricCards(panel);
+  if (window.MagnoliaParticles) {
+    const center = elementCenterPoint(panel);
+    if (center) window.MagnoliaParticles.flowerBurst(center);
+    window.MagnoliaParticles.bindRipples?.();
+  }
 
   // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
@@ -796,6 +857,7 @@ function renderProjectDetails(project, container) {
     if (!targetTab) return;
     targetTab.classList.add('active');
     ensureCollapsibleForTab(targetTab);
+    window.MagnoliaParticles?.flash();
   });
 }
 
@@ -828,12 +890,16 @@ function renderProjectList(listEl, detailsEl, activeId) {
 
   const thumbs = others.map(p=>`
     <button class="project-thumbnail panel p-3 md:p-4 w-full text-left flex items-center gap-3 hover:scale-[1.01] transition"
-            data-project-id="${p.id}">
+            data-project-id="${p.id}" data-ripple data-ripple-container>
       <img class="rounded-lg w-16 md:w-20 h-14 md:h-16 object-cover" src="${p.images?.[0]||''}" alt="${p.title}">
       <span class="font-semibold text-sm md:text-base">${p.title}</span>
     </button>`).join('');
 
   listEl.innerHTML = `${activeHtml}<div class="mt-3 md:mt-4 flex flex-col gap-2">${thumbs}</div>`;
+  if (window.MagnoliaParticles) {
+    window.MagnoliaParticles.setTone(active.tone || 'blush');
+    window.MagnoliaParticles.bindRipples?.();
+  }
 
   listEl.addEventListener('click', (e)=>{
     const btn = e.target.closest('[data-project-id]');
@@ -842,21 +908,56 @@ function renderProjectList(listEl, detailsEl, activeId) {
     renderProjectList(listEl, detailsEl, id);
     const proj = window.projects.find(p=>p.id===id);
     renderProjectDetails(proj, detailsEl);
+    if (proj?.tone && window.MagnoliaParticles) {
+      window.MagnoliaParticles.setTone(proj.tone);
+    }
   }, { once:true });
 
   renderProjectDetails(active, detailsEl);
 }
 
 // Public init
+function renderTestimonials() {
+  const scroller = document.getElementById('testimonial-scroller');
+  if (!scroller || !Array.isArray(window.testimonials)) return;
+  const cards = window.testimonials.map((t) => {
+    const badge = t.featured ? '<span class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold rounded-full bg-[rgba(229,183,197,0.85)] text-white">Spotlight</span>' : '';
+    return `<article class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full" data-ripple data-ripple-container>${badge}<p class="text-base italic text-gray-700">"${t.quote}"</p><p class="font-semibold not-italic text-gray-800 mt-4">- ${t.author}</p><p class="text-sm text-gray-500">${t.company}</p></article>`;
+  }).join('');
+  const inner = document.createElement('div');
+  inner.className = 'scroller-inner';
+  inner.innerHTML = cards + cards;
+  scroller.innerHTML = '';
+  scroller.appendChild(inner);
+  window.MagnoliaParticles?.bindRipples?.();
+}
+
 window.initPortfolio = function(opts) {
   const list = document.querySelector(opts.listSelector);
   const details = document.querySelector(opts.detailsSelector);
   if (!list || !details) return;
-  renderProjectList(list, details, (window.projects[0]||{}).id);
+
+  const initialId = (window.projects[0]||{}).id;
+  renderProjectList(list, details, initialId);
   details.classList.add('visible');
-  // Ensure jelly theme on
-  document.documentElement.classList.add('theme-jelly');
-  document.body.classList.add('theme-jelly');
+  renderTestimonials();
+
+  const handleHover = (event) => {
+    const item = event.target.closest('.project-thumbnail');
+    if (!item) return;
+    const rect = item.getBoundingClientRect();
+    window.MagnoliaParticles?.hoverBloom(rect);
+  };
+  list.addEventListener('pointerover', handleHover);
+  list.addEventListener('focusin', handleHover);
+
+  const year = document.getElementById('copyright-year');
+  if (year) year.textContent = new Date().getFullYear();
+
+  window.MagnoliaParticles?.bindRipples?.();
+  if (window.projects[0]?.tone && window.MagnoliaParticles) {
+    window.MagnoliaParticles.setTone(window.projects[0].tone);
+  }
 };
 
 window.setupMediaCarousels = setupMediaCarousels;
@@ -865,6 +966,7 @@ window.setupMediaCarousels = setupMediaCarousels;
 window.projects = [
   {
     id: 'guide',
+    tone: 'lilac',
     title: "Reinventing The TV Guide",
     hook: "A strategic research initiative to unify user experiences across two major platforms, turning a point of friction into a driver for engagement and revenue.",
     outcome: "~$7.46M Estimated Annual Impact",
@@ -1061,6 +1163,7 @@ window.projects = [
   },
   {
     id: 'gundersen',
+    tone: 'blush',
     title: "Gundersen Pharmacy",
     hook: "Streamlining prescription refills by empowering patients and reducing manual work for pharmacy staff, resulting in significant cost savings and improved patient satisfaction.",
     outcome: "Achieved 12,334+ Active App Users within 6 months.",
@@ -1401,3 +1504,5 @@ window.projects = [
     }
   }
 ];
+
+window.testimonials = [ { quote: "I had the privilege of working with Sphoorthy... She helped us gain tremendous consumer insights and improved the velocity and prioritization of our product development roadmap.", author: "Gary S.", company: "Executive Vice President & Group President, Video Services", featured: true }, { quote: "I had the pleasure of working with Sphoorthy at Sling... Her research was always thorough, actionable, and aligned with both user needs and business goals.", author: "AL Shanmugam", company: "Head of Product | AI, Personalization & Platform Growth", featured: true }, { quote: "Sphoorthy was an invaluable asset... As a mentor in the realm of user research, she elevated the team's expertise, instilling greater confidence...", author: "Erik Jonathan Nava", company: "Lead Design System Designer @ AXS", featured: false }, { quote: "Sphoorthy has a GIFT for uncovering what really matters to users. Her research is sharp, actionable, and always grounded in empathy.", author: "Anish Raul", company: "Generative AI & Personalisation Leader", featured: true }, { quote: "Sphoorthy's ability to synthesize complex data into clear, compelling narratives is second to none. Her work was instrumental in shaping our product vision.", author: "Emily K.", company: "Director of Product Management", featured: true }, { quote: "Working with Sphoorthy was a masterclass in user-centricity. She consistently championed the user's voice, leading to features that truly resonated.", author: "Michael B.", company: "Senior Product Designer", featured: false }, { quote: "Sphoorthy is a rare talent who can bridge the gap between user research and business strategy. Her insights are actionable and have a direct impact on our bottom line.", author: "David L.", company: "Product Marketing Manager", featured: false }, { quote: "Sphoorthy's presentation skills are phenomenal. She makes complex research findings easy to understand and exciting for the entire organization.", author: "Jessica M.", company: "Head of Marketing", featured: true } ];
