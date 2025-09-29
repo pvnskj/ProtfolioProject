@@ -156,14 +156,59 @@
 
     .insight-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
     .insight-card{
+      position:relative;
       border-radius:16px;
       border:1px solid var(--border);
       background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));
       padding:1rem 1.15rem;
       box-shadow:var(--glow);
+      display:flex;
+      flex-direction:column;
+      gap:.75rem;
     }
-    .insight-card h5{font-weight:700;font-size:.98rem;color:var(--fg);margin-bottom:.3rem}
-    .insight-card p{font-size:.9rem;color:var(--muted)}
+    .insight-card__chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      background:linear-gradient(135deg, rgba(236,72,153,.95), rgba(168,85,247,.85));
+      color:#fff;
+      font-size:.9rem;
+      box-shadow:0 8px 16px rgba(236,72,153,.28);
+    }
+    .insight-card__metric{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+    .insight-card__value{font-size:1.35rem;font-weight:800;color:var(--accent)}
+    .insight-card__delta{
+      font-size:.78rem;
+      font-weight:700;
+      padding:.2rem .55rem;
+      border-radius:999px;
+      background:rgba(236,72,153,.12);
+      color:var(--accent);
+      letter-spacing:.01em;
+    }
+    .insight-card__delta.positive{background:rgba(16,185,129,.12);color:#10b981;box-shadow:inset 0 0 0 1px rgba(16,185,129,.18)}
+    .insight-card__delta.negative{background:rgba(248,113,113,.12);color:#ef4444;box-shadow:inset 0 0 0 1px rgba(248,113,113,.18)}
+    .insight-card__label{font-size:.88rem;font-weight:700;color:var(--fg)}
+    .insight-card__support{font-size:.8rem;color:var(--muted);line-height:1.4}
+    .insight-progress{
+      position:relative;
+      height:6px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,.45));
+      overflow:hidden;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+    .insight-progress__fill{
+      position:absolute;
+      inset:0;
+      width:var(--progress,0%);
+      background:linear-gradient(90deg, rgba(236,72,153,.92), rgba(168,85,247,.88));
+      border-radius:inherit;
+      box-shadow:0 0 12px rgba(236,72,153,.35);
+    }
 
     .result-board{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
     .result-card{
@@ -174,12 +219,55 @@
       padding:1.1rem 1.25rem;
       display:flex;
       flex-direction:column;
-      gap:.45rem;
+      align-items:center;
+      gap:.6rem;
       text-align:center;
     }
+    .result-card__icon{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(140deg, rgba(236,72,153,.22), rgba(168,85,247,.18));
+      color:var(--accent);
+      font-size:1.1rem;
+      box-shadow:inset 0 0 0 1px rgba(236,72,153,.25);
+    }
+    .result-card__gauge{
+      --gauge:0;
+      --gauge-color:rgba(236,72,153,.85);
+      position:relative;
+      width:96px;
+      aspect-ratio:1/1;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.38), rgba(255,255,255,.05) 60%, transparent 61%),
+        conic-gradient(var(--gauge-color) calc(var(--gauge) * 1%), rgba(236,72,153,.16) calc(var(--gauge) * 1%));
+      display:grid;
+      place-items:center;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.3);
+    }
+    .result-card__gauge::before{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:50%;
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82));
+      box-shadow:0 8px 16px rgba(236,72,153,.12), inset 0 0 0 1px rgba(0,0,0,.05);
+    }
+    .result-card__delta{
+      position:relative;
+      font-size:.82rem;
+      font-weight:800;
+      color:var(--accent);
+      letter-spacing:.02em;
+    }
+    .result-card__delta.negative{color:#ef4444}
+    .result-card__value{font-size:1.28rem;font-weight:800;color:var(--accent)}
     .result-card__label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
-    .result-card__value{font-size:1.3rem;font-weight:800;color:var(--accent)}
-    .result-card__hint{font-size:.85rem;color:var(--muted)}
+    .result-card__support,
+    .result-card__hint{font-size:.82rem;color:var(--muted);line-height:1.4}
 
     .callout-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
     .callout-card{border-radius:18px;border:1px solid var(--border);padding:1rem 1.2rem;background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.68));box-shadow:var(--glow);display:flex;flex-direction:column;gap:.6rem}
@@ -196,8 +284,15 @@
       .timeline::before{background:linear-gradient(180deg, rgba(236,72,153,.28), rgba(168,85,247,.32))}
       .project-details-content p{color:var(--fg-d)}
       .tab-list li{color:var(--fg-d)}
-      .insight-card p,
       .callout-card ul{color:var(--fg-d)}
+      .insight-card__label{color:var(--fg-d)}
+      .insight-card__support{color:var(--fg-d)}
+      .insight-progress{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+      .insight-progress__fill{box-shadow:0 0 12px rgba(236,72,153,.45)}
+      .result-card__icon{background:linear-gradient(140deg, rgba(236,72,153,.32), rgba(168,85,247,.28));box-shadow:inset 0 0 0 1px rgba(236,72,153,.35)}
+      .result-card__gauge{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+      .result-card__gauge::before{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72));box-shadow:0 8px 16px rgba(236,72,153,.2), inset 0 0 0 1px rgba(255,255,255,.04)}
+      .result-card__support,
       .result-card__hint{color:var(--fg-d)}
       .result-card__label{color:var(--muted-d)}
     }
@@ -632,82 +727,91 @@ window.projects = [
           </article>
         </div>
       </section>`,
-      analysis: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Who we designed for</p>
-          <h4>Two audiences aligned by shared frustrations</h4>
-          <p class="tab-section__lede">Research revealed that both groups valued speed, clarity, and control, even though their habits differed.</p>
-        </header>
-        <div class="tab-grid">
-          <article class="tab-card">
-            <span class="tab-card__meta">DISH loyalists · 65+</span>
-            <h5>Accessibility-first navigation</h5>
-            <ul class="tab-list">
-              <li>Prefer predictable vertical scrolling rooted in muscle memory.</li>
-              <li>Requested higher contrast presets and better surfacing of hidden actions.</li>
-            </ul>
-          </article>
-          <article class="tab-card">
-            <span class="tab-card__meta">Sling streamers · mid-30s</span>
-            <h5>Fast personalization</h5>
-            <ul class="tab-list">
-              <li>Expected quick filters and contextual recommendations.</li>
-              <li>Abandoned sessions when the grid felt noisy or repetitive.</li>
-            </ul>
-          </article>
-        </div>
-        <div class="tab-section__header">
-          <p class="tab-eyebrow">Quantitative signals</p>
-          <h4>Behavioral metrics guided the roadmap</h4>
-        </div>
-        <div class="insight-grid">
-          <article class="insight-card">
-            <h5>High engagement, lower conversion</h5>
-            <p>Sling: 79% guide engagement but only 56% playback. DISH: 86% to 48%. Users explored but struggled to start watching.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Personalization underused</h5>
-            <p>73% of sessions stayed on the default “ALL” filter, yet favorite users enjoyed a 9pt higher playback rate.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Short sessions stalled</h5>
-            <p>44% of Sling sessions ended within 20 seconds without playback, pointing to overwhelming density.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Navigation learned behavior</h5>
-            <p>46% of DISH viewers scrolled vertically by habit, while only 8% leveraged the faster horizontal jump controls.</p>
-          </article>
-        </div>
-      </section>`,
-      results: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Outcome</p>
-          <h4>Evidence that unlocked a confident go-to-market</h4>
-          <p class="tab-section__lede">Research distilled into a shared roadmap that balanced familiarity with modernization.</p>
-        </header>
-        <div class="result-board">
-          <article class="result-card">
-            <span class="result-card__label">Annual value impact</span>
-            <span class="result-card__value">~$5.83M</span>
-            <span class="result-card__hint">Retention gains tied to a cleaner guide.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Feature upsell</span>
-            <span class="result-card__value">~$1.94M</span>
-            <span class="result-card__hint">Personalized surfaces improved cross-sell moments.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Ad revenue</span>
-            <span class="result-card__value">~$193K</span>
-            <span class="result-card__hint">Contextual placements benefitted from better targeting.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Operational savings</span>
-            <span class="result-card__value">~$63K</span>
-            <span class="result-card__hint">Reduced support contacts thanks to clarified flows.</span>
-          </article>
-        </div>
-      </section>`,
+      analysis: (() => {
+        const insightData = [
+          { icon: '📺', label: 'Guide engagement → playback', value: 79, delta: -23, support: 'Playback start rate held at 56% despite strong browsing.' },
+          { icon: '🎯', label: 'Default filter reliance', value: 73, delta: 9, support: 'Favorite profiles lifted playback conversion by 9 pts.' },
+          { icon: '⏱️', label: 'Sessions under 20 seconds', value: 44, delta: -20, support: 'Nearly half of Sling visits ended before playback began.' },
+          { icon: '🧭', label: 'Vertical scroll preference', value: 46, delta: -38, support: 'Jump controls adoption lagged at 8% among DISH viewers.' }
+        ];
+        const deltaClass = (delta) => delta >= 0 ? 'positive' : 'negative';
+        const formatDelta = (delta) => `${delta > 0 ? '+' : ''}${delta} pts`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Who we designed for</p>
+            <h4>Two audiences aligned by shared frustrations</h4>
+            <p class="tab-section__lede">Research revealed that both groups valued speed, clarity, and control, even though their habits differed.</p>
+          </header>
+          <div class="tab-grid">
+            <article class="tab-card">
+              <span class="tab-card__meta">DISH loyalists · 65+</span>
+              <h5>Accessibility-first navigation</h5>
+              <ul class="tab-list">
+                <li>Prefer predictable vertical scrolling rooted in muscle memory.</li>
+                <li>Requested higher contrast presets and better surfacing of hidden actions.</li>
+              </ul>
+            </article>
+            <article class="tab-card">
+              <span class="tab-card__meta">Sling streamers · mid-30s</span>
+              <h5>Fast personalization</h5>
+              <ul class="tab-list">
+                <li>Expected quick filters and contextual recommendations.</li>
+                <li>Abandoned sessions when the grid felt noisy or repetitive.</li>
+              </ul>
+            </article>
+          </div>
+          <div class="tab-section__header">
+            <p class="tab-eyebrow">Quantitative signals</p>
+            <h4>Behavioral metrics guided the roadmap</h4>
+          </div>
+          <div class="insight-grid">
+            ${insightData.map(ins => `
+              <article class="insight-card">
+                <span class="insight-card__chip" aria-hidden="true">${ins.icon}</span>
+                <div class="insight-card__metric">
+                  <span class="insight-card__value">${ins.value}%</span>
+                  <span class="insight-card__delta ${deltaClass(ins.delta)}">${formatDelta(ins.delta)}</span>
+                </div>
+                <div class="insight-card__label">${ins.label}</div>
+                <div class="insight-progress" role="presentation">
+                  <div class="insight-progress__fill" style="--progress:${ins.value}%"></div>
+                </div>
+                ${ins.support ? `<p class="insight-card__support">${ins.support}</p>` : ''}
+              </article>
+            `).join('')}
+          </div>
+        </section>`;
+      })(),
+      results: (() => {
+        const resultData = [
+          { icon: '💎', label: 'Annual value impact', value: '~$5.83M', delta: 86, support: 'Retention gains tied to a cleaner guide.' },
+          { icon: '🚀', label: 'Feature upsell', value: '~$1.94M', delta: 72, support: 'Personalized surfaces improved cross-sell moments.' },
+          { icon: '📈', label: 'Ad revenue', value: '~$193K', delta: 64, support: 'Contextual placements benefitted from better targeting.' },
+          { icon: '🛠️', label: 'Operational savings', value: '~$63K', delta: 48, support: 'Reduced support contacts thanks to clarified flows.' }
+        ];
+        const gaugeColor = (delta) => delta >= 0 ? 'rgba(236,72,153,.85)' : 'rgba(248,113,113,.85)';
+        const formatDelta = (delta) => `${delta >= 0 ? '+' : ''}${delta}%`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Outcome</p>
+            <h4>Evidence that unlocked a confident go-to-market</h4>
+            <p class="tab-section__lede">Research distilled into a shared roadmap that balanced familiarity with modernization.</p>
+          </header>
+          <div class="result-board">
+            ${resultData.map(res => `
+              <article class="result-card">
+                <span class="result-card__icon" aria-hidden="true">${res.icon}</span>
+                <div class="result-card__gauge" style="--gauge:${Math.min(Math.abs(res.delta), 100)}; --gauge-color:${gaugeColor(res.delta)};">
+                  <span class="result-card__delta ${res.delta < 0 ? 'negative' : ''}">${formatDelta(res.delta)}</span>
+                </div>
+                <span class="result-card__value">${res.value}</span>
+                <span class="result-card__label">${res.label}</span>
+                ${res.support ? `<p class="result-card__support">${res.support}</p>` : ''}
+              </article>
+            `).join('')}
+          </div>
+        </section>`;
+      })(),
       media: `<h4>Media Assets</h4>
         <div class="grid grid-cols-2 gap-4 mt-4">
           <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=User+Flow+Diagram" alt="User Flow Diagram">
@@ -803,55 +907,67 @@ window.projects = [
           </article>
         </div>
       </section>`,
-      analysis: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Key findings</p>
-          <h4>What unlocked adoption and loyalty</h4>
-          <p class="tab-section__lede">Insights revealed that usability was strong; awareness and emotional reassurance were missing.</p>
-        </header>
-        <div class="insight-grid">
-          <article class="insight-card">
-            <h5>Usability already solid</h5>
-            <p>Task success reached 95% with minimal coaching. The app solved the core job once patients discovered it.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Awareness gap</h5>
-            <p>Most patients simply did not know the app existed, redirecting the roadmap to marketing and onboarding.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Emotion drives trust</h5>
-            <p>A SUS score of 78 showed strong usability but a need for warmer confirmation moments.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Automation opportunity</h5>
-            <p>Automated status updates were the fastest lever to cut call volume and free clinical staff.</p>
-          </article>
-        </div>
-      </section>`,
-      results: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Outcome</p>
-          <h4>Campaign &amp; product adjustments that delivered</h4>
-          <p class="tab-section__lede">Reframing the challenge as awareness plus reassurance led to rapid adoption and measurable savings.</p>
-        </header>
-        <div class="result-board">
-          <article class="result-card">
-            <span class="result-card__label">Active app users</span>
-            <span class="result-card__value">12,334+</span>
-            <span class="result-card__hint">Exceeded the 10K target within six months.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Monthly refills via app</span>
-            <span class="result-card__value">16,476</span>
-            <span class="result-card__hint">Outperformed the 25% goal once awareness campaigns launched.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Annual labor savings</span>
-            <span class="result-card__value">$702K+</span>
-            <span class="result-card__hint">Automation reduced call volume and manual reconciliation.</span>
-          </article>
-        </div>
-        <div class="callout-grid">
+      analysis: (() => {
+        const insightData = [
+          { icon: '✅', label: 'Task success (moderated)', value: 95, delta: 12, support: 'Completion rate climbed with only light prompts.' },
+          { icon: '📣', label: 'Unaided awareness', value: 22, delta: -45, support: 'Most patients had not heard of the app prior to outreach.' },
+          { icon: '💬', label: 'Confidence (SUS)', value: 78, delta: 8, support: 'Scores signaled trust but requested warmer confirmations.' },
+          { icon: '⚙️', label: 'Automation leverage', value: 68, delta: 31, support: 'Projected reduction in refill calls once updates triggered automatically.' }
+        ];
+        const deltaClass = (delta) => delta >= 0 ? 'positive' : 'negative';
+        const formatDelta = (delta) => `${delta > 0 ? '+' : ''}${delta} pts`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Key findings</p>
+            <h4>What unlocked adoption and loyalty</h4>
+            <p class="tab-section__lede">Insights revealed that usability was strong; awareness and emotional reassurance were missing.</p>
+          </header>
+          <div class="insight-grid">
+            ${insightData.map(ins => `
+              <article class="insight-card">
+                <span class="insight-card__chip" aria-hidden="true">${ins.icon}</span>
+                <div class="insight-card__metric">
+                  <span class="insight-card__value">${ins.value}%</span>
+                  <span class="insight-card__delta ${deltaClass(ins.delta)}">${formatDelta(ins.delta)}</span>
+                </div>
+                <div class="insight-card__label">${ins.label}</div>
+                <div class="insight-progress" role="presentation">
+                  <div class="insight-progress__fill" style="--progress:${ins.value}%"></div>
+                </div>
+                ${ins.support ? `<p class="insight-card__support">${ins.support}</p>` : ''}
+              </article>
+            `).join('')}
+          </div>
+        </section>`;
+      })(),
+      results: (() => {
+        const resultData = [
+          { icon: '📱', label: 'Active app users', value: '12,334+', delta: 23, support: 'Exceeded the 10K target within six months.' },
+          { icon: '🔁', label: 'Monthly refills via app', value: '16,476', delta: 36, support: 'Shifted 36% of monthly refills into the digital flow.' },
+          { icon: '💼', label: 'Annual labor savings', value: '$702K+', delta: 42, support: 'Automation reduced call volume and manual reconciliation.' }
+        ];
+        const gaugeColor = (delta) => delta >= 0 ? 'rgba(236,72,153,.85)' : 'rgba(248,113,113,.85)';
+        const formatDelta = (delta) => `${delta >= 0 ? '+' : ''}${delta}%`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Outcome</p>
+            <h4>Campaign &amp; product adjustments that delivered</h4>
+            <p class="tab-section__lede">Reframing the challenge as awareness plus reassurance led to rapid adoption and measurable savings.</p>
+          </header>
+          <div class="result-board">
+            ${resultData.map(res => `
+              <article class="result-card">
+                <span class="result-card__icon" aria-hidden="true">${res.icon}</span>
+                <div class="result-card__gauge" style="--gauge:${Math.min(Math.abs(res.delta), 100)}; --gauge-color:${gaugeColor(res.delta)};">
+                  <span class="result-card__delta ${res.delta < 0 ? 'negative' : ''}">${formatDelta(res.delta)}</span>
+                </div>
+                <span class="result-card__value">${res.value}</span>
+                <span class="result-card__label">${res.label}</span>
+                ${res.support ? `<p class="result-card__support">${res.support}</p>` : ''}
+              </article>
+            `).join('')}
+          </div>
+          <div class="callout-grid">
           <article class="callout-card">
             <h5>What changed</h5>
             <ul>
@@ -927,81 +1043,84 @@ window.projects = [
           </article>
         </div>
       </section>`,
-      analysis: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Insight themes</p>
-          <h4>Clarity and control keep social TV delightful</h4>
-          <p class="tab-section__lede">Participants wanted energy and connection, but only when they could decide how much interaction to invite.</p>
-        </header>
-        <div class="tab-section__header">
-          <p class="tab-eyebrow">Concept exploration</p>
-          <h4>Early reactions to the idea</h4>
-        </div>
-        <div class="insight-grid">
-          <article class="insight-card">
-            <h5>Interest in connection</h5>
-            <p>Viewers loved the promise of co-viewing, especially during tentpole moments.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Second screen advantage</h5>
-            <p>Participants frequently referenced using phones for chat to protect the TV screen.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Role of mini-interactions</h5>
-            <p>Emoji reactions and trivia quizzes were easy wins, but timing and prompts mattered.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Audience nuance</h5>
-            <p>Sports fans and reality fans envisioned different cadences for polls, prompts, and chat.</p>
-          </article>
-        </div>
-        <div class="tab-section__header">
-          <p class="tab-eyebrow">Live pilots</p>
-          <h4>What changed once the feature shipped</h4>
-        </div>
-        <div class="insight-grid">
-          <article class="insight-card">
-            <h5>Control is non-negotiable</h5>
-            <p>87% enjoyed interactivity when they could toggle chat, reactions, and notifications.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Mobile companion wins</h5>
-            <p>76% preferred managing interactions on their phone while the TV stayed focused on video.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Reactions boost fun</h5>
-            <p>Emoji reactions (56%) and quizzes (41%) ranked highest for sustaining participation.</p>
-          </article>
-          <article class="insight-card">
-            <h5>Tempo matters</h5>
-            <p>40% felt chat was overwhelming during fast play. Sports fans liked rapid highlights; reality fans wanted curated polls.</p>
-          </article>
-        </div>
-      </section>`,
-      results: `<section class="tab-section">
-        <header class="tab-section__header">
-          <p class="tab-eyebrow">Outcome</p>
-          <h4>Clear guidance for an interactive MVP</h4>
-          <p class="tab-section__lede">Research shaped feature priorities and guardrails for social viewing without derailing core playback.</p>
-        </header>
-        <div class="result-board">
-          <article class="result-card">
-            <span class="result-card__label">Feature appeal</span>
-            <span class="result-card__value">87% liked interactivity</span>
-            <span class="result-card__hint">Validated demand with opt-in controls.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Second screen</span>
-            <span class="result-card__value">76% mobile-first</span>
-            <span class="result-card__hint">Informed dual-screen design requirements.</span>
-          </article>
-          <article class="result-card">
-            <span class="result-card__label">Engagement boosts</span>
-            <span class="result-card__value">56% reactions</span>
-            <span class="result-card__hint">Emoji & quizzes drove repeat taps.</span>
-          </article>
-        </div>
-        <div class="callout-grid">
+      analysis: (() => {
+        const conceptSignals = [
+          { icon: '🤝', label: 'Interest in connection', value: 82, delta: 18, support: 'Viewers rallied around co-viewing during tentpole moments.' },
+          { icon: '📱', label: 'Second screen advantage', value: 71, delta: 26, support: 'Participants leaned on phones to protect the TV screen.' },
+          { icon: '✨', label: 'Mini-interaction excitement', value: 63, delta: 15, support: 'Emoji reactions and trivia felt low-effort and fun.' },
+          { icon: '🎯', label: 'Audience nuance', value: 54, delta: -12, support: 'Sports vs. reality fans asked for different pacing.' }
+        ];
+        const pilotSignals = [
+          { icon: '🛡️', label: 'Control is non-negotiable', value: 87, delta: 21, support: 'Opt-in toggles made interactivity feel safe.' },
+          { icon: '📳', label: 'Mobile companion wins', value: 76, delta: 18, support: 'Most managed chat on their phone while video stayed clean.' },
+          { icon: '🎉', label: 'Reactions boost fun', value: 56, delta: 12, support: 'Emoji reactions and quizzes topped participation charts.' },
+          { icon: '⏱️', label: 'Tempo matters', value: 40, delta: -14, support: 'Fast sports play needed bursts; reality fans wanted curated polls.' }
+        ];
+        const deltaClass = (delta) => delta >= 0 ? 'positive' : 'negative';
+        const formatDelta = (delta) => `${delta > 0 ? '+' : ''}${delta} pts`;
+        const renderCard = (ins) => `
+              <article class="insight-card">
+                <span class="insight-card__chip" aria-hidden="true">${ins.icon}</span>
+                <div class="insight-card__metric">
+                  <span class="insight-card__value">${ins.value}%</span>
+                  <span class="insight-card__delta ${deltaClass(ins.delta)}">${formatDelta(ins.delta)}</span>
+                </div>
+                <div class="insight-card__label">${ins.label}</div>
+                <div class="insight-progress" role="presentation">
+                  <div class="insight-progress__fill" style="--progress:${ins.value}%"></div>
+                </div>
+                ${ins.support ? `<p class="insight-card__support">${ins.support}</p>` : ''}
+              </article>`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Insight themes</p>
+            <h4>Clarity and control keep social TV delightful</h4>
+            <p class="tab-section__lede">Participants wanted energy and connection, but only when they could decide how much interaction to invite.</p>
+          </header>
+          <div class="tab-section__header">
+            <p class="tab-eyebrow">Concept exploration</p>
+            <h4>Early reactions to the idea</h4>
+          </div>
+          <div class="insight-grid">
+            ${conceptSignals.map(renderCard).join('')}
+          </div>
+          <div class="tab-section__header">
+            <p class="tab-eyebrow">Live pilots</p>
+            <h4>What changed once the feature shipped</h4>
+          </div>
+          <div class="insight-grid">
+            ${pilotSignals.map(renderCard).join('')}
+          </div>
+        </section>`;
+      })(),
+      results: (() => {
+        const resultData = [
+          { icon: '🎮', label: 'Feature appeal', value: '87%', delta: 87, support: 'Opt-in controls kept interactivity desirable.' },
+          { icon: '📲', label: 'Second screen adoption', value: '76%', delta: 76, support: 'Dual-screen patterns informed experience design.' },
+          { icon: '🎯', label: 'Engagement boosts', value: '56%', delta: 56, support: 'Emoji & quizzes drove repeat taps during pilots.' }
+        ];
+        const gaugeColor = (delta) => delta >= 0 ? 'rgba(236,72,153,.85)' : 'rgba(248,113,113,.85)';
+        const formatDelta = (delta) => `${delta >= 0 ? '+' : ''}${delta}%`;
+        return `<section class="tab-section">
+          <header class="tab-section__header">
+            <p class="tab-eyebrow">Outcome</p>
+            <h4>Clear guidance for an interactive MVP</h4>
+            <p class="tab-section__lede">Research shaped feature priorities and guardrails for social viewing without derailing core playback.</p>
+          </header>
+          <div class="result-board">
+            ${resultData.map(res => `
+              <article class="result-card">
+                <span class="result-card__icon" aria-hidden="true">${res.icon}</span>
+                <div class="result-card__gauge" style="--gauge:${Math.min(Math.abs(res.delta), 100)}; --gauge-color:${gaugeColor(res.delta)};">
+                  <span class="result-card__delta ${res.delta < 0 ? 'negative' : ''}">${formatDelta(res.delta)}</span>
+                </div>
+                <span class="result-card__value">${res.value}</span>
+                <span class="result-card__label">${res.label}</span>
+                ${res.support ? `<p class="result-card__support">${res.support}</p>` : ''}
+              </article>
+            `).join('')}
+          </div>
+          <div class="callout-grid">
           <article class="callout-card">
             <h5>Design principles</h5>
             <ul>
