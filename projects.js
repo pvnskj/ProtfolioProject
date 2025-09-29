@@ -38,7 +38,7 @@
     /* Left tile ↔ right details alignment */
     .active-project-panel{margin:0}
     .active-project-panel .panel{padding:var(--panel-pad)}
-    .panel-rail{max-width:1100px;margin-inline:auto}
+    .panel-rail{max-width:1250px;margin-inline:auto}
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
     /* Tabs (pills) */
@@ -104,6 +104,96 @@
     .project-details-content .insight-card,
     .project-details-content .stat-card{ border-radius:14px }
 
+    /* Normalize colors from legacy Tailwind classes so copy looks consistent */
+    .project-details-content .text-white{color:var(--fg);}
+    .project-details-content .text-gray-300,
+    .project-details-content .text-gray-400,
+    .project-details-content .text-gray-200{color:var(--muted);}
+    .project-details-content .text-lime-200{color:var(--accent);}
+    .project-details-content .bg-black\/20{
+      background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.62));
+      border:1px solid var(--border);
+      color:var(--fg);
+    }
+    .project-details-content .bg-gray-800\/50{background:linear-gradient(180deg, rgba(236,72,153,.12), rgba(168,85,247,.12));}
+    .project-details-content .border-white\/10{border-color:var(--border);}
+    @media (prefers-color-scheme: dark){
+      .project-details-content .bg-black\/20{
+        background:linear-gradient(180deg, rgba(31,41,55,.82), rgba(31,41,55,.62));
+        border-color:var(--border-d);
+        color:var(--fg-d);
+      }
+      .project-details-content .bg-gray-800\/50{background:linear-gradient(180deg, rgba(236,72,153,.22), rgba(168,85,247,.22));}
+      .project-details-content .border-white\/10{border-color:var(--border-d);}
+    }
+
+    .project-details-content table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:var(--glow);
+      margin-top:1.25rem;
+    }
+    .project-details-content thead{background:linear-gradient(180deg, rgba(236,72,153,.16), rgba(168,85,247,.16));}
+    .project-details-content th,
+    .project-details-content td{padding:.75rem 1rem; border-bottom:1px solid var(--border); color:var(--fg);}
+    .project-details-content th{font-weight:700; font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; opacity:.9;}
+    .project-details-content tbody tr:nth-child(even){background:rgba(255,255,255,.55);}
+    .project-details-content tbody tr:last-child td{border-bottom:none;}
+    @media (prefers-color-scheme: dark){
+      .project-details-content table{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72)); border-color:var(--border-d);}
+      .project-details-content thead{background:linear-gradient(180deg, rgba(236,72,153,.26), rgba(168,85,247,.26));}
+      .project-details-content th,
+      .project-details-content td{color:var(--fg-d); border-color:var(--border-d);}
+      .project-details-content tbody tr:nth-child(even){background:rgba(31,41,55,.65);}
+    }
+
+    /* Long-form content toggles */
+    .collapsible-block{
+      position:relative;
+      max-height:360px;
+      overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    .collapsible-block::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:96px;
+      background:linear-gradient(180deg, rgba(250,248,245,0), rgba(250,248,245,.94));
+      pointer-events:none;
+      transition:opacity .25s ease;
+    }
+    @media (prefers-color-scheme: dark){
+      .collapsible-block::after{
+        background:linear-gradient(180deg, rgba(17,24,39,0), rgba(17,24,39,.9));
+      }
+    }
+    .collapsible-block.expanded{max-height:none; overflow:visible;}
+    .collapsible-block.expanded::after{opacity:0;}
+
+    .collapsible-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      margin-top:.85rem;
+      padding:.45rem .85rem;
+      border-radius:999px;
+      border:1px solid rgba(236,72,153,.35);
+      background:linear-gradient(180deg, rgba(236,72,153,.08), rgba(168,85,247,.08));
+      color:var(--accent);
+      font-weight:700;
+      font-size:.88rem;
+      transition:transform .12s ease, box-shadow .15s ease, background .2s ease;
+    }
+    .collapsible-toggle:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
+    .collapsible-toggle svg{width:16px;height:16px;transition:transform .2s ease;}
+    .collapsible-toggle[aria-expanded="true"] svg{ transform:rotate(180deg); }
+
     /* Metrics row (fits text nicely) */
     .metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
     .metric-card{
@@ -162,6 +252,44 @@
   document.documentElement.classList.add('theme-jelly');
 })();
 
+const COLLAPSIBLE_LIMIT = 360;
+
+function ensureCollapsibleForTab(tab){
+  if (!tab) return;
+  const block = tab.querySelector('.leading-relaxed');
+  if (!block) return;
+
+  const existingToggle = block.nextElementSibling;
+  if (existingToggle && existingToggle.classList.contains('collapsible-toggle')) {
+    existingToggle.remove();
+  }
+  block.classList.remove('collapsible-block', 'expanded');
+
+  const schedule = window.requestAnimationFrame || function(cb){ return setTimeout(cb, 16); };
+  schedule(()=>{
+    if (block.scrollHeight <= COLLAPSIBLE_LIMIT + 32) return;
+
+    block.classList.add('collapsible-block');
+    const toggle = document.createElement('button');
+    const collapsedText = 'Show full details';
+    const expandedText = 'Show less';
+    toggle.type = 'button';
+    toggle.className = 'collapsible-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.innerHTML = `<span class="collapsible-toggle-label">${collapsedText}</span>
+      <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor"><path d="M10 13.5a1 1 0 0 1-.7-.29l-5-5a1 1 0 1 1 1.4-1.42L10 11.09l4.3-4.3a1 1 0 0 1 1.4 1.42l-5 5a1 1 0 0 1-.7.29Z"/></svg>`;
+    toggle.addEventListener('click', ()=>{
+      const expanded = block.classList.toggle('expanded');
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      const label = toggle.querySelector('.collapsible-toggle-label');
+      if (label) {
+        label.textContent = expanded ? expandedText : collapsedText;
+      }
+    });
+    block.after(toggle);
+  });
+}
+
 // 2) ---- Rendering (alignment-aware + readable) ----
 function renderProjectDetails(project, container) {
   if (!project || !project.content) { container.innerHTML = ''; return; }
@@ -196,6 +324,7 @@ function renderProjectDetails(project, container) {
 
   container.innerHTML = '';
   container.appendChild(panel);
+  ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
 
   // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
@@ -206,7 +335,10 @@ function renderProjectDetails(project, container) {
     btn.classList.add('active');
     const tab = btn.getAttribute('data-tab');
     panel.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
-    panel.querySelector(`.tab-content[data-tab-content="${tab}"]`)?.classList.add('active');
+    const targetTab = panel.querySelector(`.tab-content[data-tab-content="${tab}"]`);
+    if (!targetTab) return;
+    targetTab.classList.add('active');
+    ensureCollapsibleForTab(targetTab);
   });
 }
 
