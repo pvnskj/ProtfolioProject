@@ -593,6 +593,78 @@
   document.documentElement.classList.add('theme-jelly');
 })();
 
+const mediaCarouselMotion = (() => {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return { getBehavior: () => 'smooth' };
+  }
+
+  const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let behavior = query.matches ? 'auto' : 'smooth';
+
+  const updateBehavior = () => {
+    behavior = query.matches ? 'auto' : 'smooth';
+  };
+
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', updateBehavior);
+  } else if (typeof query.addListener === 'function') {
+    query.addListener(updateBehavior);
+  }
+
+  return {
+    getBehavior: () => behavior
+  };
+})();
+
+function setupMediaCarousels(root = document) {
+  if (!root || typeof root.querySelectorAll !== 'function') return;
+
+  const carousels = root.querySelectorAll('[data-media-carousel]');
+  carousels.forEach((carousel) => {
+    const track = carousel.querySelector('[data-media-carousel-track]') || carousel;
+    const items = Array.from(track.querySelectorAll('[data-media-carousel-item]'));
+    if (!items.length) return;
+
+    if (carousel.dataset.carouselInitialized === 'true') return;
+    carousel.dataset.carouselInitialized = 'true';
+
+    let activeIndex = items.findIndex((item) =>
+      item.classList.contains('is-active') || item.getAttribute('aria-current') === 'true'
+    );
+    if (activeIndex < 0) activeIndex = 0;
+
+    const clampIndex = (index) => Math.max(0, Math.min(index, items.length - 1));
+    const scrollToIndex = (index) => {
+      const targetIndex = clampIndex(index);
+      const target = items[targetIndex];
+      if (!target || typeof target.scrollIntoView !== 'function') return;
+
+      target.scrollIntoView({
+        behavior: mediaCarouselMotion.getBehavior(),
+        inline: 'center',
+        block: 'nearest'
+      });
+
+      activeIndex = targetIndex;
+    };
+
+    carousel.scrollToIndex = scrollToIndex;
+
+    const prevBtn = carousel.querySelector('[data-carousel-prev]');
+    const nextBtn = carousel.querySelector('[data-carousel-next]');
+    prevBtn?.addEventListener('click', () => scrollToIndex(activeIndex - 1));
+    nextBtn?.addEventListener('click', () => scrollToIndex(activeIndex + 1));
+
+    carousel.querySelectorAll('[data-carousel-index]').forEach((btn) => {
+      const indexValue = Number(btn.getAttribute('data-carousel-index'));
+      if (Number.isNaN(indexValue)) return;
+      btn.addEventListener('click', () => scrollToIndex(indexValue));
+    });
+
+    scrollToIndex(activeIndex);
+  });
+}
+
 const COLLAPSIBLE_LIMIT = 360;
 
 function ensureCollapsibleForTab(tab){
@@ -707,6 +779,7 @@ function renderProjectDetails(project, container) {
 
   container.innerHTML = '';
   container.appendChild(panel);
+  setupMediaCarousels(panel);
   ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
 
   // Tabs
@@ -785,6 +858,8 @@ window.initPortfolio = function(opts) {
   document.documentElement.classList.add('theme-jelly');
   document.body.classList.add('theme-jelly');
 };
+
+window.setupMediaCarousels = setupMediaCarousels;
 
 // 3) ---- Project Data (complete, unchanged copy) ----
 window.projects = [
