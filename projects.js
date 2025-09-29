@@ -41,6 +41,112 @@
     .panel-rail{max-width:1250px;margin-inline:auto}
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
+    /* Project hero */
+    .project-hero{
+      display:grid;
+      gap:1.75rem;
+      margin-bottom:2.25rem;
+      align-items:stretch;
+    }
+    @media (min-width: 900px){
+      .project-hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:2.25rem;}
+    }
+    .project-hero__media{
+      position:relative;
+      border-radius:24px;
+      overflow:hidden;
+      min-height:220px;
+      background:linear-gradient(135deg, rgba(236,72,153,.65), rgba(168,85,247,.55));
+      box-shadow:var(--glow-strong);
+    }
+    .project-hero__media::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(17,24,39,.15), rgba(17,24,39,.45));
+      mix-blend-mode:multiply;
+      pointer-events:none;
+    }
+    .project-hero__media img,
+    .project-hero__media video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .project-hero__summary{
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
+      border-radius:22px;
+      padding:2rem clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
+      box-shadow:var(--glow-strong);
+      border:1px solid var(--border);
+      display:flex;
+      flex-direction:column;
+      gap:1.25rem;
+    }
+    .project-hero__eyebrow{
+      font-size:.72rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-weight:800;
+      color:var(--accent);
+    }
+    .project-hero__headline{
+      font-weight:900;
+      font-size:clamp(1.8rem, 1.4rem + 1.8vw, 2.5rem);
+      color:var(--fg);
+      line-height:1.15;
+    }
+    .project-hero__subhead{
+      font-size:clamp(1rem, .95rem + .4vw, 1.22rem);
+      color:var(--muted);
+      max-width:48ch;
+    }
+    .project-hero__bullets{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:grid;
+      gap:1.1rem;
+    }
+    .project-hero__bullet{
+      position:relative;
+      padding-left:2.6rem;
+      color:var(--fg);
+    }
+    .project-hero__bullet::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:.3rem;
+      width:1.8rem;
+      height:1.8rem;
+      border-radius:50%;
+      background:linear-gradient(135deg, rgba(236,72,153,.9), rgba(168,85,247,.9));
+      opacity:.85;
+      box-shadow:0 10px 25px rgba(236,72,153,.28);
+    }
+    .project-hero__bullet-title{
+      font-size:clamp(1.02rem, .98rem + .35vw, 1.28rem);
+      font-weight:800;
+      display:block;
+    }
+    .project-hero__bullet-copy{
+      display:block;
+      margin-top:.25rem;
+      font-size:clamp(.9rem, .86rem + .2vw, 1rem);
+      color:var(--muted);
+      max-width:52ch;
+    }
+    @media (prefers-color-scheme: dark){
+      .project-hero__media::after{background:linear-gradient(180deg, rgba(17,24,39,.35), rgba(17,24,39,.65));}
+      .project-hero__summary{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72));border-color:var(--border-d);}
+      .project-hero__headline{color:var(--fg-d);}
+      .project-hero__bullet{color:var(--fg-d);}
+      .project-hero__bullet-copy{color:var(--fg-d);}
+    }
+
     /* Tabs (pills) */
     .details-tabs{ gap:.5rem; }
     .details-tabs button{
@@ -436,29 +542,71 @@ function renderProjectDetails(project, container) {
 
   const panel = document.createElement('div');
   panel.className = 'project-details-content panel';
-  panel.innerHTML = `
-    <div class="panel-rail">
+  const metrics = Array.isArray(project.content.metrics) ? project.content.metrics : [];
+  const metricsHtml = metrics.length ? `
       <div class="metric-row">
-        ${(project.content.metrics || []).map(m =>
+        ${metrics.map(m =>
           `<div class="metric-card">
              <div class="metric-card-value">${m.value}</div>
              <div class="metric-card-label">${m.label}</div>
            </div>`).join('')}
       </div>
+  ` : '';
 
-      <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">
-        ${['overview','methodology','analysis','results','media'].map((t,i)=>
-          `<button data-tab="${t}" class="${i===0?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`
-        ).join('')}
+  const heroBullets = (project.hero?.bullets || []).map(b => {
+    if (typeof b === 'string') {
+      return `<li class="project-hero__bullet"><span class="project-hero__bullet-title">${b}</span></li>`;
+    }
+    const title = b?.title || b?.headline || b?.text || '';
+    const copy = b?.description || b?.copy || '';
+    return `<li class="project-hero__bullet">
+              <span class="project-hero__bullet-title">${title}</span>
+              ${copy ? `<span class="project-hero__bullet-copy">${copy}</span>` : ''}
+            </li>`;
+  }).join('');
+  const heroBulletsHtml = heroBullets ? `<ul class="project-hero__bullets">${heroBullets}</ul>` : '';
+  const heroMedia = project.hero?.media;
+  let heroMediaHtml = '';
+  if (heroMedia?.type === 'video' && heroMedia.src) {
+    const poster = heroMedia.poster ? ` poster="${heroMedia.poster}"` : '';
+    const autoplay = heroMedia.autoplay ? ' autoplay muted loop playsinline' : '';
+    const mime = heroMedia.mime || 'video/mp4';
+    heroMediaHtml = `<video${poster}${autoplay} preload="metadata"><source src="${heroMedia.src}" type="${mime}"></video>`;
+  } else if (heroMedia?.src) {
+    heroMediaHtml = `<img src="${heroMedia.src}" alt="${heroMedia.alt || project.title}">`;
+  }
+  const heroSubhead = project.hero?.subhead || project.hero?.subtitle || project.outcome || project.hook || '';
+  const heroHtml = project.hero ? `
+      <section class="project-hero">
+        ${heroMediaHtml ? `<figure class="project-hero__media">${heroMediaHtml}</figure>` : ''}
+        <div class="project-hero__summary">
+          ${project.hero.eyebrow ? `<p class="project-hero__eyebrow">${project.hero.eyebrow}</p>` : ''}
+          <h2 class="project-hero__headline">${project.hero.headline || project.title}</h2>
+          ${heroSubhead ? `<p class="project-hero__subhead">${heroSubhead}</p>` : ''}
+          ${heroBulletsHtml}
+        </div>
+      </section>
+  ` : '';
+
+  const tabOrder = ['overview','methodology','analysis','results','media'];
+  const tabs = tabOrder.filter(key => project.content[key]);
+  const tabButtonsHtml = tabs.map((t,i)=>
+    `<button data-tab="${t}" class="${i===0?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`
+  ).join('');
+  const tabContentHtml = tabs.map((key,i)=>`
+      <div class="tab-content ${i===0?'active':''}" data-tab-content="${key}">
+        <div class="leading-relaxed">${project.content[key]}</div>
       </div>
+  `).join('');
 
-      ${Object.entries(project.content).map(([k,v])=>{
-        if (k==='metrics') return '';
-        const active = k==='overview' ? 'active':'';
-        return `<div class="tab-content ${active}" data-tab-content="${k}">
-                  <div class="leading-relaxed">${v}</div>
-                </div>`;
-      }).join('')}
+  panel.innerHTML = `
+    <div class="panel-rail">
+      ${heroHtml}
+      ${metricsHtml}
+      <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">
+        ${tabButtonsHtml}
+      </div>
+      ${tabContentHtml}
     </div>
   `;
 
@@ -468,6 +616,7 @@ function renderProjectDetails(project, container) {
 
   // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
+  if (!tabsWrap) return;
   tabsWrap.addEventListener('click', (e)=>{
     const btn = e.target.closest('button[data-tab]');
     if (!btn) return;
@@ -550,6 +699,21 @@ window.projects = [
     hook: "A strategic research initiative to unify user experiences across two major platforms, turning a point of friction into a driver for engagement and revenue.",
     outcome: "~$7.46M Estimated Annual Impact",
     images: ["https://images.unsplash.com/photo-1616428784112-2544265780d6?q=80&w=2070&auto=format&fit=crop"],
+    hero: {
+      eyebrow: 'Strategic Initiative',
+      headline: 'Unified TV guide, reimagined',
+      subhead: 'Blending Sling speed with DISH familiarity through layered research.',
+      media: {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?q=80&w=2070&auto=format&fit=crop',
+        alt: 'Viewer browsing a modern television guide interface'
+      },
+      bullets: [
+        { title: 'North-star blueprint', description: 'Shared navigation language spanning two live TV ecosystems.' },
+        { title: 'Evidence-led roadmap', description: 'Mixed-method insights de-risked personalization and rollout decisions.' },
+        { title: 'Meaningful impact', description: 'Projected ~$7.46M annual value through retention, upsell, and efficiency.' }
+      ]
+    },
     content: {
       metrics: [
         { value: "~$7.46M", label: "Estimated Annual Value Impact" },
@@ -722,6 +886,21 @@ window.projects = [
     hook: "Streamlining prescription refills by empowering patients and reducing manual work for pharmacy staff, resulting in significant cost savings and improved patient satisfaction.",
     outcome: "Achieved 12,334+ Active App Users within 6 months.",
     images: ["https://images.unsplash.com/photo-1588720490792-26f5053ae81e?q=80&w=2070&auto=format&fit=crop"],
+    hero: {
+      eyebrow: 'Healthcare Service Design',
+      headline: 'Refills that run themselves',
+      subhead: 'Automation and outreach freed pharmacists while reassuring patients.',
+      media: {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1580281658629-6b0ef3d13de1?q=80&w=2069&auto=format&fit=crop',
+        alt: 'Pharmacist providing a prescription to a patient at the counter'
+      },
+      bullets: [
+        { title: 'Operational clarity', description: 'Shadowing exposed 2,600+ monthly manual hours tied to refills.' },
+        { title: 'Adoption catalysts', description: 'Reframed messaging and automation created 12,334+ active users.' },
+        { title: 'Sustainable savings', description: 'Digital flows now power 36% of refills and save $702K+ each year.' }
+      ]
+    },
     content: {
       metrics: [
         { value: "12,334+", label: "Active App Users" },
