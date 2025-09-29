@@ -1,19 +1,39 @@
-// projects.js — UI polish (alignment + methodology tiles) + full project data
+// projects.js — Jelly theme + alignment fixes + readable sections (no text removed)
 
-// ---- UI polish (alignment + methodology tiles) ----
+// 1) ---- Jelly Theme + Layout Styles ----
 (function injectPortfolioStyles(){
-  if (document.getElementById('portfolio-style-v2')) return;
+  if (document.getElementById('portfolio-style-jelly')) return;
   const style = document.createElement('style');
-  style.id = 'portfolio-style-v2';
+  style.id = 'portfolio-style-jelly';
   style.innerHTML = `
     :root{
-      --accent:#ec4899; --panel-radius:16px; --panel-pad:20px;
-      --chip-br:9999px; --fg:#374151; --fg-d:#e5e7eb;
+      --accent:#ec4899;
+      --accent-2:#a855f7;
+      --panel-radius:18px; --panel-pad:20px;
+      --chip-br:9999px;
+      --fg:#1f2937; --fg-d:#e5e7eb;
+      --muted:#6b7280; --muted-d:#c7cad1;
       --border:rgba(0,0,0,.08); --border-d:rgba(255,255,255,.12);
-      --bg:rgba(255,255,255,.7); --bg-d:rgba(31,41,55,.6);
+      --bg:rgba(255,255,255,.75); --bg-d:rgba(31,41,55,.6);
+      --glow:0 10px 30px rgba(236,72,153,.15), 0 6px 12px rgba(168,85,247,.12);
+      --glow-strong:0 18px 45px rgba(236,72,153,.22), 0 10px 22px rgba(168,85,247,.18);
+      --ring:0 0 0 2px rgba(236,72,153,.6);
     }
-    .panel{background:var(--bg);backdrop-filter:saturate(120%) blur(2px);border-radius:var(--panel-radius);border:1px solid var(--border)}
-    @media (prefers-color-scheme: dark){.panel{background:var(--bg-d);border-color:var(--border-d)}}
+    html.theme-jelly body, body.theme-jelly { background: radial-gradient(1200px 1200px at 10% -10%, rgba(236,72,153,.06), transparent 60%) no-repeat; }
+
+    /* Core panel look (glassy jelly) */
+    .panel{
+      background:var(--bg);
+      -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
+      border-radius:var(--panel-radius);
+      border:1px solid var(--border);
+      box-shadow: var(--glow);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .panel:hover{ transform: translateY(-1px); box-shadow: var(--glow-strong); }
+    @media (prefers-color-scheme: dark){
+      .panel{ background:var(--bg-d); border-color:var(--border-d); }
+    }
 
     /* Left tile ↔ right details alignment */
     .active-project-panel{margin:0}
@@ -21,59 +41,128 @@
     .panel-rail{max-width:1100px;margin-inline:auto}
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
-    /* Tabs & readable text */
-    .details-tabs button{border:1px solid var(--border);background:var(--bg);border-radius:10px}
-    .details-tabs button.active{outline:2px solid var(--accent);font-weight:800}
-    @media (prefers-color-scheme: dark){.details-tabs button{border-color:var(--border-d);background:var(--bg-d);color:var(--fg-d)}}
-    .tab-content{display:none}
-    .tab-content.active{display:block}
-    .project-details-content .tab-content{font-size:.95rem;line-height:1.75;color:var(--fg)}
-    @media (prefers-color-scheme: dark){.project-details-content .tab-content{color:var(--fg-d)}}
-    .project-details-content h4{font-weight:800;font-size:1.125rem;margin:.25rem 0}
-    .project-details-content h5{font-weight:700;margin:.25rem 0 .125rem}
-    .project-details-content p,.project-details-content li{margin:.3rem 0;word-break:break-word;hyphens:auto}
-    .project-details-content ul{padding-left:1.1rem}
-
-    /* Metrics row */
-    .metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
-    .metric-card{display:flex;flex-direction:column;gap:.2rem;align-items:center;justify-content:center;
-      padding:.85rem;border-radius:12px;background:var(--bg);border:1px solid var(--border);min-height:68px}
-    @media (prefers-color-scheme: dark){.metric-card{background:var(--bg-d);border-color:var(--border-d)}}
-    .metric-card-value{font-weight:900;font-size:1.08rem}
-    .metric-card-label{font-size:.72rem;opacity:.95;text-align:center}
-
-    /* Insight/Stat */
-    .insight-card,.stat-card{border:1px solid var(--border);border-radius:12px;padding:1rem;background:var(--bg)}
-    @media (prefers-color-scheme: dark){.insight-card,.stat-card{background:var(--bg-d);border-color:var(--border-d)}}
-    .stat-number{font-weight:900;font-size:1.08rem}
-    .stat-description{font-size:.82rem;opacity:.9}
-
-    /* Much nicer Methodology tiles */
-    .methodology-container{display:grid;gap:14px;grid-template-columns:1fr;counter-reset:step}
-    @media (min-width:768px){.methodology-container{grid-template-columns:repeat(2,1fr)}}
-    .methodology-item{position:relative;display:flex;flex-direction:column;gap:.5rem;
-      border:1px solid var(--border);border-radius:14px;background:var(--bg);padding:14px 14px 12px 52px;min-height:120px}
-    @media (prefers-color-scheme: dark){.methodology-item{background:var(--bg-d);border-color:var(--border-d)}}
-    .methodology-item .tag-badge{display:inline-block;font-size:.72rem;padding:.25rem .6rem;border-radius:var(--chip-br);
-      border:1px solid var(--border);margin-right:.35rem;margin-top:.4rem}
-    @media (prefers-color-scheme: dark){.methodology-item .tag-badge{border-color:var(--border-d)}}
-    .methodology-item::before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:14px;
-      width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      font-weight:800;font-size:.9rem;color:#fff;background:var(--accent);box-shadow:0 1px 0 rgba(0,0,0,.1), inset 0 -1px 0 rgba(0,0,0,.1)}
-    @media (max-width:767px){
-      .methodology-container{position:relative}
-      .methodology-container::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;
-        background:linear-gradient(to bottom, rgba(236,72,153,.5), transparent 70%)}
+    /* Tabs (pills) */
+    .details-tabs{ gap:.5rem; }
+    .details-tabs button{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));
+      border-radius:12px;
+      padding:.45rem .8rem;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.05);
+      transition: transform .12s ease, box-shadow .15s ease;
+      font-weight:700;
+      color:var(--fg);
+    }
+    .details-tabs button:hover{ transform: translateY(-1px); }
+    .details-tabs button.active{
+      outline:2px solid transparent;
+      box-shadow: var(--ring), inset 0 -1px 0 rgba(0,0,0,.05);
+      background:linear-gradient(180deg, rgba(236,72,153,.16), rgba(168,85,247,.16));
+    }
+    @media (prefers-color-scheme: dark){
+      .details-tabs button{
+        border-color:var(--border-d);
+        background:linear-gradient(180deg, rgba(31,41,55,.9), rgba(31,41,55,.7));
+        color:var(--fg-d);
+      }
+      .details-tabs button.active{ box-shadow: var(--ring); }
     }
 
-    /* Thumbs */
-    .project-thumbnail{border-radius:12px}
-    .project-thumbnail img{border-radius:10px}
+    /* Content readability */
+    .tab-content{ display:none }
+    .tab-content.active{ display:block }
+
+    .project-details-content .tab-content{
+      color:var(--fg);
+      line-height:1.75;
+      font-size: clamp(.92rem, .92rem + .15vw, 1rem);
+    }
+    @media (prefers-color-scheme: dark){ .project-details-content .tab-content{ color:var(--fg-d) } }
+
+    /* Make long sections scannable by “carding” their subsections */
+    .tab-content .text-left.space-y-6 > div,
+    .tab-content .text-left.text-sm.space-y-6 > div,
+    .tab-content .space-y-8 > div{
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.5));
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px 16px;
+      box-shadow: var(--glow);
+    }
+    @media (prefers-color-scheme: dark){
+      .tab-content .text-left.space-y-6 > div,
+      .tab-content .text-left.text-sm.space-y-6 > div,
+      .tab-content .space-y-8 > div{
+        background:linear-gradient(180deg, rgba(31,41,55,.75), rgba(31,41,55,.55));
+        border-color:var(--border-d);
+      }
+    }
+    .project-details-content h4{font-weight:800;font-size: clamp(1.05rem,1rem + .2vw,1.2rem);margin:.25rem 0 .35rem}
+    .project-details-content h5{font-weight:800;margin:.25rem 0 .125rem;font-size:1rem}
+    .project-details-content p,.project-details-content li{margin:.3rem 0; word-break:break-word; hyphens:auto}
+    .project-details-content ul{padding-left:1.15rem}
+    .project-details-content .insight-card,
+    .project-details-content .stat-card{ border-radius:14px }
+
+    /* Metrics row (fits text nicely) */
+    .metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+    .metric-card{
+      display:flex;flex-direction:column;gap:.25rem;align-items:center;justify-content:center;
+      padding:.85rem;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+      border:1px solid var(--border);min-height:70px;box-shadow: var(--glow);
+      text-align:center
+    }
+    @media (prefers-color-scheme: dark){
+      .metric-card{background:linear-gradient(180deg, rgba(31,41,55,.85), rgba(31,41,55,.65)); border-color:var(--border-d)}
+    }
+    .metric-card-value{font-weight:900;font-size: clamp(1rem, .95rem + .2vw, 1.15rem)}
+    .metric-card-label{font-size: clamp(.7rem, .68rem + .1vw, .78rem);opacity:.95}
+
+    /* Methodology (jelly tiles with numbered beads) */
+    .methodology-container{display:grid;gap:14px;grid-template-columns:1fr;counter-reset:step}
+    @media (min-width:768px){.methodology-container{grid-template-columns:repeat(2,1fr)}}
+    .methodology-item{
+      position:relative;display:flex;flex-direction:column;gap:.5rem;
+      border:1px solid var(--border);border-radius:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+      padding:16px 16px 14px 56px;min-height:118px;box-shadow: var(--glow);
+      transition: transform .12s ease, box-shadow .15s ease;
+    }
+    .methodology-item:hover{ transform: translateY(-1px); box-shadow: var(--glow-strong); }
+    @media (prefers-color-scheme: dark){
+      .methodology-item{ background:linear-gradient(180deg, rgba(31,41,55,.85), rgba(31,41,55,.65)); border-color:var(--border-d) }
+    }
+    .methodology-item .tag-badge{
+      display:inline-block;font-size:.72rem;padding:.28rem .6rem;border-radius:var(--chip-br);
+      border:1px solid var(--border);margin-right:.35rem;margin-top:.4rem; background:rgba(255,255,255,.6)
+    }
+    @media (prefers-color-scheme: dark){ .methodology-item .tag-badge{ border-color:var(--border-d); background:rgba(255,255,255,.08) } }
+    .methodology-item::before{
+      counter-increment:step;content:counter(step);position:absolute;left:16px;top:16px;
+      width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:.9rem;color:#fff;
+      background: radial-gradient(120% 120% at 30% 20%, var(--accent), var(--accent-2));
+      box-shadow: 0 4px 10px rgba(236,72,153,.35), inset 0 -2px 6px rgba(0,0,0,.18);
+      animation: jellyPop .6s ease both;
+    }
+
+    /* Thumbnails */
+    .project-thumbnail{border-radius:14px}
+    .project-thumbnail img{border-radius:12px}
+
+    /* Small “jelly” micro-anim */
+    @keyframes jellyPop{
+      0%{ transform: scale(.7)}
+      60%{ transform: scale(1.08)}
+      100%{ transform: scale(1)}
+    }
   `;
   document.head.appendChild(style);
+  // enable theme by default
+  document.documentElement.classList.add('theme-jelly');
 })();
 
-// ---- Rendering (alignment-aware) ----
+// 2) ---- Rendering (alignment-aware + readable) ----
 function renderProjectDetails(project, container) {
   if (!project || !project.content) { container.innerHTML = ''; return; }
 
@@ -89,9 +178,9 @@ function renderProjectDetails(project, container) {
            </div>`).join('')}
       </div>
 
-      <div class="details-tabs flex flex-wrap items-center gap-2 border-b mb-6 pb-3">
+      <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">
         ${['overview','methodology','analysis','results','media'].map((t,i)=>
-          `<button data-tab="${t}" class="${i===0?'active':''} py-2 px-4 text-sm font-semibold capitalize">${t}</button>`
+          `<button data-tab="${t}" class="${i===0?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`
         ).join('')}
       </div>
 
@@ -126,9 +215,9 @@ function renderProjectList(listEl, detailsEl, activeId) {
   const others = window.projects.filter(p=>p.id!==active.id);
 
   const highlights = (active.content.metrics||[]).map(m=>`
-    <div class="rounded-xl border border-black/10 bg-white/70 p-3 text-center">
+    <div class="rounded-xl border border-black/10 bg-white/70 p-3 text-center panel">
       <div class="font-extrabold text-base md:text-lg" style="color:var(--accent)">${m.value}</div>
-      <div class="text-[11px] md:text-xs text-gray-600">${m.label}</div>
+      <div class="text-[11px] md:text-xs" style="color:var(--muted)">${m.label}</div>
     </div>`).join('');
 
   const activeHtml = `
@@ -138,7 +227,7 @@ function renderProjectList(listEl, detailsEl, activeId) {
           <div class="grid md:grid-cols-3 gap-4 items-center">
             <div class="md:col-span-2">
               <h3 class="text-xl md:text-2xl font-bold">${active.title}</h3>
-              <p class="text-gray-700 mt-1 text-sm md:text-base">${active.hook}</p>
+              <p class="mt-1 text-sm md:text-base" style="color:var(--muted)">${active.hook}</p>
               <p class="font-semibold mt-2 text-sm md:text-base" style="color:var(--accent)">${active.outcome}</p>
             </div>
             <img class="rounded-xl w-full h-32 md:h-36 object-cover" src="${active.images?.[0]||''}" alt="${active.title}">
@@ -152,7 +241,7 @@ function renderProjectList(listEl, detailsEl, activeId) {
     <button class="project-thumbnail panel p-3 md:p-4 w-full text-left flex items-center gap-3 hover:scale-[1.01] transition"
             data-project-id="${p.id}">
       <img class="rounded-lg w-16 md:w-20 h-14 md:h-16 object-cover" src="${p.images?.[0]||''}" alt="${p.title}">
-      <span class="font-semibold text-gray-800 text-sm md:text-base">${p.title}</span>
+      <span class="font-semibold text-sm md:text-base">${p.title}</span>
     </button>`).join('');
 
   listEl.innerHTML = `${activeHtml}<div class="mt-3 md:mt-4 flex flex-col gap-2">${thumbs}</div>`;
@@ -169,16 +258,19 @@ function renderProjectList(listEl, detailsEl, activeId) {
   renderProjectDetails(active, detailsEl);
 }
 
-// Public init for pages
+// Public init
 window.initPortfolio = function(opts) {
   const list = document.querySelector(opts.listSelector);
   const details = document.querySelector(opts.detailsSelector);
   if (!list || !details) return;
   renderProjectList(list, details, (window.projects[0]||{}).id);
   details.classList.add('visible');
+  // Ensure jelly theme on
+  document.documentElement.classList.add('theme-jelly');
+  document.body.classList.add('theme-jelly');
 };
 
-// ---- Project Data (complete, no omissions) ----
+// 3) ---- Project Data (complete, unchanged copy) ----
 window.projects = [
   {
     id: 'guide',
