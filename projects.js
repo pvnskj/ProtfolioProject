@@ -292,6 +292,50 @@
       .project-details-content tbody tr:nth-child(even){background:rgba(31,41,55,.65);}
     }
 
+    /* Media carousel */
+    .media-section{display:flex;flex-direction:column;gap:1rem;margin-top:.5rem}
+    .media-header{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .media-header h4{margin:0;font-size:1.05rem;font-weight:800}
+    .media-counter{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .media-viewport{position:relative}
+    .media-track{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:0 1.5rem;scroll-padding:0 1.5rem;border-radius:22px}
+    .media-track:focus-visible{outline:var(--ring);outline-offset:3px}
+    .media-track::-webkit-scrollbar{display:none}
+    .media-track{scrollbar-width:none}
+    .media-slide{position:relative;flex:0 0 100%;max-width:100%;border-radius:22px;overflow:hidden;background:linear-gradient(135deg, rgba(236,72,153,.16), rgba(168,85,247,.16));scroll-snap-align:center;min-height:240px;transition:transform .25s ease, box-shadow .25s ease}
+    .media-slide.active{box-shadow:var(--glow-strong);transform:translateY(-4px)}
+    .media-slide img,
+    .media-slide video{width:100%;height:100%;object-fit:cover;display:block}
+    .media-slide video{background:#000}
+    .media-slide figcaption{position:absolute;inset:auto 0 0 0;padding:1rem;background:linear-gradient(180deg, rgba(15,23,42,0), rgba(15,23,42,.78));color:#fff;font-size:.85rem;font-weight:600;display:flex;align-items:flex-end;gap:.6rem}
+    .media-slide figcaption::before{content:"";width:32px;height:3px;border-radius:999px;background:linear-gradient(90deg, rgba(236,72,153,.75), rgba(168,85,247,.75));opacity:.9}
+    .media-control{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.95);box-shadow:var(--glow);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s ease, box-shadow .2s ease, background .2s ease;z-index:2}
+    .media-control:hover{transform:translateY(-50%) scale(1.05);box-shadow:var(--glow-strong)}
+    .media-control svg{width:16px;height:16px}
+    .media-control--prev{left:.35rem}
+    .media-control--next{right:.35rem}
+    .media-control[disabled]{opacity:0;pointer-events:none}
+    .media-description{color:var(--muted);font-size:.9rem;text-align:center;max-width:60ch;margin-inline:auto}
+    .media-empty{color:var(--muted);font-size:.9rem;text-align:center;padding:2rem 1rem;border-radius:18px;border:1px dashed var(--border);background:rgba(255,255,255,.55)}
+    @media (min-width:768px){
+      .media-track{padding:0 3rem;scroll-padding:0 3rem}
+      .media-slide{min-height:360px}
+      .media-control--prev{left:1.75rem}
+      .media-control--next{right:1.75rem}
+    }
+    @media (prefers-color-scheme: dark){
+      .media-counter{color:var(--muted-d)}
+      .media-track{background:linear-gradient(135deg, rgba(31,41,55,.4), rgba(31,41,55,.55))}
+      .media-slide{background:linear-gradient(135deg, rgba(236,72,153,.2), rgba(168,85,247,.18))}
+      .media-slide figcaption{background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.78))}
+      .media-control{background:rgba(17,24,39,.92);color:var(--fg-d);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+      .media-empty{background:rgba(31,41,55,.55);border-color:var(--border-d);color:var(--fg-d)}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .media-track{scroll-behavior:auto}
+      .media-slide{transition:none}
+    }
+
     /* Long-form content toggles */
     .collapsible-block{
       position:relative;
@@ -431,40 +475,187 @@ function ensureCollapsibleForTab(tab){
 }
 
 // 2) ---- Rendering (alignment-aware + readable) ----
+function renderMediaSection(project) {
+  const media = project?.content?.media;
+  if (!media) {
+    return `<div class="media-empty">Media assets are coming soon.</div>`;
+  }
+
+  const heading = media.heading || 'Media';
+  const caption = media.caption ? `<p class="media-description">${media.caption}</p>` : '';
+  const items = Array.isArray(media.items) ? media.items.filter(item => item && item.src) : [];
+
+  if (!items.length) {
+    return `<section class="media-section"><div class="media-header"><h4>${heading}</h4></div><div class="media-empty">Media assets are coming soon.</div>${caption}</section>`;
+  }
+
+  const trackId = `media-track-${project.id}`;
+  const total = items.length;
+  const slides = items.map((item, idx) => {
+    const type = (item.type || 'image').toLowerCase();
+    const captionHtml = item.caption ? `<figcaption>${item.caption}</figcaption>` : '';
+    const baseAttrs = item.alt ? ` alt="${item.alt}"` : ' alt=""';
+    if (type === 'video') {
+      const posterAttr = item.poster ? ` poster="${item.poster}"` : '';
+      const autoplayAttrs = item.autoplay ? ' autoplay muted loop playsinline' : '';
+      const controlsAttr = item.controls === false ? '' : ' controls';
+      const mimeAttr = item.mime ? ` type="${item.mime}"` : '';
+      return `<figure class="media-slide${idx === 0 ? ' active' : ''}" data-media-index="${idx}" data-media-type="video">`
+        + `<video${posterAttr}${autoplayAttrs}${controlsAttr}>`
+        + `<source src="${item.src}"${mimeAttr}>`
+        + `Your browser does not support the video tag.`
+        + `</video>`
+        + `${captionHtml}`
+        + `</figure>`;
+    }
+    const loading = item.loading || 'lazy';
+    return `<figure class="media-slide${idx === 0 ? ' active' : ''}" data-media-index="${idx}" data-media-type="${type}">`
+      + `<img src="${item.src}"${baseAttrs} loading="${loading}">`
+      + `${captionHtml}`
+      + `</figure>`;
+  }).join('');
+
+  const disabledAttr = total <= 1 ? ' disabled' : '';
+
+  return `<section class="media-section" data-media-carousel>`
+    + `<div class="media-header">`
+    + `<h4>${heading}</h4>`
+    + `<span class="media-counter" data-media-count>1/${total}</span>`
+    + `</div>`
+    + `<div class="media-viewport">`
+    + `<button class="media-control media-control--prev" type="button" aria-label="Previous media" data-media-prev${disabledAttr}>`
+    + `<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M12.7 15.7a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 1 1 1.4 1.4L8.41 10l4.3 4.3a1 1 0 0 1-.01 1.4Z"/></svg>`
+    + `</button>`
+    + `<div class="media-track" id="${trackId}" tabindex="0" data-media-track role="group" aria-label="${heading}">`
+    + `${slides}`
+    + `</div>`
+    + `<button class="media-control media-control--next" type="button" aria-label="Next media" data-media-next${disabledAttr}>`
+    + `<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 1 1-1.4-1.4L11.59 10 7.3 5.7a1 1 0 0 1 0-1.4Z"/></svg>`
+    + `</button>`
+    + `</div>`
+    + `${caption}`
+    + `</section>`;
+}
+
+function setupMediaCarousels(scope) {
+  const carousels = scope.querySelectorAll('[data-media-carousel]');
+  carousels.forEach(carousel => {
+    if (carousel.dataset.carouselBound) return;
+    carousel.dataset.carouselBound = 'true';
+
+    const track = carousel.querySelector('[data-media-track]');
+    const slides = Array.from(track?.children || []);
+    const prevBtn = carousel.querySelector('[data-media-prev]');
+    const nextBtn = carousel.querySelector('[data-media-next]');
+    const counter = carousel.querySelector('[data-media-count]');
+    if (!track || !slides.length) return;
+
+    let currentIndex = 0;
+    const raf = window.requestAnimationFrame || function(cb){ return setTimeout(cb, 16); };
+    const cancelRaf = window.cancelAnimationFrame || clearTimeout;
+
+    const updateActive = () => {
+      slides.forEach((slide, idx) => slide.classList.toggle('active', idx === currentIndex));
+      if (counter) {
+        counter.textContent = `${currentIndex + 1}/${slides.length}`;
+      }
+      if (prevBtn) prevBtn.disabled = slides.length <= 1;
+      if (nextBtn) nextBtn.disabled = slides.length <= 1;
+    };
+
+    const scrollToIndex = (index) => {
+      if (!slides.length) return;
+      const total = slides.length;
+      const normalized = ((index % total) + total) % total;
+      currentIndex = normalized;
+      slides[normalized].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      updateActive();
+    };
+
+    const handleScroll = () => {
+      if (!slides.length) return;
+      const trackRect = track.getBoundingClientRect();
+      const trackCenter = trackRect.left + trackRect.width / 2;
+      let nearest = currentIndex;
+      let minDistance = Number.POSITIVE_INFINITY;
+      slides.forEach((slide, idx) => {
+        const rect = slide.getBoundingClientRect();
+        const slideCenter = rect.left + rect.width / 2;
+        const distance = Math.abs(slideCenter - trackCenter);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = idx;
+        }
+      });
+      if (nearest !== currentIndex) {
+        currentIndex = nearest;
+        updateActive();
+      }
+    };
+
+    let rafId = null;
+    track.addEventListener('scroll', () => {
+      if (rafId) cancelRaf(rafId);
+      rafId = raf(handleScroll);
+    });
+
+    prevBtn?.addEventListener('click', () => scrollToIndex(currentIndex - 1));
+    nextBtn?.addEventListener('click', () => scrollToIndex(currentIndex + 1));
+
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        scrollToIndex(currentIndex + 1);
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        scrollToIndex(currentIndex - 1);
+      }
+    });
+
+    updateActive();
+  });
+}
+
 function renderProjectDetails(project, container) {
   if (!project || !project.content) { container.innerHTML = ''; return; }
 
   const panel = document.createElement('div');
   panel.className = 'project-details-content panel';
+  const tabs = ['overview', 'methodology', 'analysis', 'results', 'media']
+    .filter(key => key === 'media' ? project.content.media : project.content[key]);
+  const metricsHtml = (project.content.metrics || []).map(m =>
+    `<div class="metric-card">
+       <div class="metric-card-value">${m.value}</div>
+       <div class="metric-card-label">${m.label}</div>
+     </div>`).join('');
+
+  const tabButtonsHtml = tabs.map((tab, idx) =>
+    `<button data-tab="${tab}" class="${idx === 0 ? 'active' : ''}">${tab[0].toUpperCase() + tab.slice(1)}</button>`
+  ).join('');
+
+  const tabPanelsHtml = tabs.map((tab, idx) => {
+    const active = idx === 0 ? 'active' : '';
+    if (tab === 'media') {
+      return `<div class="tab-content ${active}" data-tab-content="${tab}">${renderMediaSection(project)}</div>`;
+    }
+    const value = project.content[tab] || '';
+    return `<div class="tab-content ${active}" data-tab-content="${tab}">
+              <div class="leading-relaxed">${value}</div>
+            </div>`;
+  }).join('');
+
   panel.innerHTML = `
     <div class="panel-rail">
-      <div class="metric-row">
-        ${(project.content.metrics || []).map(m =>
-          `<div class="metric-card">
-             <div class="metric-card-value">${m.value}</div>
-             <div class="metric-card-label">${m.label}</div>
-           </div>`).join('')}
-      </div>
-
-      <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">
-        ${['overview','methodology','analysis','results','media'].map((t,i)=>
-          `<button data-tab="${t}" class="${i===0?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`
-        ).join('')}
-      </div>
-
-      ${Object.entries(project.content).map(([k,v])=>{
-        if (k==='metrics') return '';
-        const active = k==='overview' ? 'active':'';
-        return `<div class="tab-content ${active}" data-tab-content="${k}">
-                  <div class="leading-relaxed">${v}</div>
-                </div>`;
-      }).join('')}
+      <div class="metric-row">${metricsHtml}</div>
+      <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">${tabButtonsHtml}</div>
+      ${tabPanelsHtml}
     </div>
   `;
 
   container.innerHTML = '';
   container.appendChild(panel);
   ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
+  setupMediaCarousels(panel);
 
   // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
@@ -479,6 +670,9 @@ function renderProjectDetails(project, container) {
     if (!targetTab) return;
     targetTab.classList.add('active');
     ensureCollapsibleForTab(targetTab);
+    if (targetTab.querySelector('[data-media-carousel]')) {
+      setupMediaCarousels(targetTab);
+    }
   });
 }
 
@@ -708,12 +902,31 @@ window.projects = [
           </article>
         </div>
       </section>`,
-      media: `<h4>Media Assets</h4>
-        <div class="grid grid-cols-2 gap-4 mt-4">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=User+Flow+Diagram" alt="User Flow Diagram">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=Early+Prototypes" alt="Early Prototypes">
-        </div>
-        <p class="mt-4 text-sm text-center text-gray-400">Key visuals, user flows, and prototypes from the project.</p>`
+      media: {
+        heading: 'Media Assets',
+        caption: 'Key visuals, user flows, and prototypes from the project.',
+        items: [
+          {
+            type: 'image',
+            src: 'https://placehold.co/1200x675/111827/a3a3a3?text=User+Flow+Diagram',
+            alt: 'User flow diagram that unifies two TV guide experiences',
+            caption: 'Cross-platform user flow aligning the personalized guide journey.'
+          },
+          {
+            type: 'image',
+            src: 'https://placehold.co/1200x675/111827/a3a3a3?text=Early+Prototypes',
+            alt: 'Early prototype screens exploring TV guide layouts',
+            caption: 'High-fidelity explorations that balanced familiarity with modernization.'
+          },
+          {
+            type: 'video',
+            src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+            poster: 'https://images.unsplash.com/photo-1520170350709-776b1d7c3b8d?auto=format&fit=crop&w=1600&q=80',
+            mime: 'video/mp4',
+            caption: 'Motion walkthrough demonstrating the dynamic recommendation carousel.'
+          }
+        ]
+      }
     }
   },
   {
@@ -1019,12 +1232,31 @@ window.projects = [
           </article>
         </div>
       </section>`,
-      media: `<h4>Media Assets</h4>
-        <div class="grid grid-cols-2 gap-4 mt-4">
-          <img class="project-image rounded-lg" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop" alt="Streaming logos">
-          <img class="project-image rounded-lg" src="https://images.unsplash.com/photo-1516245834210-c4c1427873ab?q=80&w=1770&auto=format&fit=crop" alt="Sports screen">
-        </div>
-        <p class="mt-4 text-sm text-center text-gray-400">Concept visuals from tests and prototypes.</p>`
+      media: {
+        heading: 'Media Assets',
+        caption: 'Concept visuals from tests and prototypes.',
+        items: [
+          {
+            type: 'image',
+            src: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop',
+            alt: 'Collage of streaming service logos used during testing',
+            caption: 'Brand alignment board to test channel expectations across households.'
+          },
+          {
+            type: 'gif',
+            src: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2E5aWsxMHdjYWFyN3c1MzhwdTF4MDk2bjNiaWE0NHlqZWNsd3g1eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btPCcdNniyf0ArS/giphy.gif',
+            alt: 'Animated reaction sequence from co-viewing prototype',
+            caption: 'Lightweight motion study showing timed reactions during live content.'
+          },
+          {
+            type: 'video',
+            src: 'https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4',
+            poster: 'https://images.unsplash.com/photo-1517249371037-2d5269cbd724?auto=format&fit=crop&w=1600&q=80',
+            mime: 'video/mp4',
+            caption: 'Prototype walkthrough detailing second-screen poll interactions.'
+          }
+        ]
+      }
     }
   }
 ];
