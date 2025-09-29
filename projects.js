@@ -1,43 +1,249 @@
-// projects.js — defines projects data and renders Portfolio (list + details)
-// Readability upgrades: tighter typography, responsive spacing, non-blocky text, full Results content for all projects.
-
+// projects.js — readability + alignment upgrades (methodology + panel alignment)
 (function () {
-  // ---- Minimal styles to improve readability & fit ----
+  // ---- Polished styles (drop-in) ----
   const style = document.createElement('style');
   style.innerHTML = `
-    .panel{background:rgba(255,255,255,.6);backdrop-filter:saturate(120%) blur(2px);border-radius:1rem;border:1px solid rgba(0,0,0,.08)}
-    @media (prefers-color-scheme: dark){.panel{background:rgba(17,24,39,.6);border-color:rgba(255,255,255,.1)}}
-    .project-details-content{max-width:1100px;margin-inline:auto}
-    .project-details-content .tab-content{font-size:0.95rem;line-height:1.7;color:#374151}
-    @media (prefers-color-scheme: dark){.project-details-content .tab-content{color:#e5e7eb}}
-    .project-details-content h4{font-weight:800;font-size:1.125rem;margin-top:.5rem}
-    .project-details-content h5{font-weight:700;margin-top:.75rem;margin-bottom:.25rem}
-    .project-details-content p,.project-details-content li{margin-top:.35rem;margin-bottom:.35rem;word-break:break-word;hyphens:auto}
-    .project-details-content ul{padding-left:1.1rem}
-    .metric-card{display:flex;flex-direction:column;gap:.125rem;align-items:center;justify-content:center;padding:.75rem;border-radius:.75rem;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.06)}
-    @media (prefers-color-scheme: dark){.metric-card{background:rgba(31,41,55,.6);border-color:rgba(255,255,255,.08)}}
-    .metric-card-value{font-weight:800;font-size:1.05rem}
-    .metric-card-label{font-size:.7rem;opacity:.9;text-align:center}
-    .details-tabs button{border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.7);border-radius:.5rem}
-    @media (prefers-color-scheme: dark){.details-tabs button{border-color:rgba(255,255,255,.1);background:rgba(31,41,55,.6);color:#e5e7eb}}
-    .details-tabs button.active{outline:2px solid var(--accent-pink, #ec4899);font-weight:800}
+    :root{
+      --accent:#ec4899;
+      --panel-radius:16px;
+      --panel-pad:20px;
+      --chip-br:9999px;
+      --fg:#374151;
+      --fg-d:#e5e7eb;
+      --border:rgba(0,0,0,.08);
+      --border-d:rgba(255,255,255,.12);
+      --bg:rgba(255,255,255,.7);
+      --bg-d:rgba(31,41,55,.6);
+    }
+    .panel{background:var(--bg);backdrop-filter:saturate(120%) blur(2px);border-radius:var(--panel-radius);border:1px solid var(--border)}
+    @media (prefers-color-scheme: dark){
+      .panel{background:var(--bg-d);border-color:var(--border-d)}
+    }
+
+    /* NEW: make the left tile and right details feel aligned */
+    .active-project-panel{ /* wrapper around the active card (left) */
+      margin:0; /* ensures predictable math */
+    }
+    .active-project-panel .panel{padding:var(--panel-pad)}
+    .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)} /* tiny lift so borders align visually */
+
+    /* NEW: a shared “content rail” so text & tiles align across both panels */
+    .panel-rail{
+      max-width:1100px;
+      margin-inline:auto;
+    }
+
+    /* Tabs & text rhythm */
+    .details-tabs button{
+      border:1px solid var(--border);
+      background:var(--bg);
+      border-radius:10px;
+    }
+    .details-tabs button.active{outline:2px solid var(--accent);font-weight:800}
+    @media (prefers-color-scheme: dark){
+      .details-tabs button{border-color:var(--border-d);background:var(--bg-d);color:var(--fg-d)}
+    }
     .tab-content{display:none}
     .tab-content.active{display:block}
-    .insight-card{border:1px solid rgba(0,0,0,.08);border-radius:.75rem;padding:1rem;background:rgba(255,255,255,.7)}
-    @media (prefers-color-scheme: dark){.insight-card{background:rgba(31,41,55,.6);border-color:rgba(255,255,255,.1)}}
-    .stat-card{border:1px solid rgba(0,0,0,.08);border-radius:.75rem;padding:1rem;background:rgba(255,255,255,.7);text-align:center}
-    @media (prefers-color-scheme: dark){.stat-card{background:rgba(31,41,55,.6);border-color:rgba(255,255,255,.1)}}
-    .stat-number{font-weight:900;font-size:1.1rem}
-    .stat-description{font-size:.8rem;opacity:.9}
-    .project-image{aspect-ratio:16/9;object-fit:cover}
-    .methodology-container{display:grid;grid-template-columns:1fr;gap:1rem}
-    @media (min-width:768px){.methodology-container{grid-template-columns:repeat(2,1fr)}}
-    .methodology-item{border:1px solid rgba(0,0,0,.08);border-radius:.75rem;padding:1rem;background:rgba(255,255,255,.7)}
-    @media (prefers-color-scheme: dark){.methodology-item{background:rgba(31,41,55,.6);border-color:rgba(255,255,255,.1)}}
-    .tag-badge{display:inline-block;font-size:.7rem;padding:.25rem .5rem;border-radius:9999px;border:1px solid rgba(0,0,0,.08)}
-    @media (prefers-color-scheme: dark){.tag-badge{border-color:rgba(255,255,255,.2)}}
+
+    .project-details-content .tab-content{font-size:0.95rem;line-height:1.75;color:var(--fg)}
+    @media (prefers-color-scheme: dark){.project-details-content .tab-content{color:var(--fg-d)}}
+    .project-details-content h4{font-weight:800;font-size:1.125rem;margin-top:.25rem;margin-bottom:.25rem}
+    .project-details-content h5{font-weight:700;margin-top:.25rem;margin-bottom:.125rem}
+    .project-details-content p,.project-details-content li{margin-top:.3rem;margin-bottom:.3rem;word-break:break-word;hyphens:auto}
+    .project-details-content ul{padding-left:1.1rem}
+
+    /* Metrics row (aligned with the active tile rail) */
+    .metric-row{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .metric-card{
+      display:flex;flex-direction:column;gap:.2rem;align-items:center;justify-content:center;
+      padding:.85rem;border-radius:12px;background:var(--bg);border:1px solid var(--border);
+      min-height:68px;
+    }
+    @media (prefers-color-scheme: dark){
+      .metric-card{background:var(--bg-d);border-color:var(--border-d)}
+    }
+    .metric-card-value{font-weight:900;font-size:1.1rem}
+    .metric-card-label{font-size:.72rem;opacity:.95;text-align:center}
+
+    /* Insight/Stat cards */
+    .insight-card,.stat-card{
+      border:1px solid var(--border);border-radius:12px;padding:1rem;background:var(--bg);
+    }
+    @media (prefers-color-scheme: dark){
+      .insight-card,.stat-card{background:var(--bg-d);border-color:var(--border-d)}
+    }
+    .stat-number{font-weight:900;font-size:1.08rem}
+    .stat-description{font-size:.82rem;opacity:.9}
+
+    /* MUCH NICER METHODOLOGY */
+    .methodology-container{
+      display:grid;gap:14px;
+      grid-template-columns:1fr;counter-reset:step;
+    }
+    @media (min-width:768px){
+      .methodology-container{grid-template-columns:repeat(2,1fr)}
+    }
+    .methodology-item{
+      position:relative;display:flex;flex-direction:column;gap:.5rem;
+      border:1px solid var(--border);border-radius:14px;background:var(--bg);padding:14px 14px 12px 52px;
+      min-height:120px;
+    }
+    @media (prefers-color-scheme: dark){
+      .methodology-item{background:var(--bg-d);border-color:var(--border-d)}
+    }
+    .methodology-item h5{margin:0;line-height:1.3}
+    .methodology-item p{margin:2px 0 0 0}
+    .methodology-item .tag-badge{
+      display:inline-block;font-size:.72rem;padding:.25rem .6rem;border-radius:var(--chip-br);
+      border:1px solid var(--border);
+      margin-right:.35rem;margin-top:.4rem;
+    }
+    @media (prefers-color-scheme: dark){
+      .methodology-item .tag-badge{border-color:var(--border-d)}
+    }
+
+    /* Step bullet (clean + accessible) */
+    .methodology-item::before{
+      counter-increment:step;content:counter(step);
+      position:absolute;left:14px;top:14px;
+      width:28px;height:28px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:.9rem;color:white;background:var(--accent);
+      box-shadow:0 1px 0 rgba(0,0,0,.1), inset 0 -1px 0 rgba(0,0,0,.1);
+    }
+    /* Guideline line connecting steps (mobile vertical, desktop subtle) */
+    .methodology-container::before{
+      content:"";position:absolute;display:none;
+    }
+    @media (max-width:767px){
+      .methodology-container{position:relative}
+      .methodology-container::before{
+        display:block;left:28px;top:0;bottom:0;width:2px;
+        background:linear-gradient(to bottom, rgba(236,72,153,.5), transparent 70%);
+      }
+    }
+
+    /* Thumbnails & active panel coherence */
+    .project-thumbnail{border-radius:12px}
+    .project-thumbnail img{border-radius:10px}
   `;
   document.head.appendChild(style);
+
+  // ---- Project data (unchanged) ----
+  window.projects = window.projects || []; // if you're pasting over, your data block remains as you already have it
+
+  // ---- Rendering (small tweaks for alignment) ----
+  function renderProjectDetails(project, container) {
+    if (!project || !project.content) { container.innerHTML = ''; return; }
+
+    const panel = document.createElement('div');
+    panel.className = 'project-details-content panel';
+    panel.innerHTML = `
+      <div class="panel-rail">
+        <div class="metric-row">
+          ${(project.content.metrics || []).map(m =>
+            `<div class="metric-card">
+               <div class="metric-card-value">${m.value}</div>
+               <div class="metric-card-label">${m.label}</div>
+             </div>`).join('')}
+        </div>
+
+        <div class="details-tabs flex flex-wrap items-center gap-2 border-b mb-6 pb-3">
+          ${['overview','methodology','analysis','results','media'].map((t,i)=>
+            `<button data-tab="${t}" class="${i===0?'active':''} py-2 px-4 text-sm font-semibold capitalize">${t}</button>`
+          ).join('')}
+        </div>
+
+        ${Object.entries(project.content).map(([k,v])=>{
+          if (k==='metrics') return '';
+          const active = k==='overview' ? 'active':'';
+          return `<div class="tab-content ${active}" data-tab-content="${k}">
+                    <div class="leading-relaxed">${v}</div>
+                  </div>`;
+        }).join('')}
+      </div>
+    `;
+
+    container.innerHTML = '';
+    container.appendChild(panel);
+
+    // Tab behavior
+    const tabsWrap = panel.querySelector('.details-tabs');
+    tabsWrap.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-tab]');
+      if (!btn) return;
+      tabsWrap.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.getAttribute('data-tab');
+      panel.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
+      panel.querySelector(`.tab-content[data-tab-content="${tab}"]`)?.classList.add('active');
+    });
+  }
+
+  function renderProjectList(listEl, detailsEl, activeId) {
+    const active = window.projects.find(p=>p.id===activeId) || window.projects[0];
+    const others = window.projects.filter(p=>p.id!==active.id);
+
+    const highlights = (active.content.metrics||[]).map(m=>`
+      <div class="rounded-xl border border-black/10 bg-white/70 p-3 text-center">
+        <div class="font-extrabold text-base md:text-lg" style="color:var(--accent)">${m.value}</div>
+        <div class="text-[11px] md:text-xs text-gray-600">${m.label}</div>
+      </div>`).join('');
+
+    const activeHtml = `
+      <div class="active-project-panel">
+        <div class="panel">
+          <div class="panel-rail">
+            <div class="grid md:grid-cols-3 gap-4 items-center">
+              <div class="md:col-span-2">
+                <h3 class="text-xl md:text-2xl font-bold">${active.title}</h3>
+                <p class="text-gray-700 mt-1 text-sm md:text-base">${active.hook}</p>
+                <p class="font-semibold mt-2 text-sm md:text-base" style="color:var(--accent)">${active.outcome}</p>
+              </div>
+              <img class="rounded-xl w-full h-32 md:h-36 object-cover" src="${active.images?.[0]||''}" alt="${active.title}">
+            </div>
+            <div class="grid grid-cols-3 gap-2 md:gap-3 mt-4">${highlights}</div>
+          </div>
+        </div>
+      </div>`;
+
+    const thumbs = others.map(p=>`
+      <button class="project-thumbnail panel p-3 md:p-4 w-full text-left flex items-center gap-3 hover:scale-[1.01] transition"
+              data-project-id="${p.id}">
+        <img class="rounded-lg w-16 md:w-20 h-14 md:h-16 object-cover" src="${p.images?.[0]||''}" alt="${p.title}">
+        <span class="font-semibold text-gray-800 text-sm md:text-base">${p.title}</span>
+      </button>`).join('');
+
+    listEl.innerHTML = `${activeHtml}<div class="mt-3 md:mt-4 flex flex-col gap-2">${thumbs}</div>`;
+
+    listEl.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-project-id]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-project-id');
+      renderProjectList(listEl, detailsEl, id);
+      const proj = window.projects.find(p=>p.id===id);
+      renderProjectDetails(proj, detailsEl);
+    }, { once:true });
+
+    renderProjectDetails(active, detailsEl);
+  }
+
+  // Public init for pages
+  window.initPortfolio = function(opts) {
+    const list = document.querySelector(opts.listSelector);
+    const details = document.querySelector(opts.detailsSelector);
+    if (!list || !details) return;
+    renderProjectList(list, details, (window.projects[0]||{}).id);
+    details.classList.add('visible');
+  };
+})();
+
 
   // ---- Project Data (complete, no omissions) ----
   window.projects = [
