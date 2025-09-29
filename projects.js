@@ -38,7 +38,7 @@
     /* Left tile ↔ right details alignment */
     .active-project-panel{margin:0}
     .active-project-panel .panel{padding:var(--panel-pad)}
-    .panel-rail{max-width:1100px;margin-inline:auto}
+    .panel-rail{max-width:1250px;margin-inline:auto}
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
     /* Tabs (pills) */
