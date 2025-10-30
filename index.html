@@ -3,452 +3,663 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sphoorthy Masa - Senior UX Researcher</title>
+    <title>Sphoorthy Masa · Senior UX Researcher</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* --- Magnolia Blossom Theme --- */
-        :root {
-            --bg-color: #FAF8F5;
-            --text-dark: #4F4A45;
-            --text-medium: #756f6a;
-            --text-light: #9e9690;
-            --accent-pink: #D8A0A8;
-            --accent-pink-dark: #B88088;
-            --accent-pink-light: #E8C0C8;
-            --panel-border: rgba(0, 0, 0, 0.08);
-            --panel-bg: rgba(255, 255, 255, 0.7);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
         }
-        
+    </script>
+    <style>
+        :root {
+            color-scheme: light;
+            --canvas-top: #FFF9FB;
+            --canvas-mid: #FFFFFF;
+            --canvas-low: #FDF2F8;
+            --ink-strong: #0F172A;
+            --ink-muted: #475569;
+            --ink-soft: #64748B;
+            --glass: rgba(255, 255, 255, 0.6);
+            --glass-ring: rgba(15, 23, 42, 0.14);
+            --cta-focus: #06B6D4;
+            --cta-hot: #14B8A6;
+            --cta-glow: #D946EF;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            color: var(--text-dark);
-            background-color: var(--bg-color);
+            background: linear-gradient(180deg, var(--canvas-top) 0%, var(--canvas-mid) 60%, var(--canvas-low) 100%);
+            min-height: 100vh;
+            color: var(--ink-strong);
+            letter-spacing: 0.01em;
         }
 
-        #bg-canvas {
-            position: fixed; top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1;
-            display: block;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: 0;
         }
 
-        .content-container { position: relative; z-index: 1; }
-
-        .panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px;
-            border: 1px solid var(--panel-border);
-            box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.05);
-            transition: box-shadow 0.3s ease;
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -10%;
+            pointer-events: none;
+            background:
+                radial-gradient(45% 45% at 20% 20%, rgba(6, 182, 212, 0.25), transparent 65%),
+                radial-gradient(50% 50% at 80% 25%, rgba(217, 70, 239, 0.2), transparent 70%),
+                radial-gradient(48% 48% at 50% 80%, rgba(20, 184, 166, 0.22), transparent 68%);
+            mix-blend-mode: screen;
+            animation: aurora 28s ease-in-out infinite alternate;
+            z-index: 0;
         }
-        .panel:hover { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.07); }
 
-        .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        
-        /* --- At-a-Glance Project View --- */
-        .project-active {
-            border-radius: 20px;
-            overflow: hidden;
+        .panel-surface {
+            background: var(--glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 1.25rem;
+            border: 1px solid var(--glass-ring);
+            padding: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
             position: relative;
-            background-size: cover;
-            background-position: center;
+            overflow: hidden;
+            transition: transform 0.24s ease-out;
+        }
+
+        .panel-surface::after {
+            content: "";
+            position: absolute;
+            inset: -120%;
+            background: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(6, 182, 212, 0.24), transparent 65%);
+            opacity: var(--cursor-opacity, 0);
+            transition: opacity 0.26s ease-out;
+            pointer-events: none;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .panel-surface.is-cursor-active::after {
+            opacity: 1;
+        }
+
+        .panel-surface:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06);
+        }
+
+        .panel-zone {
+            container-type: inline-size;
+        }
+
+        .sticky-label {
+            position: sticky;
+            top: 4.5rem;
+            z-index: 30;
+        }
+
+        .lede {
+            line-height: 1.5;
+            color: var(--ink-muted);
+        }
+
+        .copy-tight {
+            line-height: 1.45;
+            color: var(--ink-soft);
+        }
+
+        .cta-chip {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 9999px;
+            padding-inline: 1rem;
+            padding-block: 0.5rem;
+            font-weight: 600;
+            border: 1px solid rgba(15, 23, 42, 0.16);
+            transition: transform 0.24s ease-out, box-shadow 0.24s ease-out, background 0.24s ease-out;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .cta-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06);
+            border-color: rgba(6, 182, 212, 0.7);
+        }
+
+        .cta-chip::after {
+            content: "";
+            position: absolute;
+            inset: -120%;
+            background: radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(6, 182, 212, 0.18), transparent 65%);
+            opacity: var(--cursor-opacity, 0);
+            transition: opacity 0.2s ease-out;
+            pointer-events: none;
+            mix-blend-mode: lighten;
+        }
+
+        .cta-chip.is-cursor-active::after {
+            opacity: 1;
+        }
+
+        .cta-chip:active {
+            background: rgba(6, 182, 212, 1);
+            color: #fff;
+        }
+
+        .cta-chip:focus-visible {
+            outline: 3px solid var(--cta-focus);
+            outline-offset: 2px;
+        }
+
+        .carousel-wrapper {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .carousel-track {
+            scroll-snap-type: x mandatory;
             display: flex;
-            flex-direction: column;
-            border: 2px solid var(--accent-pink);
-            box-shadow: 0 0 25px -5px var(--accent-pink);
-            padding: 1.5rem;
+            gap: 1.25rem;
+            padding-inline: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+            padding-block: 1rem;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
         }
-        .project-active::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to top, rgba(250, 248, 245, 0.9) 0%, rgba(250, 248, 245, 0.2) 100%);
-            z-index: 1;
-        }
-        .project-active-content {
-            position: relative; z-index: 2;
-        }
-        .project-active-highlights {
-            position: relative; z-index: 2;
-            margin-top: auto;
-            padding-top: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 0.75rem;
-        }
-        .highlight-card {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .highlight-card-value { color: var(--text-dark); font-weight: 700; font-size: 1.5rem; line-height: 1; }
-        .highlight-card-label { color: var(--text-medium); font-size: 0.75rem; line-height: 1.2; margin-top: 0.25rem; }
 
-        .project-thumbnail-list {
-            margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
-        }
-        .project-thumbnail {
-            border-radius: 16px; overflow: hidden; position: relative; height: 100px;
-            background-size: cover; background-position: center; display: flex;
-            align-items: center; padding: 1rem 1.5rem; cursor: pointer;
-            border: 1px solid var(--panel-border); transition: all 0.3s ease;
-        }
-        .project-thumbnail:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-        .project-thumbnail::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(50, 45, 40, 0.7); transition: background 0.3s ease;
-        }
-        .project-thumbnail:hover::before { background: rgba(50, 45, 40, 0.5); }
-        .project-thumbnail-title { position: relative; z-index: 2; font-weight: 600; color: #fff; }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        .carousel-track { scrollbar-width: none; }
 
-        /* Themed Components */
-        .metric-card { background: rgba(0, 0, 0, 0.02); border-radius: 12px; padding: 1.5rem; text-align: center; }
-        .metric-card-value { font-size: 2.5rem; line-height: 1; font-weight: 800; color: var(--accent-pink); }
-        .metric-card-label { font-size: 0.9rem; color: var(--text-medium); }
-        .details-tabs button { color: var(--text-light); border: 1px solid transparent; }
-        .details-tabs button.active { background-color: rgba(0, 0, 0, 0.05); color: var(--text-dark); box-shadow: 0 0 15px -3px rgba(216, 160, 168, 0.4); border-color: rgba(216, 160, 168, 0.3); }
-        .details-tabs { border-color: var(--panel-border); }
-        .stat-card { background: rgba(0,0,0,0.03); border-left: 4px solid var(--accent-pink); padding: 1rem; border-radius: 8px; text-align: center; }
-        .stat-card .stat-number { font-size: 2rem; font-weight: 800; color: var(--accent-pink); line-height: 1;}
-        .stat-card .stat-description { font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-medium); }
-        .testimonial-scroller { -webkit-mask: linear-gradient(90deg, transparent, black 20%, black 80%, transparent); mask: linear-gradient(90deg, transparent, black 20%, black 80%, transparent); }
-        
-        .skills-heading { color: var(--accent-pink-dark); }
-        .tag-badge { background-color: rgba(0,0,0,0.05); color: var(--text-medium); font-weight: 500; border: 1px solid rgba(0,0,0,0.08); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; }
-        
-        .image-placeholder {
-            width: 180px; height: 180px; border-radius: 9999px; background-color: rgba(0,0,0,0.04);
-            border: 2px dashed var(--panel-border); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; margin: 0 auto;
+        .carousel-slide {
+            scroll-snap-align: center;
+            flex: 0 0 88%;
+            min-width: 88%;
+            max-width: 640px;
+            transform: translate3d(0, 0, 0);
         }
-        .image-placeholder-icon { color: var(--text-light); }
-        .image-placeholder-text { font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem; }
 
-        /* General Utilities & Layout Fixes */
-        .main-container { max-width: 1400px; width: min(100%, 1400px); }
-        @media (min-width: 1600px) {
-            .main-container { max-width: 1500px; width: min(100%, 1500px); }
+        @container (min-width: 48rem) {
+            .carousel-slide { flex-basis: 80%; min-width: 80%; }
         }
-        .background-leaf { opacity: 0.25; color: var(--accent-pink-light); }
-        @keyframes pulse { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(5deg); } }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .insight-card { background: rgba(0,0,0,0.03); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--panel-border); }
-        .scroller-inner { display: flex; gap: 1.5rem; width: max-content; animation: scroll 90s linear infinite; }
-        .testimonial-scroller:hover .scroller-inner { animation-play-state: paused; }
-        .testimonial-card { width: 380px; height: 250px; }
-        @keyframes scroll { to { transform: translateX(calc(-50% - 0.75rem)); } }
-        
-        #portfolio-layout { display: flex; flex-direction: column; gap: 2rem; }
-        @media (min-width: 1024px) { #portfolio-layout { flex-direction: row; align-items: flex-start; } }
-        #project-list-container { width: 100%; flex-shrink: 0; }
-        @media (min-width: 1024px) { #project-list-container { flex-basis: 35%; width: auto; } }
-        #project-details-expanded { width: 100%; max-height: 0; opacity: 0; transition: all 0.5s ease-in-out; transform: translateY(50px); padding: 0; }
-        #project-details-expanded.visible { max-height: 3500px; opacity: 1; transform: translateX(0); padding-top: 2rem; }
-        @media (min-width: 1024px) {
-            #project-details-expanded { flex-grow: 1; width: auto; padding-left: 2rem; padding-top: 0; }
-            #project-details-expanded.visible { padding-top: 0; }
+
+        @container (min-width: 72rem) {
+            .carousel-slide { flex-basis: 72%; min-width: 72%; }
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 56px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.28s ease-out, transform 0.32s ease-out;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: translate3d(-2%, -1%, 0) scale(1.02);
+            }
+            50% {
+                transform: translate3d(2%, 1.5%, 0) scale(1.05);
+            }
+            100% {
+                transform: translate3d(-1%, 2%, 0) scale(1.01);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
-<body class="antialiased">
-    <canvas id="bg-canvas"></canvas>
-
-    <div class="content-container">
-        
-        <div class="fixed top-6 left-6 z-50">
-             <h1 class="text-2xl font-bold text-gray-800">Sphoorthy Masa</h1>
-        </div>
-
-        <div class="fixed top-6 right-6 z-50 group">
-             <button aria-label="Open navigation menu" class="panel p-3 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
-            <div class="hidden group-hover:block absolute top-0 right-0 pt-16 w-48">
-                <nav class="panel p-4 rounded-lg flex flex-col space-y-2">
-                    <a href="#portfolio" class="px-4 py-2 text-gray-700 hover:text-pink-500 hover:bg-black/5 rounded-md transition-colors">Portfolio</a>
-                    <a href="#about" class="px-4 py-2 text-gray-700 hover:text-pink-500 hover:bg-black/5 rounded-md transition-colors">About</a>
-                    <a href="#skills" class="px-4 py-2 text-gray-700 hover:text-pink-500 hover:bg-black/5 rounded-md transition-colors">Skills</a>
-                    <a href="#why-me-contact" class="px-4 py-2 text-gray-700 hover:text-pink-500 hover:bg-black/5 rounded-md transition-colors">Contact</a>
-                </nav>
+<body class="antialiased selection:bg-cyan-100">
+    <header class="fixed top-4 inset-x-0 px-4 md:px-6 z-40">
+        <div class="w-full flex items-center justify-between rounded-full bg-white/70 backdrop-blur-md ring-1 ring-black/5 px-4 py-2 shadow-[0_1px_0_rgba(15,23,42,0.06)]">
+            <div class="flex items-center gap-3">
+                <span class="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-400/70 via-white/60 to-purple-300/70 ring-1 ring-black/10 grid place-items-center font-semibold text-slate-800">SM</span>
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.32em] text-slate-600">Research Ops</p>
+                    <p class="text-base font-semibold text-slate-900 leading-tight">Sphoorthy Masa</p>
+                </div>
             </div>
+            <nav class="flex items-center gap-2 text-sm text-slate-700">
+                <a href="#about" class="cta-chip">About</a>
+                <a href="#projects" class="cta-chip">Programs</a>
+                <a href="#skills" class="cta-chip">Stack</a>
+                <a href="#testimonials" class="cta-chip">Signal</a>
+                <a href="#contact" class="cta-chip">Let’s collaborate</a>
+            </nav>
         </div>
+    </header>
 
-        <main class="container mx-auto px-6 py-12 pt-24 relative z-10 main-container">
-            
-            <section id="about" class="py-12 reveal">
-                <div class="panel p-12">
-                    <div class="grid md:grid-cols-3 gap-12 items-center">
-                        <div class="md:col-span-2">
-                            <h3 class="text-3xl font-bold text-gray-800 mb-4">About Me</h3>
-                            <div class="text-lg text-gray-700 space-y-4">
-                                <p>Hello, I'm Sphoorthy, a Senior UX Researcher with over a decade of experience turning ambiguous questions into sharp insights that address both user pain points and business strategy.</p>
-                                <p>Most recently, I led UX Research at Sling TV, where I worked across product areas such as onboarding, content discovery, and interactive experiences. My goal is to help product, design, and engineering teams build experiences people love using.</p>
+    <main class="relative z-10 pt-28 pb-16 px-2 md:px-4 space-y-16 w-screen max-w-none">
+        <section id="hero" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6">
+                <div class="col-span-12">
+                    <div class="panel-surface min-h-[85vh] md:min-h-screen flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
+                        <div class="flex-1 space-y-6">
+                            <p class="text-xs uppercase tracking-[0.38em] text-slate-600">Strategic Research Systems</p>
+                            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">Dense signal. Calm storytelling. Research that unlocks confident launches.</h1>
+                            <p class="lede max-w-[62ch]">I partner with product, design, and engineering to frame the right question, find the clean signal, and translate insight into roadmaps that stick.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="skills-contact.html" class="cta-chip">View capability map</a>
+                                <a href="#projects" class="cta-chip">See impact loops</a>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-slate-600">
+                                <div class="panel-surface p-3">
+                                    <p class="text-2xl font-semibold text-slate-900 leading-tight">60+</p>
+                                    <p class="leading-snug">Mixed-method engagements launched</p>
+                                </div>
+                                <div class="panel-surface p-3">
+                                    <p class="text-2xl font-semibold text-slate-900 leading-tight">5×</p>
+                                    <p class="leading-snug">Average lift in activation when insights land in product</p>
+                                </div>
+                                <div class="panel-surface p-3">
+                                    <p class="text-2xl font-semibold text-slate-900 leading-tight">12 yrs</p>
+                                    <p class="leading-snug">Partnering across enterprise and growth-stage teams</p>
+                                </div>
+                                <div class="panel-surface p-3">
+                                    <p class="text-2xl font-semibold text-slate-900 leading-tight">Global</p>
+                                    <p class="leading-snug">US · EMEA · APAC research coverage</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="md:col-span-1">
-                            <div class="image-placeholder">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 image-placeholder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div class="flex-1 space-y-4">
+                            <div class="panel-surface p-4">
+                                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-600 mb-2">Cadence trend</p>
+                                <svg class="sparkline" viewBox="0 0 320 120" aria-hidden="true">
+                                    <defs>
+                                        <linearGradient id="spark" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.7" />
+                                            <stop offset="50%" stop-color="#14B8A6" stop-opacity="0.9" />
+                                            <stop offset="100%" stop-color="#D946EF" stop-opacity="0.8" />
+                                        </linearGradient>
+                                    </defs>
+                                    <polyline points="12,98 44,90 76,86 108,74 140,68 172,54 204,62 236,44 268,34 300,28" fill="none" stroke="url(#spark)" stroke-width="6" stroke-linecap="round"></polyline>
+                                    <polyline points="12,110 300,110" stroke="#CBD5F5" stroke-width="1" stroke-dasharray="4 8"></polyline>
                                 </svg>
-                                <span class="image-placeholder-text">Your Image Here</span>
+                                <p class="text-xs leading-snug text-slate-500">Median turnaround from brief to actionable readout over the last 10 programs.</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="portfolio" class="py-12 reveal">
-                 <div class="absolute inset-0 z-0 hidden lg:block">
-                     <svg class="background-leaf" width="120" height="120" style="top: 24%; left: 50%;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="50" cy="50" r="20" opacity="0.9"/> <ellipse cx="50" cy="50" rx="34" ry="20" transform="rotate(18 50 50)" opacity="0.7"/> <ellipse cx="50" cy="50" rx="34" ry="20" transform="rotate(-22 50 50)" opacity="0.6"/> <circle cx="70" cy="50" r="2.5" /> <circle cx="38" cy="62" r="2" /> </svg>
-                     <svg class="background-leaf" width="96" height="96" style="top: 36%; left: 65%; animation-delay: 2s; animation-duration: 6s;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"> <polygon points="50,10 80,27 80,63 50,80 20,63 20,27" opacity="0.9"/> <line x1="50" y1="10" x2="50" y2="80" opacity="0.6"/> <line x1="20" y1="27" x2="80" y2="63" opacity="0.6"/> <line x1="80" y1="27" x2="20" y2="63" opacity="0.6"/> </svg>
-                     <svg class="background-leaf" width="108" height="108" style="top: 50%; left: 75%; animation-delay: 4s; animation-duration: 7s;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"> <polygon points="50,8 82,26 82,62 50,80 18,62 18,26" opacity="0.9"/> <polyline points="50,8 50,44 82,62" opacity="0.6"/> <polyline points="50,44 18,62" opacity="0.6"/> </svg>
-                     <svg class="background-leaf" width="130" height="130" style="top: 66%; left: 33%; animation-delay: 1s; animation-duration: 5.5s;" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="24" cy="28" r="3"/> <circle cx="96" cy="30" r="3"/> <circle cx="84" cy="86" r="3"/> <circle cx="32" cy="90" r="3"/> <circle cx="60" cy="58" r="2.5"/> <line x1="24" y1="28" x2="60" y2="58" /> <line x1="96" y1="30" x2="60" y2="58" /> <line x1="32" y1="90" x2="60" y2="58" /> <line x1="84" y1="86" x2="60" y2="58" /> <line x1="24" y1="28" x2="32" y2="90" opacity="0.5"/> <line x1="96" y1="30" x2="84" y2="86" opacity="0.5"/> </svg>
-                </div>
-                <div id="portfolio-layout" class="relative z-10">
-                    <div id="project-list-container">
-                       </div>
-                    <div id="project-details-expanded">
-                        </div>
-                </div>
-            </section>
-            
-            <section id="skills" class="py-12 reveal">
-                <div class="text-center mb-8">
-                    <h3 class="text-4xl font-bold text-gray-800">Skills & Expertise</h3>
-                    <p class="text-lg text-gray-600 mt-2">A comprehensive look at my research methodologies, tools, and frameworks.</p>
-                </div>
-                <div class="flex flex-col md:flex-row gap-8">
-                    <div class="panel p-8 flex-1">
-                        <h4 class="text-2xl font-semibold mb-6 skills-heading">Research Methodologies</h4>
-                        <div class="space-y-6">
-                            <div>
-                                <h5 class="text-lg font-bold text-gray-800 mb-3">Quantitative Methods</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="tag-badge">Surveys</span> <span class="tag-badge">A/B Testing</span> <span class="tag-badge">Competitive Analysis</span> <span class="tag-badge">Data Analysis</span> <span class="tag-badge">First-click Testing</span> <span class="tag-badge">Heat Maps</span>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-lg font-bold text-gray-800 mb-3">Qualitative Methods</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="tag-badge">User Interviews</span> <span class="tag-badge">Usability testing</span> <span class="tag-badge">User Observations</span> <span class="tag-badge">Card Sorting</span> <span class="tag-badge">Contextual Interviews</span> <span class="tag-badge">Focus Groups</span> <span class="tag-badge">Heuristic Evaluation</span> <span class="tag-badge">Journey mapping</span> <span class="tag-badge">Personas</span> <span class="tag-badge">Ethnography</span> <span class="tag-badge">Stakeholder Interviews</span> <span class="tag-badge">Competitor Analysis</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel p-8 flex-1">
-                        <h4 class="text-2xl font-semibold mb-6 skills-heading">Tools, Metrics & Frameworks</h4>
-                        <div class="space-y-6">
-                            <div>
-                                <h5 class="text-lg font-bold text-gray-800 mb-3">Tools & Software</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="tag-badge">UserZoom</span> <span class="tag-badge">UserTesting</span> <span class="tag-badge">Qualtrics</span> <span class="tag-badge">Airtable</span> <span class="tag-badge">Quantum Metric</span> <span class="tag-badge">Figma</span> <span class="tag-badge">Hotjar</span> <span class="tag-badge">Dovetail</span> <span class="tag-badge">Lookback</span>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-lg font-bold text-gray-800 mb-3">UX Metrics</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="tag-badge">System Usability Scale (SUS)</span> <span class="tag-badge">UMUX-Lite</span> <span class="tag-badge">Task Success Rate</span> <span class="tag-badge">Time-on-Task</span> <span class="tag-badge">User Error Rate</span>
-                                </div>
-                            </div>
-                             <div>
-                                <h5 class="text-lg font-bold text-gray-800 mb-3">Process & Frameworks</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="tag-badge">Agile</span> <span class="tag-badge">Dual-track Agile</span> <span class="tag-badge">Jobs To Be Done (JTBD)</span> <span class="tag-badge">Lean UX</span> <span class="tag-badge">Design Thinking</span>
+                            <div class="panel-surface p-4">
+                                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-600 mb-2">Launch health</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="relative h-24 w-24 rounded-full bg-white/70 ring-1 ring-black/10 grid place-items-center">
+                                        <svg viewBox="0 0 120 120" class="h-20 w-20">
+                                            <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="12"></circle>
+                                            <path d="M60 8 A52 52 0 0 1 111 69" fill="none" stroke="#06B6D4" stroke-width="12" stroke-linecap="round"></path>
+                                            <path d="M111 69 A52 52 0 0 1 25 98" fill="none" stroke="#14B8A6" stroke-width="12" stroke-linecap="round"></path>
+                                            <path d="M25 98 A52 52 0 0 1 60 8" fill="none" stroke="#D946EF" stroke-width="12" stroke-linecap="round"></path>
+                                        </svg>
+                                        <span class="absolute text-base font-semibold text-slate-700">88%</span>
+                                    </div>
+                                    <div class="space-y-2 text-sm text-slate-600">
+                                        <p class="leading-snug"><span class="font-semibold text-slate-900">4/5</span> launches shipped on time with integrated narrative decks.</p>
+                                        <p class="leading-snug">Sustained alignment workshops reduced rework cycles by <span class="font-semibold text-slate-900">32%</span>.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="why-me-contact" class="py-12 reveal">
-                <div class="panel p-12 flex flex-col md:flex-row items-center gap-12">
-                    <div class="md:w-1/2 text-left">
-                        <h3 class="text-3xl font-bold text-gray-800 mb-4">Why Me?</h3>
-                        <div class="text-lg text-gray-700 space-y-4 max-w-prose">
-                            <p>Good research doesn't just inform. It transforms how teams think, build, and connect with their users. I focus on turning insights into action and action into impact.</p>
-                            <p class="font-semibold text-2xl mt-6 text-gray-800">User insights shouldn't be boring. And neither should your researcher.</p>
+        <section id="about" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6 items-start">
+                <div class="col-span-12 lg:col-span-3 sticky-label">
+                    <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">About</p>
+                </div>
+                <div class="col-span-12 lg:col-span-9 panel-surface space-y-3">
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Research that keeps momentum while honoring the nuance.</h2>
+                    <p class="copy-tight">I translate ambiguous product questions into clear frames, combine qual + quant evidence, and connect dots fast so teams stay in flow.</p>
+                    <div class="grid sm:grid-cols-2 gap-3 text-sm text-slate-600">
+                        <div class="panel-surface p-3">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Hybrid discovery programs</p>
+                            <p class="leading-snug">Multi-market interviews + telemetry to surface confidence curves and depth of need.</p>
+                        </div>
+                        <div class="panel-surface p-3">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Narrative-first delivery</p>
+                            <p class="leading-snug">Story maps, sprint-ready briefs, and Miro canvases that teams can act on immediately.</p>
+                        </div>
+                        <div class="panel-surface p-3">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Ops + enablement</p>
+                            <p class="leading-snug">Playbooks, recruiting systems, and research repos that scale with product velocity.</p>
+                        </div>
+                        <div class="panel-surface p-3">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Inclusive facilitation</p>
+                            <p class="leading-snug">Bias checks, accessible sessions, and open artifacts to keep every voice in the room.</p>
                         </div>
                     </div>
-                    <div class="md:w-px h-full bg-black/10 md:block hidden"></div>
-                    <div class="md:w-1/2 text-center">
-                        <h3 class="text-4xl font-bold text-gray-800 mb-4">Let's Build Something Meaningful</h3>
-                        <p class="text-lg text-gray-700 mb-8">If you're building a team where research plays a strategic role, I'd love the opportunity to contribute.</p>
-                        <a href="mailto:sphoorthy.masa@example.com" class="inline-block font-bold py-4 px-10 text-lg bg-[#D8A0A8] text-white rounded-lg shadow-lg transition hover:bg-[#C7909A]">Get In Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6 items-start">
+                <div class="col-span-12 lg:col-span-3 sticky-label">
+                    <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">Programs</p>
+                </div>
+                <div class="col-span-12 lg:col-span-9 space-y-6">
+                    <div class="panel-surface space-y-3">
+                        <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Recent research programs</h2>
+                        <p class="copy-tight">Each program pairs measurable product outcomes with lightweight visualizations so decision makers see progress immediately.</p>
+                    </div>
+                    <div class="carousel-wrapper">
+                        <div id="projects-carousel" class="carousel-track" tabindex="0" aria-label="Case studies carousel" data-lazy="projects"></div>
                     </div>
                 </div>
-            </section>
-            
-            <section id="testimonials" class="py-12 reveal">
-                <div class="text-center pb-12"><h3 class="text-4xl font-bold text-gray-800">Testimonials</h3></div>
-                <div id="testimonial-scroller" class="testimonial-scroller"></div>
-            </section>
+            </div>
+        </section>
 
-        </main>
+        <section id="skills" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6 items-start">
+                <div class="col-span-12 lg:col-span-3 sticky-label">
+                    <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">Stack</p>
+                </div>
+                <div class="col-span-12 lg:col-span-9 panel-surface space-y-3">
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Methodologies, tools, and rituals</h2>
+                    <div class="grid sm:grid-cols-2 gap-3 text-sm text-slate-600">
+                        <div class="panel-surface p-3 space-y-2">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Quant &amp; telemetry</p>
+                            <ul class="space-y-2 leading-snug list-disc list-inside">
+                                <li>Experimentation design · A/B · feature flags</li>
+                                <li>Funnel health monitoring (Mixpanel, Amplitude)</li>
+                                <li>Product analytics storytelling for execs</li>
+                            </ul>
+                        </div>
+                        <div class="panel-surface p-3 space-y-2">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Qualitative depth</p>
+                            <ul class="space-y-2 leading-snug list-disc list-inside">
+                                <li>Contextual inquiry · diary studies · co-creation</li>
+                                <li>Usability labs with fast-turn highlight reels</li>
+                                <li>JTBD and opportunity solution trees</li>
+                            </ul>
+                        </div>
+                        <div class="panel-surface p-3 space-y-2">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Ops systems</p>
+                            <ul class="space-y-2 leading-snug list-disc list-inside">
+                                <li>Research CRM + panel health dashboards</li>
+                                <li>Dovetail, Aurelius, Airtable, Notion</li>
+                                <li>Automations for consent + incentives</li>
+                            </ul>
+                        </div>
+                        <div class="panel-surface p-3 space-y-2">
+                            <p class="text-sm font-semibold text-slate-900 leading-tight">Enablement rituals</p>
+                            <ul class="space-y-2 leading-snug list-disc list-inside">
+                                <li>Monthly insight forums and playback pods</li>
+                                <li>Roadmap influence scoring &amp; health checks</li>
+                                <li>Design crit facilitation &amp; playback storytelling</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <footer class="text-center py-6"><p class="text-gray-500">&copy; <span id="copyright-year">2025</span> Sphoorthy Masa. All Rights Reserved.</p></footer>
-    </div>
-    
+        <section id="testimonials" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6 items-start">
+                <div class="col-span-12 lg:col-span-3 sticky-label">
+                    <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">Signal</p>
+                </div>
+                <div class="col-span-12 lg:col-span-9 space-y-6">
+                    <div class="panel-surface space-y-3">
+                        <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Stakeholders on working together</h2>
+                        <p class="copy-tight">Short pulses captured after launches and strategy sprints. Snap to the center slide to read each voice.</p>
+                    </div>
+                    <div class="carousel-wrapper">
+                        <div id="testimonial-carousel" class="carousel-track" tabindex="0" aria-label="Testimonials carousel" data-lazy="testimonials"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="panel-zone reveal">
+            <div class="grid grid-cols-12 gap-x-2 md:gap-x-3 gap-y-6 items-start">
+                <div class="col-span-12 lg:col-span-3 sticky-label">
+                    <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">Contact</p>
+                </div>
+                <div class="col-span-12 lg:col-span-9 panel-surface space-y-4">
+                    <h2 class="text-2xl md:text-3xl font-semibold leading-tight">Bring research into the room earlier.</h2>
+                    <p class="copy-tight">Let’s unblock your roadmap, shape the bet, and make sure insight keeps shipping with design and engineering.</p>
+                    <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                        <a href="mailto:sphoorthy.masa@example.com" class="cta-chip">Email Sphoorthy</a>
+                        <a href="https://www.linkedin.com" class="cta-chip" target="_blank" rel="noopener">LinkedIn</a>
+                        <a href="skills-contact.html" class="cta-chip">Download resume</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="px-4 md:px-6 pb-8 text-xs text-slate-500 leading-snug">
+        <div class="panel-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p>&copy; <span id="copyright-year"></span> Sphoorthy Masa. All rights reserved.</p>
+            <p>Contrast checked for sakura background · Focus visible across interactive elements.</p>
+        </div>
+    </footer>
+
     <script>
-    // --- Data Objects ---
-    const projects = [ { id: 'guide', title: "Reinventing The TV Guide", hook: "A strategic research initiative to unify user experiences across two major platforms.", outcome: "~$7.46M Estimated Annual Impact", images: ["https://images.unsplash.com/photo-1616428784112-2544265780d6?q=80&w=2070&auto=format&fit=crop"], content: { metrics: [ { value: "~$7.46M", label: "Estimated Annual Value Impact" }, { value: "90%", label: "Target Task Success Rate" }, { value: "12%", label: "Reduction in CX Complaints" } ], overview: `<div class="text-left space-y-6"><div><h5 class="font-bold text-gray-800 text-lg">Background</h5><p class="text-gray-700 mt-1">The guide sits at the heart of content discovery, but had evolved in parallel across Sling TV and Dish TV, creating fragmented experiences.</p></div><div><h5 class="font-bold text-gray-800 text-lg">The Challenge</h5><p class="text-gray-700 mt-1">How can we unify the guide experience to enhance usability and personalization without alienating loyal users on two very different platforms?</p></div><div><h5 class="font-bold text-gray-800 text-lg">Key Objectives</h5><ul class="list-disc list-inside pl-4 space-y-2 mt-2 text-gray-700"><li>Identify user frustrations and unmet needs across both platforms.</li><li>Uncover shared pain points to guide a unified design strategy.</li><li>Deliver actionable recommendations that balance user needs and business goals.</li></ul></div></div>`, methodology: `<h4>My Research Process & Tools</h4><div class="methodology-container mt-6"> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">1. Discovery & Planning</h5> <p>Stakeholder Interviews, Data Analysis, and Defining Project Scope.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserZoom</span><span class="tag-badge">Google Analytics</span><span class="tag-badge">JIRA</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">2. Generative Research</h5> <p>In-depth User Interviews to uncover behaviors and motivations.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">User Interviews</span><span class="tag-badge">Lookback</span><span class="tag-badge">Google Meet</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">3. Synthesis & Ideation</h5> <p>Mapping insights and collaborating with design and product teams.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Miro</span><span class="tag-badge">Figma</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">4. Validation & Delivery</h5> <p>Usability Testing and Handoff to Engineering teams.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserTesting.com</span><span class="tag-badge">Figma Prototypes</span><span class="tag-badge">Confluence</span></div> </div> </div>`, analysis: `<h4>Target Audience & Segments</h4><div class="flex flex-col md:flex-row gap-4 mt-4 text-left"><div class="flex-1 p-4 bg-black/5 rounded-lg border border-black/5"><h5 class="font-bold text-gray-800">DISH TV Subscribers (65+)</h5><p class="text-sm text-gray-600">Tolerate outdated UI but struggle with hidden features; often have accessibility needs.</p></div><div class="flex-1 p-4 bg-black/5 rounded-lg border border-black/5"><h5 class="font-bold text-gray-800">Sling TV Subscribers (~35)</h5><p class="text-sm text-gray-600">Tech-savvy, expect fast, intuitive interfaces and quick content access.</p></div></div><h4 class="mt-8">Key Quantitative Insights</h4><div class="grid md:grid-cols-2 gap-4 mt-4 text-gray-700 text-left"><div class="insight-card"><h5>1. High Engagement, Low Conversion</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li><b>Sling TV:</b> 79% engagement &rarr; 56% playback</li><li><b>DISH TV:</b> 86% engagement &rarr; 48% playback</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Strong adoption, but poor discoverability leads to drop-offs.</p></div><div class="insight-card"><h5>2. Underutilized Features</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>73% of sessions used the default "ALL" filter.</li><li>"Favorites" users had a 64% playback rate vs. 55% for others.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Personalization improves engagement but is underused.</p></div><div class="insight-card"><h5>3. High Drop-Offs in Short Sessions</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>44% of Sling guide sessions ended without playback.</li><li>Most of these non-playback sessions lasted &lt;20 seconds.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Users abandon quickly, suggesting poor content surfacing.</p></div><div class="insight-card"><h5>4. Habitual Navigation (DISH)</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>46% of users navigated vertically by habit.</li><li>Only 8% used faster horizontal navigation by time.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Users may not be aware of more efficient navigation options.</p></div></div>`, results: `<p class="text-center text-lg">The research insights directly led to iterative design improvements, validating each solution through rigorous testing to ensure it met user needs and business goals.</p><h4 class="mt-8">Financial Impact</h4><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-gray-700"><div class="stat-card"><div class="stat-number">~$5.83M</div><div class="stat-description">from Increased Retention</div></div><div class="stat-card"><div class="stat-number">~$1.94M</div><div class="stat-description">from Feature Upsells</div></div><div class="stat-card"><div class="stat-number">~$193k</div><div class="stat-description">from Ad Revenue</div></div><div class="stat-card"><div class="stat-number">~$63k</div><div class="stat-description">from Ops Savings</div></div></div>`, media: `<h4>Media Assets</h4><div class="grid grid-cols-2 gap-4 mt-4"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1587440871875-191322ee64b0?q=80&w=1771&auto=format&fit=crop" alt="User Flow Diagram"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1600132806378-439004585258?q=80&w=1770&auto=format&fit=crop" alt="Early Prototypes"></div><p class="mt-4 text-sm text-center text-gray-500">Key visuals, user flows, and prototypes from the project.</p>` } }, { id: 'gundersen', title: "Gundersen Pharmacy", hook: "Streamlining prescription refills by empowering patients and reducing manual work for pharmacy staff.", outcome: "Achieved 12,334+ Active App Users", images: ["https://images.unsplash.com/photo-1588720490792-26f5053ae81e?q=80&w=2070&auto=format&fit=crop"], content: { metrics: [ { value: "12,334+", label: "Active App Users" }, { value: "36%", label: "Refill Volume via App" }, { value: "$702k+", label: "Annual Labor Savings" } ], overview: `<div class="text-left space-y-6"><div><h5 class="font-bold text-gray-800 text-lg">Background</h5><p class="text-gray-700 mt-1">The pharmacy app was designed to simplify and modernize the prescription refill experience. It aimed to reduce the repetitive, manual burden on pharmacists and empower patients with self-service medication management.</p></div><div><h5 class="font-bold text-gray-800 text-lg">Research Goals</h5><ul class="list-disc list-inside pl-4 space-y-2 mt-2 text-gray-700"><li><b>Boost Adoption:</b> Achieve 10,000+ active app users within 6 months.</li><li><b>Drive Prescription Orders:</b> Convert 25% of monthly refills (11,250 orders) through the app.</li><li><b>Automate Communications:</b> Deliver 10,000+ refill reminders & status messages monthly.</li><li><b>Reduce Staff Burden:</b> Decrease pharmacist time spent on refill calls by 50%.</li><li><b>Cost Optimization:</b> Recover up to $1M/year in lost labor time.</li></ul></div></div>`, methodology: `<div class="space-y-6"><p class="text-sm text-gray-700">Our research was a blend of qualitative and quantitative methods to understand both the user experience and the internal workflow challenges.</p><h4 class="font-bold text-gray-800 text-lg mb-2">Manual Workflow </h4><p class="text-sm text-gray-700">The manual process was time-consuming and inefficient. Pharmacists spent an average of 3.5 minutes per refill, totaling over 2,600 hours/month, which translated to significant lost labor time.</p><div class="methodology-container grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div class="methodology-item p-4 bg-black/5 rounded-lg"><h5 style="color:var(--accent-pink-dark);">1. Workflow & Stakeholder Analysis</h5><p>Interviews with pharmacists, RNs, and MAs to map the manual refill process.</p><div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Stakeholder Interviews</span><span class="tag-badge">Process Mapping</span></div></div><div class="methodology-item p-4 bg-black/5 rounded-lg"><h5 style="color:var(--accent-pink-dark);">2. Usability & Heuristic Evaluation</h5><p>Tested the existing app with both patients and staff to identify pain points and opportunities.</p><div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Heuristic Analysis</span><span class="tag-badge">Usability Testing</span></div></div><div class="methodology-item p-4 bg-black/5 rounded-lg"><h5 style="color:var(--accent-pink-dark);">3. Discovery & Synthesis</h5><p>Uncovered a key problem: most patients were unaware the app existed. This shifted our focus from product improvement to a marketing and awareness strategy.</p><div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Patient Interviews</span><span class="tag-badge">Journey Mapping</span></div></div></div></div>`, analysis: `<div class="space-y-8"><div><h4 class="font-bold text-gray-800 text-lg mb-4">Key Insights from Analysis</h4><div class="grid md:grid-cols-2 gap-4 mt-4 text-left"><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Minimalist UI & High Usability</h5><p class="text-sm text-gray-700">The app's core functionality was clear, allowing users to refill prescriptions with ease. <b>Task success rate was 95%.</b></p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Unexpected Awareness Gap</h5><p class="text-sm text-gray-700">A major finding: many patients were simply <b>unaware the app existed.</b> This shifted our focus from product improvement to a marketing and awareness strategy.</p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Low Emotional Engagement</h5><p class="text-sm text-gray-700">A SUS Score of 78 indicated solid usability but highlighted a <b>lack of emotional engagement</b> due to the app's basic visual design.</p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Automated Communications</h5><p class="text-sm text-gray-700">The system lacked features to reduce the repetitive, manual burden on pharmacists and their outbound calls.</p></div></div></div></div>`, results: `<p class="text-center text-lg text-gray-700">Our research led to a strategic awareness campaign that directly addressed the adoption problem and produced significant business impact.</p><h4 class="font-bold text-gray-800 text-lg mt-8">Key Outcomes</h4><div class="overflow-x-auto relative rounded-lg border border-black/10 mt-4"><table class="w-full text-sm text-left text-gray-600"><thead class="text-xs text-gray-800 uppercase bg-black/5"><tr><th scope="col" class="py-3 px-6 text-center">Metric</th><th scope="col" class="py-3 px-6 text-center">Outcome</th><th scope="col" class="py-3 px-6 text-center">Target</th></tr></thead><tbody><tr class="border-b border-black/10"><th scope="row" class="py-4 px-6 font-medium text-gray-800 whitespace-nowrap bg-black/5">Active App Users</th><td class="py-4 px-6 text-center font-bold" style="color: var(--accent-pink);">12,334</td><td class="py-4 px-6 text-center">10,000+</td></tr><tr class="border-b border-black/10"><th scope="row" class="py-4 px-6 font-medium text-gray-800 whitespace-nowrap bg-black/5">Monthly Refills via App</th><td class="py-4 px-6 text-center font-bold" style="color: var(--accent-pink);">16,476</td><td class="py-4 px-6 text-center">11,250</td></tr><tr><th scope="row" class="py-4 px-6 font-medium text-gray-800 whitespace-nowrap bg-black/5">Annual Labor Savings</th><td class="py-4 px-6 text-center font-bold" style="color: var(--accent-pink);">$702,000+</td><td class="py-4 px-6 text-center">$1M</td></tr></tbody></table></div><p class="text-center text-lg mt-8 text-gray-700">By shifting our focus from product development to an awareness campaign, the app's adoption skyrocketed, resulting in significant cost savings and improved patient satisfaction.</p>`, media: `<h4 class="mt-4">Campaign Materials</h4><div class="grid grid-cols-2 gap-4 mt-4"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1557852643-41394a110599?q=80&w=1770&auto=format&fit=crop" alt="Person using a phone for healthcare"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1618225249899-604a5119b78a?q=80&w=1964&auto=format&fit=crop" alt="Mobile application screenshots"></div>` } }, { id: 'live-rooms', title: "Validating 'Live Rooms'", hook: "A concept for social TV viewing to make live content more engaging. But would people use it?", outcome: "Guided 'Go/No-Go' Decision", images: ["https://images.unsplash.com/photo-1549419143-41c6f39d2c20?q=80&w=2070&auto=format&fit=crop"], content: { metrics: [ { value: "87%", label: "Liked interactive features" }, { value: "76%", label: "Preferred second-screen" }, { value: "56%", label: "Liked emoji reactions" }, { value: "41%", label: "Liked quizzes" } ], overview: `<div class="text-left text-sm space-y-6"><div><h5 class="font-bold text-gray-800 text-lg">Background</h5><p class="text-gray-700 mt-1">Live Rooms is a conceptual feature aimed at enhancing real-time TV viewing with interactive social experiences. The idea is to allow users to chat, react with emojis, and participate in live trivia while watching their favorite shows or sport.</p></div><div><h5 class="font-bold text-gray-800 text-lg">Research Goals</h5><ul class="list-disc list-inside pl-4 space-y-2 mt-2 text-gray-700"><li><b>Evaluate whether the Live Rooms concept resonates with users.</b></li><li><b>Understand if real-time interaction can increase emotional investment.</b></li><li><b>Ensure these interactions do not disrupt the core viewing experience.</b></li><li><b>Explore adoption across different platforms (TV vs. mobile).</b></li></ul></div></div>`, methodology: `<h4>My Research Process & Tools</h4> <div class="methodology-container mt-6 grid grid-cols-1 md:grid-cols-2 gap-4"> <div class="methodology-item p-4 bg-black/5 rounded-lg"> <h5 style="color:var(--accent-pink-dark);">1. Concept Testing</h5> <p>Used prototypes to test the concept with a mix of 8 users with and without experience in interactive streaming.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">User Interviews</span><span class="tag-badge">UserZoom</span><span class="tag-badge">Invision</span></div> </div> <div class="methodology-item p-4 bg-black/5 rounded-lg"> <h5 style="color:var(--accent-pink-dark);">2. Live Product Testing</h5> <p>Ran two live tests (NBA game & Reality TV) with a total of 114 participants to gather real-world feedback.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">LiveLike</span><span class="tag-badge">UserZoom</span></div> </div></div>`, analysis: `<h4 class="mt-4">Key Insights</h4><div class="grid md:grid-cols-2 gap-4 mt-4 text-left"><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Control is Key</h5><p class="text-sm text-gray-700"><b>87%</b> of users liked interactive features but wanted control, like turning chat on/off.</p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Second-Screen Experience</h5><p class="text-sm text-gray-700"><b>76%</b> preferred using their phone to interact while watching on a larger TV screen.</p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Positive Feedback on Interactivity</h5><p class="text-sm text-gray-700">Emoji reactions (<b>56%</b>) and quizzes (<b>41%</b>) boosted engagement and made the experience more fun.</p></div><div class="insight-card p-4"><h5 class="font-bold text-gray-800 mb-2">Content-Specific Behavior</h5><p class="text-sm text-gray-700">Sports fans preferred fast-paced chat, while reality TV fans engaged more with polls and quizzes related to the show.</p></div></div>`, results: `<div class="space-y-8"><p class="text-center text-lg text-gray-700">The Live Rooms concept was a clear win with high user engagement. The experience proved that interactive features can meaningfully enhance live TV viewing.</p><h4 class="font-bold text-gray-800 text-lg mt-8">Business Impact</h4><div class="grid md:grid-cols-3 gap-4 mt-4 text-gray-700 text-sm"><div class="panel p-4"><h5 class="font-bold text-gray-800 text-base mb-2 text-center">Jersey Shore Family Vacation</h5><ul class="list-none space-y-1.5"><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Unique Viewers:</span><span class="text-gray-800 font-semibold">13,668</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">View Time (Hrs):</span><span class="text-gray-800 font-semibold">43,017</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Hrs per User:</span><span class="text-gray-800 font-semibold">3.1</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Impact:</span><span class="text-gray-800 font-semibold">1,822,664,704</span></li></ul></div><div class="panel p-4"><h5 class="font-bold text-gray-800 text-base mb-2 text-center">BET Awards</h5><ul class="list-none space-y-1.5"><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Unique Viewers:</span><span class="text-gray-800 font-semibold">14,889</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">View Time (Hrs):</span><span class="text-gray-800 font-semibold">33,054</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Hrs per User:</span><span class="text-gray-800 font-semibold">2.2</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Impact:</span><span class="text-gray-800 font-semibold">1,082,710,213</span></li></ul></div><div class="panel p-4"><h5 class="font-bold text-gray-800 text-base mb-2 text-center">The Chi</h5><ul class="list-none space-y-1.5"><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Unique Viewers:</span><span class="text-gray-800 font-semibold">12,097</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">View Time (Hrs):</span><span class="text-gray-800 font-semibold">38,207</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Hrs per User:</span><span class="text-gray-800 font-semibold">3.2</span></li><li class="flex justify-between items-center"><span class="font-medium text-gray-500">Impact:</span><span class="text-gray-800 font-semibold">1,479,008,253</span></li></ul></div></div><p class="text-center text-lg mt-8 text-gray-700">The test set a solid foundation for future innovation. The user enthusiasm and clear engagement signals remain strong indicators of potential, positioning Sling to lead in redefining the live viewing experience when the time is right.</p></div>`, media: `<h4 class="mt-4">Concept Visuals</h4><div class="grid grid-cols-2 gap-4 mt-4"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop" alt="Streaming application logos"><img class="rounded-lg w-full h-full object-cover" src="https://images.unsplash.com/photo-1516245834210-c4c1427873ab?q=80&w=1770&auto=format&fit=crop" alt="Sports match on a screen"></div>` } } ];
-    const testimonials = [ { quote: "I had the privilege of working with Sphoorthy... She helped us gain tremendous consumer insights and improved the velocity and prioritization of our product development roadmap.", author: "Gary S.", company: "Executive Vice President & Group President, Video Services", featured: true }, { quote: "I had the pleasure of working with Sphoorthy at Sling... Her research was always thorough, actionable, and aligned with both user needs and business goals.", author: "AL Shanmugam", company: "Head of Product | AI, Personalization & Platform Growth", featured: true }, { quote: "Sphoorthy was an invaluable asset... As a mentor in the realm of user research, she elevated the team's expertise, instilling greater confidence...", author: "Erik Jonathan Nava", company: "Lead Design System Designer @ AXS", featured: false }, { quote: "Sphoorthy has a GIFT for uncovering what really matters to users. Her research is sharp, actionable, and always grounded in empathy.", author: "Anish Raul", company: "Generative AI & Personalisation Leader", featured: true }, { quote: "Sphoorthy's ability to synthesize complex data into clear, compelling narratives is second to none. Her work was instrumental in shaping our product vision.", author: "Emily K.", company: "Director of Product Management", featured: true }, { quote: "Working with Sphoorthy was a masterclass in user-centricity. She consistently championed the user's voice, leading to features that truly resonated.", author: "Michael B.", company: "Senior Product Designer", featured: false }, { quote: "Sphoorthy is a rare talent who can bridge the gap between user research and business strategy. Her insights are actionable and have a direct impact on our bottom line.", author: "David L.", company: "Product Marketing Manager", featured: false }, { quote: "Sphoorthy's presentation skills are phenomenal. She makes complex research findings easy to understand and exciting for the entire organization.", author: "Jessica M.", company: "Head of Marketing", featured: true } ];
+        const projects = [
+            {
+                title: 'OTT Onboarding Conversion',
+                summary: 'Rebuilt activation flow with JTBD-led scorecards and lifecycle experiments.',
+                outcome: 'Activation lift',
+                outcomeValue: '+18%',
+                description: 'Partnered with design and lifecycle PMs to fuse qualitative interviews with funnel telemetry, aligning messaging to readiness moments.',
+                highlights: ['20 in-home interviews', '3 rapid AB tests', '90d retention up 11%'],
+                image: 'https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1200&q=80'
+            },
+            {
+                title: 'Global Sports Discovery',
+                summary: 'Multi-market mixed-method study shaping personalization for live sports.',
+                outcome: 'Engagement increase',
+                outcomeValue: '+24%',
+                description: 'Mapped key decision moments across APAC, EMEA, and US to inform recommendation engine weights and editorial strategy.',
+                highlights: ['7 markets', 'Segmentation refresh', 'Personalization NPS +14'],
+                image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80'
+            },
+            {
+                title: 'Interactive Ad Formats',
+                summary: 'Rapid concept sprints validating new commerce overlays for streaming.',
+                outcome: 'Revenue potential',
+                outcomeValue: '$32M',
+                description: 'Co-led research with ad innovation to quantify viewer tolerance, co-design safe interaction states, and build the business case.',
+                highlights: ['4x weekly sprints', 'Concept desirability 4.6/5', 'Latency tolerance spec'],
+                image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80'
+            }
+        ];
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- WebGL Particle Field ---
-        const canvas = document.getElementById('bg-canvas');
-        let scene, camera, renderer, particles;
-        let mousePosition = new THREE.Vector2(0.5, 0.5);
-        let time = 0;
-        const vertexShader = ` uniform float uTime; uniform float uHue; uniform vec2 uMouse; uniform float uScreenWidth; attribute float aRandom; attribute float aSize; attribute float aPhase; varying vec3 vColor;
-            void main() {
-                vec3 p = position; p.x += sin(uTime*0.5*aRandom)*0.5; p.y += cos(uTime*0.5*aRandom)*0.5; p.x += sin(uTime*0.1+aPhase)*0.05; p.y += cos(uTime*0.1+aPhase)*0.05;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-                vec2 screenPos = gl_Position.xy / gl_Position.w;
-                float dist = distance(screenPos, uMouse);
-                float brightnessFactor = smoothstep(0.4, 0.0, dist);
-                float hue = uHue; float saturation = 0.7 + brightnessFactor * 0.3; float lightness = 0.65;
-                vec3 rgb;
-                if (saturation == 0.0) { rgb = vec3(lightness); } else {
-                    float q = lightness < 0.5 ? lightness * (1.0 + saturation) : lightness + saturation - lightness * saturation;
-                    float p = 2.0 * lightness - q;
-                    vec3 t = vec3(hue + 1.0/3.0, hue, hue - 1.0/3.0);
-                    t.x = fract(t.x); t.y = fract(t.y); t.z = fract(t.z);
-                    rgb.x = t.x < 1.0/6.0 ? p + (q - p) * 6.0 * t.x : (t.x < 1.0/2.0 ? q : (t.x < 2.0/3.0 ? p + (q - p) * (2.0/3.0 - t.x) * 6.0 : p));
-                    rgb.y = t.y < 1.0/6.0 ? p + (q - p) * 6.0 * t.y : (t.y < 1.0/2.0 ? q : (t.y < 2.0/3.0 ? p + (q - p) * (2.0/3.0 - t.y) * 6.0 : p));
-                    rgb.z = t.z < 1.0/6.0 ? p + (q - p) * 6.0 * t.z : (t.z < 1.0/2.0 ? q : (t.z < 2.0/3.0 ? p + (q - p) * (2.0/3.0 - t.z) * 6.0 : p));
+        const testimonials = [
+            {
+                quote: 'Sphoorthy rebuilt how our teams think about research. We now ship insights with the roadmap, not after it.',
+                author: 'Priya S., VP Product',
+                company: 'Streaming Media Platform'
+            },
+            {
+                quote: 'She met every leader where they were and translated data into momentum. Teams still reference those playbacks.',
+                author: 'Jordan T., Director of Design',
+                company: 'Global Sports Network'
+            },
+            {
+                quote: 'Workshops were surgical—every activity linked to an artifact the squad could own the next day.',
+                author: 'Miguel R., Principal PM',
+                company: 'Connected TV Startup'
+            },
+            {
+                quote: 'The operational rigor she brought means we now have a living research system supporting three product areas.',
+                author: 'Alicia K., Research Ops Lead',
+                company: 'SaaS Collaboration Suite'
+            }
+        ];
+
+        const prefetchedImages = new Set();
+
+        const lazySections = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const target = entry.target;
+                if (target.dataset.lazy === 'projects') {
+                    renderProjects();
                 }
-                vColor = rgb;
-                gl_PointSize = (aSize * 2.0) * (1.0 + brightnessFactor * 3.0) * (uScreenWidth / 1920.0) * (1.0 / -gl_Position.z);
-            }`;
-        const fragmentShader = ` varying vec3 vColor; void main() { vec2 cxy = 2.0 * gl_PointCoord - 1.0; float r = dot(cxy, cxy); float delta = fwidth(r); float alpha = 1.0 - smoothstep(1.0, 1.0 + delta, r); gl_FragColor = vec4(vColor, alpha * 0.9); }`;
-        function initParticles() { scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); camera.position.z = 50; renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(window.devicePixelRatio); const numParticles = 10000; const positions = new Float32Array(numParticles*3), randoms=new Float32Array(numParticles), sizes=new Float32Array(numParticles), phases=new Float32Array(numParticles); for(let i=0;i<numParticles;i++){ positions[i*3]=(Math.random()-.5)*100; positions[i*3+1]=(Math.random()-.5)*100; positions[i*3+2]=(Math.random()-.5)*100; randoms[i]=Math.random(); sizes[i]=Math.random()*1.5+1; phases[i]=Math.random()*Math.PI*2; } const geometry=new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.BufferAttribute(positions,3)); geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms,1)); geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes,1)); geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases,1)); const material=new THREE.ShaderMaterial({uniforms:{uTime:{value:0}, uHue:{value:0}, uMouse:{value:mousePosition}, uScreenWidth:{value:window.innerWidth}}, vertexShader, fragmentShader, transparent:true}); particles = new THREE.Points(geometry, material); scene.add(particles); animateParticles(); }
-        function animateParticles() { requestAnimationFrame(animateParticles); time += 0.005; particles.material.uniforms.uTime.value = time; particles.material.uniforms.uHue.value = 0.94 + (Math.sin(time*0.2)*0.04); renderer.render(scene, camera); }
-        function onWindowResize() { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); particles.material.uniforms.uScreenWidth.value = window.innerWidth; }
-        function onMouseMove(event) { mousePosition.x = (event.clientX/window.innerWidth)*2-1; mousePosition.y = -(event.clientY/window.innerHeight)*2+1; }
-        window.addEventListener('resize', onWindowResize, false);
-        window.addEventListener('mousemove', onMouseMove, false);
-        initParticles();
+                if (target.dataset.lazy === 'testimonials') {
+                    renderTestimonials();
+                }
+                observer.unobserve(target);
+            });
+        }, { rootMargin: '0px 0px -15%' });
 
-        // --- General Page Logic ---
-        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-        
-        // --- Reworked Portfolio Logic ---
-        const projectListContainer = document.getElementById('project-list-container');
-        const projectDetailsContainer = document.getElementById('project-details-expanded');
-        let activeProjectId = projects[0].id;
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
 
-        function renderProjectDetails(project) {
-             if (!project || !project.content) { projectDetailsContainer.innerHTML = ''; return; }
-             const detailsPanel = document.createElement('div');
-             detailsPanel.className = 'project-details-content panel p-8 text-left';
-             detailsPanel.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">${project.content.metrics.map(metric => `<div class="metric-card"><div class="metric-card-value">${metric.value}</div><div class="metric-card-label">${metric.label}</div></div>`).join('')}</div><div class="details-tabs flex flex-wrap items-center gap-2 border-b mb-6 pb-4">${['overview', 'methodology', 'analysis', 'results', 'media'].map((tab, i) => `<button data-tab="${tab}" class="${i === 0 ? 'active' : ''} py-2 px-4 text-sm font-semibold rounded-md">${tab.charAt(0).toUpperCase() + tab.slice(1)}</button>`).join('')}</div>${Object.entries(project.content).map(([key, value]) => `<div class="tab-content text-gray-700 ${key === 'metrics' ? 'hidden' : (key === 'overview' ? 'active' : '')}" data-tab-content="${key}">${value}</div>`).join('')}`;
-             projectDetailsContainer.innerHTML = '';
-             projectDetailsContainer.appendChild(detailsPanel);
+        document.querySelectorAll('.reveal').forEach((section) => revealObserver.observe(section));
+
+        document.querySelectorAll('[data-lazy]').forEach((section) => lazySections.observe(section));
+
+        function renderProjects() {
+            const container = document.getElementById('projects-carousel');
+            if (!container || container.dataset.loaded === 'true') return;
+            container.dataset.loaded = 'true';
+            projects.forEach(project => {
+                const slide = document.createElement('article');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = `
+                    <div class="panel-surface h-full flex flex-col gap-3">
+                        <div class="h-36 rounded-2xl overflow-hidden ring-1 ring-black/10 bg-slate-200">
+                            <img src="${project.image}" alt="${project.title}" loading="lazy" class="h-full w-full object-cover" />
+                        </div>
+                        <div class="flex items-center justify-between text-xs uppercase tracking-[0.24em] text-slate-500">
+                            <span>${project.outcome}</span>
+                            <span class="text-sm font-semibold text-slate-900 tracking-normal">${project.outcomeValue}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold leading-tight">${project.title}</h3>
+                        <p class="copy-tight text-sm">${project.summary}</p>
+                        <p class="text-sm text-slate-600 leading-snug">${project.description}</p>
+                        <ul class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-600">
+                            ${project.highlights.map(item => `<li class="panel-surface p-2 leading-snug font-medium">${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                container.appendChild(slide);
+                const media = slide.querySelector('img');
+                media.addEventListener('mouseenter', () => prefetchImage(project.image));
+                slide.addEventListener('focusin', () => prefetchImage(project.image));
+            });
         }
 
-        function renderProjectList() {
-            const activeProject = projects.find(p => p.id === activeProjectId);
-            const thumbnailProjects = projects.filter(p => p.id !== activeProjectId);
-
-            let highlightsHtml = activeProject.content.metrics.map(metric => `
-                <div class="highlight-card">
-                    <div class="highlight-card-value">${metric.value}</div>
-                    <div class="highlight-card-label">${metric.label}</div>
-                </div>
-            `).join('');
-
-            let activeHtml = `
-                <div class="project-active" style="background-image: url(${activeProject.images[0]})">
-                    <div class="project-active-content">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${activeProject.title}</h3>
-                        <p class="text-gray-700 text-sm mb-3">${activeProject.hook}</p>
-                        <p class="font-bold text-base" style="color:var(--accent-pink-dark);">${activeProject.outcome}</p>
+        function renderTestimonials() {
+            const container = document.getElementById('testimonial-carousel');
+            if (!container || container.dataset.loaded === 'true') return;
+            container.dataset.loaded = 'true';
+            testimonials.forEach(testimonial => {
+                const slide = document.createElement('article');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = `
+                    <div class="panel-surface h-full flex flex-col justify-between gap-3">
+                        <p class="text-lg font-medium leading-tight text-slate-900">“${testimonial.quote}”</p>
+                        <div class="text-sm text-slate-600 leading-snug">
+                            <p class="font-semibold text-slate-900">${testimonial.author}</p>
+                            <p>${testimonial.company}</p>
+                        </div>
                     </div>
-                    <div class="project-active-highlights">
-                        ${highlightsHtml}
-                    </div>
-                </div>`;
-            
-            let thumbnailsHtml = thumbnailProjects.map(p => `
-                <div class="project-thumbnail" data-project-id="${p.id}" tabindex="0">
-                    <div style="background-image: url(${p.images[0]})" class="absolute inset-0 bg-cover bg-center"></div>
-                    <h4 class="project-thumbnail-title">${p.title}</h4>
-                </div>`).join('');
-
-            projectListContainer.innerHTML = `${activeHtml}<div class="project-thumbnail-list">${thumbnailsHtml}</div>`;
+                `;
+                container.appendChild(slide);
+            });
         }
-        
-        function handleProjectClick(e) {
-            const thumbnail = e.target.closest('.project-thumbnail');
-            if (!thumbnail) return;
-            
-            const newId = thumbnail.dataset.projectId;
-            if (newId !== activeProjectId) {
-                activeProjectId = newId;
-                renderProjectList();
-                const newActiveProject = projects.find(p => p.id === activeProjectId);
-                renderProjectDetails(newActiveProject);
-                projectDetailsContainer.classList.add('visible');
+
+        function prefetchImage(src) {
+            if (!src || prefetchedImages.has(src)) return;
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = src;
+            document.head.appendChild(link);
+            prefetchedImages.add(src);
+        }
+
+        function handleCarouselKeys(event) {
+            const track = event.currentTarget;
+            const key = event.key;
+            if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(key)) return;
+            event.preventDefault();
+            const scrollWidth = track.scrollWidth - track.clientWidth;
+            if (key === 'ArrowRight') {
+                track.scrollBy({ left: track.clientWidth * 0.8, behavior: 'smooth' });
+            }
+            if (key === 'ArrowLeft') {
+                track.scrollBy({ left: -track.clientWidth * 0.8, behavior: 'smooth' });
+            }
+            if (key === 'Home') {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            }
+            if (key === 'End') {
+                track.scrollTo({ left: scrollWidth, behavior: 'smooth' });
             }
         }
-        
-        projectListContainer.addEventListener('click', handleProjectClick);
-        projectListContainer.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                handleProjectClick(e);
-            }
+
+        document.querySelectorAll('.carousel-track').forEach(track => {
+            track.addEventListener('keydown', handleCarouselKeys);
         });
 
-        projectDetailsContainer.addEventListener('click', (e) => {
-            if (e.target.matches('.details-tabs button')) {
-                const tabId = e.target.dataset.tab;
-                const container = e.target.closest('.project-details-content');
-                container.querySelectorAll('.details-tabs button').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                container.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.toggle('active', content.dataset.tabContent === tabId);
-                });
-            }
-        });
+        const finePointer = window.matchMedia('(pointer: fine)');
+        if (finePointer.matches) {
+            const cursorReactive = document.querySelectorAll('.panel-surface, .cta-chip');
+            const updateCursor = (event) => {
+                const target = event.currentTarget;
+                const rect = target.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 100;
+                const y = ((event.clientY - rect.top) / rect.height) * 100;
+                target.style.setProperty('--cursor-x', `${x}%`);
+                target.style.setProperty('--cursor-y', `${y}%`);
+                target.style.setProperty('--cursor-opacity', '1');
+                target.classList.add('is-cursor-active');
+            };
 
-        function createTestimonialScroller() {
-            const scroller = document.getElementById('testimonial-scroller');
-            if (!scroller) return;
-            scroller.innerHTML = '';
-            const scrollerInner = document.createElement('div');
-            scrollerInner.className = 'scroller-inner';
-            const testimonialContent = testimonials.map(t => {
-                let featuredBadge = t.featured ? `<span class="absolute top-4 right-4 bg-[#D8A0A8] text-white text-xs font-bold px-3 py-1 rounded-full">Leadership</span>` : '';
-                return `<div class="testimonial-card panel p-6 flex flex-col justify-center relative text-center h-full">${featuredBadge}<p class="text-base italic text-gray-700">"${t.quote}"</p><p class="font-semibold not-italic text-gray-800 mt-4">- ${t.author}</p><p class="text-sm text-gray-500">${t.company}</p></div>`;
-            }).join('');
-            scrollerInner.innerHTML = testimonialContent + testimonialContent;
-            scroller.appendChild(scrollerInner);
+            const resetCursor = (event) => {
+                const target = event.currentTarget;
+                target.style.setProperty('--cursor-opacity', '0');
+                target.classList.remove('is-cursor-active');
+            };
+
+            cursorReactive.forEach((element) => {
+                element.addEventListener('pointermove', updateCursor);
+                element.addEventListener('pointerleave', resetCursor);
+            });
         }
 
-        function initPage() {
-            renderProjectList();
-            const initialProject = projects.find(p => p.id === activeProjectId);
-            renderProjectDetails(initialProject);
-            projectDetailsContainer.classList.add('visible');
-            createTestimonialScroller();
-            document.getElementById('copyright-year').textContent = new Date().getFullYear();
-        }
-
-        initPage();
-    });
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
