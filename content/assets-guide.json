@@ -1,4 +1,35 @@
 {
+  "hero": [
+    {
+      "sectionId": "hero",
+      "id": "guide-hero-01",
+      "src": "/public/images/guide/guide-01.png",
+      "alt": "Research slide highlighting opportunity areas in a midnight-blue palette.",
+      "width": 1206,
+      "height": 658,
+      "priority": true,
+      "caption": "Mapping the opportunity landscape across Sling and DISH viewers."
+    },
+    {
+      "sectionId": "hero",
+      "id": "guide-hero-02",
+      "src": "/public/images/guide/guide-05.png",
+      "alt": "Light research slide summarizing roadmap recommendations across horizontal bands.",
+      "width": 2437,
+      "height": 1144,
+      "priority": true,
+      "caption": "Evidence-backed roadmap themes ready for handoff."
+    },
+    {
+      "sectionId": "hero",
+      "id": "guide-hero-03",
+      "src": "/public/images/guide/gr-02.png",
+      "alt": "Results slide comparing key experience metrics with teal highlights.",
+      "width": 2422,
+      "height": 807,
+      "caption": "Quantified gains from the unified guide rollout."
+    }
+  ],
   "research": [
     {
       "sectionId": "research",

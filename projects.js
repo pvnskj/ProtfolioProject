@@ -1055,6 +1055,50 @@ function resolveAssetSource(entrySrc, manifestPath) {
   }
 }
 
+function normalizeManifestEntry(entry, index, fallbackSection = 'misc') {
+  if (!entry || typeof entry !== 'object') {
+    return null;
+  }
+  const normalized = { ...entry };
+  if (!normalized.sectionId) {
+    normalized.sectionId = fallbackSection;
+  }
+  if (!normalized.id) {
+    const section = normalized.sectionId || fallbackSection || 'entry';
+    normalized.id = `${section}-${index + 1}`;
+  }
+  return normalized;
+}
+
+function normalizeProjectManifest(manifest) {
+  if (!manifest || typeof manifest !== 'object') {
+    return { entries: [] };
+  }
+
+  const explicitEntries = Array.isArray(manifest.entries)
+    ? manifest.entries
+        .map((entry, index) => normalizeManifestEntry(entry, index, entry?.sectionId || 'misc'))
+        .filter(Boolean)
+    : [];
+
+  if (explicitEntries.length) {
+    return { ...manifest, entries: explicitEntries };
+  }
+
+  const derivedEntries = [];
+  Object.entries(manifest).forEach(([section, value]) => {
+    if (!Array.isArray(value)) return;
+    value.forEach((entry, index) => {
+      const normalized = normalizeManifestEntry(entry, index, section);
+      if (normalized) {
+        derivedEntries.push(normalized);
+      }
+    });
+  });
+
+  return { ...manifest, entries: derivedEntries };
+}
+
 async function loadProjectAssets(project) {
   if (!project || !project.assetsPath) return null;
   if (projectAssetCache.has(project.assetsPath)) {
@@ -1067,6 +1111,7 @@ async function loadProjectAssets(project) {
       }
       return response.json();
     })
+    .then((data) => normalizeProjectManifest(data))
     .catch((error) => {
       console.error('[portfolio] Failed to fetch project assets', error);
       projectAssetCache.delete(project.assetsPath);
@@ -1364,6 +1409,54 @@ async function renderProjectDetails(project, container) {
            </div>`).join('')}
       </div>
   ` : '';
+
+  const heroMediaHtml = (() => {
+    const media = project.hero?.media;
+    if (!media) return '';
+
+    if (media.html) {
+      return media.html;
+    }
+
+    const widthAttr = media.width ? ` width="${media.width}"` : '';
+    const heightAttr = media.height ? ` height="${media.height}"` : '';
+
+    if (media.type === 'video') {
+      const autoplay = media.autoplay ? ' autoplay' : '';
+      const loop = media.loop ? ' loop' : '';
+      const muted = media.muted !== false ? ' muted' : '';
+      const playsInline = media.playsInline === false ? '' : ' playsinline';
+      const posterAttr = media.poster ? ` poster="${media.poster}"` : '';
+      const controls = media.controls ? ' controls' : '';
+      const sources = Array.isArray(media.sources) ? media.sources.map((source) => {
+        if (!source || typeof source !== 'object') return '';
+        const type = source.type ? ` type="${source.type}"` : '';
+        return `<source src="${source.src || ''}"${type}>`;
+      }).join('') : '';
+      return `<video${widthAttr}${heightAttr}${autoplay}${loop}${muted}${playsInline}${posterAttr}${controls}>
+        ${sources || ''}
+        ${media.src ? `<source src="${media.src}"${media.mime ? ` type="${media.mime}"` : ''}>` : ''}
+      </video>`;
+    }
+
+    if (media.type === 'iframe') {
+      const titleAttr = media.title ? ` title="${media.title}"` : '';
+      const allow = media.allow ? ` allow="${media.allow}"` : '';
+      const loadingAttr = media.loading ? ` loading="${media.loading}"` : ' loading="lazy"';
+      const frameBorderAttr = media.frameborder != null ? ` frameborder="${media.frameborder}"` : '';
+      const allowFullscreenAttr = media.allowfullscreen ? ' allowfullscreen' : '';
+      return `<iframe src="${media.src || ''}"${titleAttr}${widthAttr}${heightAttr}${allow}${loadingAttr}${frameBorderAttr}${allowFullscreenAttr}></iframe>`;
+    }
+
+    const altText = typeof media.alt === 'string' ? media.alt : '';
+    const safeAlt = altText
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/"/g, '&quot;');
+    const decodingAttr = media.decoding ? ` decoding="${media.decoding}"` : ' decoding="async"';
+    const loadingAttr = media.loading ? ` loading="${media.loading}"` : ' loading="lazy"';
+    return `<img src="${media.src || ''}" alt="${safeAlt}"${widthAttr}${heightAttr}${decodingAttr}${loadingAttr}>`;
+  })();
 
   const heroBullets = (project.hero?.bullets || []).map(b => {
     if (typeof b === 'string') {
