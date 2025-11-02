@@ -1,0 +1,174 @@
+{
+  "entries": [
+    {
+      "id": "guide-hero-01",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2001.png",
+      "alt": "TV guide concept showing a streamlined hero banner and content rows",
+      "width": 1206,
+      "height": 658,
+      "caption": "North-star hero layout that blends promotional space with quick entry points."
+    },
+    {
+      "id": "guide-hero-02",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2002.png",
+      "alt": "Navigation concept highlighting simplified top-level filters",
+      "width": 1285,
+      "height": 576,
+      "caption": "Unified navigation language creates parity across Sling and DISH surfaces."
+    },
+    {
+      "id": "guide-hero-03",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2003.png",
+      "alt": "Channel grid wireframe illustrating tuned information density",
+      "width": 2232,
+      "height": 1291,
+      "caption": "Rebalanced grid hierarchy elevates critical metadata while preserving familiarity."
+    },
+    {
+      "id": "guide-hero-04",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2004.png",
+      "alt": "Prototype showcasing a contextual program details drawer",
+      "width": 2076,
+      "height": 1203,
+      "caption": "Contextual drawers unlock deeper detail without forcing a full view change."
+    },
+    {
+      "id": "guide-hero-05",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2005.png",
+      "alt": "Comparison of legacy and proposed personalization tiles",
+      "width": 2437,
+      "height": 1144,
+      "caption": "Personalized tiles ladder to recommendations proven to reduce bounce."
+    },
+    {
+      "id": "guide-hero-06",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2006.png",
+      "alt": "Mobile guide exploration emphasizing quick filters",
+      "width": 2410,
+      "height": 1122,
+      "caption": "Mobile-first explorations reinforce parity with the living-room experience."
+    },
+    {
+      "id": "guide-hero-07",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2007.png",
+      "alt": "Animation storyboard summarizing transition states",
+      "width": 2428,
+      "height": 1159,
+      "caption": "Transition guidelines preserve context when users pivot between guide states."
+    },
+    {
+      "id": "guide-hero-08",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2008.png",
+      "alt": "Accessibility adjustments highlighting typography and contrast",
+      "width": 2388,
+      "height": 1144,
+      "caption": "Accessibility calibrations improve legibility without sacrificing density."
+    },
+    {
+      "id": "guide-hero-09",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2009.png",
+      "alt": "Profile personalization concepts with curated rows",
+      "width": 2421,
+      "height": 1114,
+      "caption": "Profile-aware curations deliver relevant rows tuned to household preferences."
+    },
+    {
+      "id": "guide-hero-10",
+      "sectionId": "hero",
+      "priority": true,
+      "type": "image",
+      "src": "Guide%2010.png",
+      "alt": "Scenario map detailing the future-state experience",
+      "width": 2425,
+      "height": 1054,
+      "caption": "Scenario mapping ties the experience vision to measurable business outcomes."
+    },
+    {
+      "id": "guide-research-01",
+      "sectionId": "research",
+      "type": "image",
+      "src": "GR01.png",
+      "alt": "Research mural capturing discovery insights and opportunity areas",
+      "width": 2403,
+      "height": 775,
+      "caption": "Discovery synthesis highlighted moments where the guide failed to build trust."
+    },
+    {
+      "id": "guide-research-02",
+      "sectionId": "research",
+      "type": "image",
+      "src": "GR02.png",
+      "alt": "Persona spread summarizing Sling and DISH household archetypes",
+      "width": 2422,
+      "height": 807,
+      "caption": "Personas grounded prioritization in the shared needs of core audiences."
+    },
+    {
+      "id": "guide-research-03",
+      "sectionId": "research",
+      "type": "image",
+      "src": "GR03.png",
+      "alt": "Service blueprint detailing current versus future guide operations",
+      "width": 2187,
+      "height": 823,
+      "caption": "Blueprinting exposed operational friction that shaped the rollout plan."
+    },
+    {
+      "id": "guide-results-01",
+      "sectionId": "results",
+      "type": "image",
+      "src": "GR04.png",
+      "alt": "Journey map showing uplift after guide refinements",
+      "width": 2058,
+      "height": 820,
+      "caption": "Experience journey visualized the uplift realized after staging the rollout."
+    },
+    {
+      "id": "guide-results-02",
+      "sectionId": "results",
+      "type": "image",
+      "src": "GR05.png",
+      "alt": "Dashboard of KPI improvements tied to the guide initiative",
+      "width": 2409,
+      "height": 751,
+      "caption": "KPI dashboard quantified value capture across revenue and retention levers."
+    },
+    {
+      "id": "guide-results-03",
+      "sectionId": "results",
+      "type": "image",
+      "src": "GR06.png",
+      "alt": "Implementation roadmap illustrating phased delivery",
+      "width": 2409,
+      "height": 982,
+      "caption": "Roadmap visualization aligned teams on sequencing and readiness gates."
+    }
+  ]
+}
