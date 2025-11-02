@@ -1,0 +1,120 @@
+{
+  "research": [
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-01.png",
+      "alt": "Dark navy research slide with teal heading bands and three columns of light-blue copy.",
+      "width": 1206,
+      "height": 658,
+      "priority": true
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-02.png",
+      "alt": "White research slide with a teal title stripe and evenly spaced columns of summary text.",
+      "width": 1285,
+      "height": 576
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-03.png",
+      "alt": "Midnight-blue research slide layering staggered light copy blocks across the page.",
+      "width": 2232,
+      "height": 1291
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-04.png",
+      "alt": "Deep teal research slide with stacked panels of light text and accent highlights.",
+      "width": 2076,
+      "height": 1203
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-05.png",
+      "alt": "Bright white research slide covered in wide horizontal rows of annotated copy.",
+      "width": 2437,
+      "height": 1144,
+      "priority": true
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-06.png",
+      "alt": "White research slide presenting three columns of outlined cards with teal accents on the right.",
+      "width": 2410,
+      "height": 1122
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-07.png",
+      "alt": "White research slide with layered text sections and soft teal highlight blocks.",
+      "width": 2428,
+      "height": 1159
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-08.png",
+      "alt": "White research slide featuring a large teal graphic on the right beside explanatory text.",
+      "width": 2388,
+      "height": 1144
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-09.png",
+      "alt": "White research slide with a bold teal block on the right and text-heavy columns on the left.",
+      "width": 2421,
+      "height": 1114
+    },
+    {
+      "sectionId": "research",
+      "src": "/public/images/guide/guide-10.png",
+      "alt": "White research slide organizing roadmap notes into stacked bands with pale blue dividers.",
+      "width": 2425,
+      "height": 1054
+    }
+  ],
+  "results": [
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-01.png",
+      "alt": "Light analytics results slide with a bright summary column on the left and a darker charting area on the right.",
+      "width": 2403,
+      "height": 775
+    },
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-02.png",
+      "alt": "Light results slide comparing metrics with a wide headline band and two-column charts underneath.",
+      "width": 2422,
+      "height": 807
+    },
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-03.png",
+      "alt": "Light slate results slide highlighting charts across the right half beside descriptive text blocks.",
+      "width": 2187,
+      "height": 823
+    },
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-04.png",
+      "alt": "Light results slide featuring large chart panels along the right edge with summary text on the left.",
+      "width": 2058,
+      "height": 820
+    },
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-05.png",
+      "alt": "Light results slide with a bold teal chart cutting across the center above supporting captions.",
+      "width": 2409,
+      "height": 751
+    },
+    {
+      "sectionId": "results",
+      "src": "/public/images/guide/gr-06.png",
+      "alt": "Light results slide combining a heatmap-style grid in the middle with summary bands above and below.",
+      "width": 2409,
+      "height": 982
+    }
+  ]
+}
