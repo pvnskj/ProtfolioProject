@@ -89,6 +89,7 @@
       box-shadow:var(--glow-strong);
       isolation:isolate;
     }
+    .project-hero__media--interactive::after{display:none;}
     .project-hero__media::after{
       content:"";
       position:absolute;
@@ -107,8 +108,8 @@
       pointer-events:none;
       z-index:2;
     }
-    .project-hero__media img,
-    .project-hero__media video{
+    .project-hero__media > img,
+    .project-hero__media > video{
       position:absolute;
       inset:0;
       width:100%;
@@ -215,6 +216,117 @@
       outline:none;
       box-shadow:0 0 0 3px rgba(236,72,153,.55), var(--glow);
     }
+    .hero-carousel{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+      height:100%;
+    }
+    .hero-carousel__track{
+      --snap-gap:1rem;
+      display:flex;
+      gap:var(--snap-gap);
+      overflow-x:auto;
+      padding:1.25rem 1.75rem 1.75rem;
+      margin:-1.25rem -1.75rem -1.75rem;
+      scroll-snap-type:x mandatory;
+      scroll-behavior:smooth;
+      scrollbar-width:thin;
+    }
+    .hero-carousel__track:focus-visible{outline:var(--ring);outline-offset:6px;}
+    .hero-carousel__slide{
+      position:relative;
+      flex:0 0 100%;
+      scroll-snap-align:center;
+      border-radius:20px;
+      overflow:hidden;
+      background:rgba(15,23,42,.3);
+      min-height:220px;
+    }
+    .hero-carousel__slide[aria-hidden="true"]{opacity:.5;}
+    .hero-carousel__slide img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .hero-carousel__slide figcaption{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:1rem 1.25rem;
+      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(15,23,42,.68) 100%);
+      color:#f9fafb;
+      font-size:.85rem;
+      line-height:1.4;
+    }
+    .hero-carousel__nav{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      border:none;
+      background:rgba(15,23,42,.72);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 30px rgba(15,23,42,.35);
+      cursor:pointer;
+      transition:background .2s ease, transform .2s ease;
+      z-index:2;
+    }
+    .hero-carousel__nav:hover{background:rgba(15,23,42,.85);transform:translateY(calc(-50% - 1px));}
+    .hero-carousel__nav:focus-visible{outline:var(--ring);outline-offset:3px;}
+    .hero-carousel__nav[disabled]{opacity:.4;cursor:not-allowed;}
+    .hero-carousel__nav--prev{left:1rem;}
+    .hero-carousel__nav--next{right:1rem;}
+    .hero-carousel__nav svg{width:20px;height:20px;}
+    .hero-carousel--reduced .hero-carousel__track{
+      scroll-behavior:auto;
+      scroll-snap-type:none;
+    }
+    .hero-carousel--reduced .hero-carousel__slide[aria-hidden="true"]{opacity:1;}
+    .project-gallery{
+      margin:2.5rem 0 0;
+      display:flex;
+      flex-direction:column;
+      gap:1.25rem;
+    }
+    .project-gallery__title{
+      font-weight:800;
+      font-size:clamp(1.15rem,1.05rem + .35vw,1.35rem);
+      color:var(--fg);
+    }
+    .project-gallery__grid{
+      display:grid;
+      gap:1rem;
+      grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    }
+    .project-gallery__figure{
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(15,23,42,.7), rgba(15,23,42,.85));
+      color:#f3f4f6;
+      box-shadow:var(--glow);
+    }
+    .project-gallery__figure img{
+      display:block;
+      width:100%;
+      height:auto;
+    }
+    .project-gallery__figure figcaption{
+      padding:1rem 1.25rem;
+      font-size:.9rem;
+      line-height:1.5;
+      background:linear-gradient(180deg, rgba(15,23,42,.35), rgba(15,23,42,.82));
+    }
+    .project-gallery.is-empty{display:none;}
     .project-hero__summary{
       background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
       border-radius:22px;
@@ -931,9 +1043,314 @@ function ensureCollapsibleForTab(tab){
   });
 }
 
+const projectAssetCache = new Map();
+
+function resolveAssetSource(entrySrc, manifestPath) {
+  try {
+    const manifestUrl = new URL(manifestPath, window.location.href);
+    return new URL(entrySrc, manifestUrl).toString();
+  } catch (err) {
+    console.warn('Unable to resolve asset source', entrySrc, err);
+    return entrySrc;
+  }
+}
+
+async function loadProjectAssets(project) {
+  if (!project || !project.assetsPath) return null;
+  if (projectAssetCache.has(project.assetsPath)) {
+    return projectAssetCache.get(project.assetsPath);
+  }
+  const fetchPromise = fetch(project.assetsPath, { cache: 'force-cache' })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Unable to load project assets: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error('[portfolio] Failed to fetch project assets', error);
+      projectAssetCache.delete(project.assetsPath);
+      throw error;
+    });
+  projectAssetCache.set(project.assetsPath, fetchPromise);
+  return fetchPromise;
+}
+
+function groupManifestEntries(entries){
+  return (Array.isArray(entries) ? entries : []).reduce((acc, entry) => {
+    const section = entry && entry.sectionId ? entry.sectionId : 'misc';
+    if (!acc.has(section)) {
+      acc.set(section, []);
+    }
+    acc.get(section).push(entry);
+    return acc;
+  }, new Map());
+}
+
+function createProjectImage(entry, options = {}) {
+  const { lazy = true } = options;
+  const img = document.createElement('img');
+  img.src = entry.resolvedSrc || entry.src || '';
+  img.alt = entry.alt || '';
+  const width = Number(entry.width) || 1600;
+  const height = Number(entry.height) || 900;
+  img.width = width;
+  img.height = height;
+  if (lazy) {
+    img.loading = 'lazy';
+  }
+  img.decoding = 'async';
+  return img;
+}
+
+function ensureHeroPreload(entry) {
+  if (!entry || !entry.resolvedSrc) return;
+  const preloadId = `hero-preload-${entry.id || entry.resolvedSrc}`;
+  if (document.querySelector(`link[data-preload-id="${preloadId}"]`)) return;
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = entry.resolvedSrc;
+  link.dataset.preloadId = preloadId;
+  document.head.appendChild(link);
+}
+
+function prefersReducedMotion(){
+  if (!window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function mountHeroCarousel(entries, slot, project, manifestPath){
+  if (!slot || !entries.length) return;
+  const resolvedEntries = entries.map((entry) => ({
+    ...entry,
+    resolvedSrc: resolveAssetSource(entry.src, manifestPath),
+  }));
+  const region = document.createElement('div');
+  region.className = 'hero-carousel';
+  const carouselLabel = project?.title ? `${project.title} hero gallery` : 'Project hero gallery';
+  region.setAttribute('role', 'region');
+  region.setAttribute('aria-label', carouselLabel);
+
+  const trackId = `${project?.id || 'project'}-hero-track`;
+  const track = document.createElement('div');
+  track.className = 'hero-carousel__track';
+  track.id = trackId;
+  track.setAttribute('role', 'list');
+
+  let reduceMotion = prefersReducedMotion();
+  if (reduceMotion) {
+    region.classList.add('hero-carousel--reduced');
+  }
+
+  resolvedEntries.forEach((entry, index) => {
+    const figure = document.createElement('figure');
+    figure.className = 'hero-carousel__slide';
+    figure.setAttribute('role', 'listitem');
+    figure.setAttribute('aria-roledescription', 'slide');
+    figure.setAttribute('aria-label', `${index + 1} of ${resolvedEntries.length}`);
+    figure.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+    figure.tabIndex = index === 0 ? 0 : -1;
+
+    const img = createProjectImage(entry, { lazy: index !== 0 });
+    figure.appendChild(img);
+
+    if (entry.caption) {
+      const caption = document.createElement('figcaption');
+      caption.textContent = entry.caption;
+      figure.appendChild(caption);
+    }
+
+    track.appendChild(figure);
+  });
+
+  region.appendChild(track);
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'hero-carousel__nav hero-carousel__nav--prev';
+  prevBtn.setAttribute('aria-label', 'Previous slide');
+  prevBtn.setAttribute('aria-controls', trackId);
+  prevBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.7 5.3a1 1 0 0 1 0 1.4L11.41 11l4.3 4.3a1 1 0 1 1-1.42 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.42 0Z"/></svg>';
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'hero-carousel__nav hero-carousel__nav--next';
+  nextBtn.setAttribute('aria-label', 'Next slide');
+  nextBtn.setAttribute('aria-controls', trackId);
+  nextBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.3 18.7a1 1 0 0 1 0-1.4L12.59 13l-4.3-4.3a1 1 0 1 1 1.42-1.4l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.42 0Z"/></svg>';
+
+  region.append(prevBtn, nextBtn);
+
+  slot.innerHTML = '';
+  slot.appendChild(region);
+
+  const slides = Array.from(track.children);
+  let activeIndex = 0;
+  ensureHeroPreload(resolvedEntries[0]);
+
+  function updateActive(newIndex, options = {}) {
+    if (!slides.length) return;
+    const total = slides.length;
+    const targetIndex = ((newIndex % total) + total) % total;
+    activeIndex = targetIndex;
+
+    slides.forEach((slide, idx) => {
+      slide.setAttribute('aria-hidden', idx === targetIndex ? 'false' : 'true');
+      slide.tabIndex = idx === targetIndex ? 0 : -1;
+    });
+
+    const targetSlide = slides[targetIndex];
+    if (targetSlide) {
+      const behavior = reduceMotion ? 'auto' : 'smooth';
+      targetSlide.scrollIntoView({ behavior, inline: 'center', block: 'nearest' });
+      if (options.focus) {
+        targetSlide.focus({ preventScroll: true });
+      }
+    }
+  }
+
+  let scrollLock = false;
+  function syncFromScroll(){
+    if (scrollLock) return;
+    const { scrollLeft } = track;
+    let nearestIndex = activeIndex;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+    slides.forEach((slide, idx) => {
+      const distance = Math.abs(slide.offsetLeft - scrollLeft);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = idx;
+      }
+    });
+    if (nearestIndex !== activeIndex) {
+      updateActive(nearestIndex);
+    }
+  }
+
+  track.addEventListener('scroll', () => {
+    if (reduceMotion) {
+      syncFromScroll();
+      return;
+    }
+    if (scrollLock) return;
+    scrollLock = true;
+    window.requestAnimationFrame(() => {
+      syncFromScroll();
+      scrollLock = false;
+    });
+  });
+
+  function handleAdvance(direction, focus = false) {
+    scrollLock = true;
+    updateActive(activeIndex + direction, { focus });
+    window.setTimeout(() => { scrollLock = false; }, reduceMotion ? 0 : 350);
+  }
+
+  prevBtn.addEventListener('click', () => handleAdvance(-1, true));
+  nextBtn.addEventListener('click', () => handleAdvance(1, true));
+
+  region.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      handleAdvance(-1, true);
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      handleAdvance(1, true);
+    }
+  });
+
+  const onMotionChange = (event) => {
+    reduceMotion = event.matches;
+    region.classList.toggle('hero-carousel--reduced', event.matches);
+  };
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq) {
+      if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', onMotionChange);
+      } else if (typeof mq.addListener === 'function') {
+        mq.addListener(onMotionChange);
+      }
+    }
+  }
+
+  if (slides.length <= 1) {
+    prevBtn.hidden = true;
+    nextBtn.hidden = true;
+  }
+}
+
+function mountGallery(entries, slot, manifestPath){
+  if (!slot) return;
+  const hostSection = slot.closest('.project-gallery');
+  const resolvedEntries = (Array.isArray(entries) ? entries : []).map((entry) => ({
+    ...entry,
+    resolvedSrc: resolveAssetSource(entry.src, manifestPath),
+  }));
+  if (!resolvedEntries.length) {
+    if (hostSection) {
+      hostSection.classList.add('is-empty');
+    }
+    slot.innerHTML = '';
+    return;
+  }
+  const fragment = document.createDocumentFragment();
+  resolvedEntries.forEach((entry) => {
+    const figure = document.createElement('figure');
+    figure.className = 'project-gallery__figure';
+    figure.setAttribute('role', 'listitem');
+    const img = createProjectImage(entry, { lazy: true });
+    figure.appendChild(img);
+    if (entry.caption) {
+      const caption = document.createElement('figcaption');
+      caption.textContent = entry.caption;
+      figure.appendChild(caption);
+    }
+    fragment.appendChild(figure);
+  });
+  slot.innerHTML = '';
+  slot.appendChild(fragment);
+  if (hostSection) {
+    hostSection.classList.remove('is-empty');
+  }
+}
+
+function populateProjectAssets(manifest, panel, project){
+  if (!manifest || !Array.isArray(manifest.entries)) return;
+  const grouped = groupManifestEntries(manifest.entries);
+  const manifestPath = project?.assetsPath || '';
+
+  const heroSlot = panel.querySelector('[data-slot="project-hero"]');
+  const heroEntries = (grouped.get('hero') || []).filter((entry) => entry && entry.priority !== false);
+  if (heroSlot && heroEntries.length) {
+    heroSlot.classList.add('project-hero__media--interactive');
+    mountHeroCarousel(heroEntries, heroSlot, project, manifestPath);
+  } else if (heroSlot) {
+    heroSlot.classList.add('is-empty');
+  }
+
+  const researchSlot = panel.querySelector('[data-slot="project-research"]');
+  mountGallery(grouped.get('research') || [], researchSlot, manifestPath);
+
+  const resultsSlot = panel.querySelector('[data-slot="project-results"]');
+  mountGallery(grouped.get('results') || [], resultsSlot, manifestPath);
+}
+
 // 2) ---- Rendering (alignment-aware + readable) ----
-function renderProjectDetails(project, container) {
+async function renderProjectDetails(project, container) {
   if (!project || !project.content) { container.innerHTML = ''; return; }
+
+  let manifest = null;
+  if (project.id === 'guide') {
+    try {
+      manifest = await loadProjectAssets(project);
+    } catch (err) {
+      manifest = null;
+    }
+  }
+  const hasManifest = Boolean(manifest && Array.isArray(manifest.entries) && manifest.entries.length);
 
   const panel = document.createElement('div');
   panel.className = 'project-details-content panel';
@@ -960,16 +1377,6 @@ function renderProjectDetails(project, container) {
             </li>`;
   }).join('');
   const heroBulletsHtml = heroBullets ? `<ul class="project-hero__bullets">${heroBullets}</ul>` : '';
-  const heroMedia = project.hero?.media;
-  let heroMediaHtml = '';
-  if (heroMedia?.type === 'video' && heroMedia.src) {
-    const poster = heroMedia.poster ? ` poster="${heroMedia.poster}"` : '';
-    const autoplay = heroMedia.autoplay ? ' autoplay muted loop playsinline' : '';
-    const mime = heroMedia.mime || 'video/mp4';
-    heroMediaHtml = `<video${poster}${autoplay} preload="metadata"><source src="${heroMedia.src}" type="${mime}"></video>`;
-  } else if (heroMedia?.src) {
-    heroMediaHtml = `<img src="${heroMedia.src}" alt="${heroMedia.alt || project.title}">`;
-  }
   const heroSubhead = project.hero?.subhead || project.hero?.subtitle || project.outcome || project.hook || '';
   const heroHtml = project.hero ? `
       <div class="project-breakout project-breakout--edge">
@@ -1007,6 +1414,8 @@ function renderProjectDetails(project, container) {
     <div class="panel-rail">
       ${heroHtml}
       ${metricsHtml}
+      ${researchSection}
+      ${resultsSection}
       <div class="details-tabs flex flex-wrap items-center border-b mb-6 pb-3">
         ${tabButtonsHtml}
       </div>
@@ -1016,10 +1425,14 @@ function renderProjectDetails(project, container) {
 
   container.innerHTML = '';
   container.appendChild(panel);
+
+  if (hasManifest) {
+    populateProjectAssets(manifest, panel, project);
+  }
+
   setupMediaCarousels(panel);
   ensureCollapsibleForTab(panel.querySelector('.tab-content.active'));
 
-  // Tabs
   const tabsWrap = panel.querySelector('.details-tabs');
   if (!tabsWrap) return;
   tabsWrap.addEventListener('click', (e)=>{
@@ -1046,6 +1459,11 @@ function renderProjectList(listEl, detailsEl, activeId) {
       <div class="text-[11px] md:text-xs" style="color:var(--muted)">${m.label}</div>
     </div>`).join('');
 
+  const activeImgWidth = 640;
+  const activeImgHeight = 360;
+  const thumbImgWidth = 160;
+  const thumbImgHeight = 120;
+
   const activeHtml = `
     <div class="active-project-panel">
       <div class="panel">
@@ -1056,7 +1474,7 @@ function renderProjectList(listEl, detailsEl, activeId) {
               <p class="mt-1 text-sm md:text-base" style="color:var(--muted)">${active.hook}</p>
               <p class="font-semibold mt-2 text-sm md:text-base" style="color:var(--accent)">${active.outcome}</p>
             </div>
-            <img class="rounded-xl w-full h-32 md:h-36 object-cover" src="${active.images?.[0]||''}" alt="${active.title}">
+            <img class="rounded-xl w-full h-32 md:h-36 object-cover" src="${active.images?.[0]||''}" alt="${active.title}" width="${activeImgWidth}" height="${activeImgHeight}" loading="lazy">
           </div>
           <div class="grid grid-cols-3 gap-2 md:gap-3 mt-4">${highlights}</div>
         </div>
@@ -1066,7 +1484,7 @@ function renderProjectList(listEl, detailsEl, activeId) {
   const thumbs = others.map(p=>`
     <button class="project-thumbnail panel p-3 md:p-4 w-full text-left flex items-center gap-3 hover:scale-[1.01] transition"
             data-project-id="${p.id}">
-      <img class="rounded-lg w-16 md:w-20 h-14 md:h-16 object-cover" src="${p.images?.[0]||''}" alt="${p.title}">
+      <img class="rounded-lg w-16 md:w-20 h-14 md:h-16 object-cover" src="${p.images?.[0]||''}" alt="${p.title}" width="${thumbImgWidth}" height="${thumbImgHeight}" loading="lazy">
       <span class="font-semibold text-sm md:text-base">${p.title}</span>
     </button>`).join('');
 
@@ -1078,10 +1496,14 @@ function renderProjectList(listEl, detailsEl, activeId) {
     const id = btn.getAttribute('data-project-id');
     renderProjectList(listEl, detailsEl, id);
     const proj = window.projects.find(p=>p.id===id);
-    renderProjectDetails(proj, detailsEl);
+    renderProjectDetails(proj, detailsEl).catch((error) => {
+      console.error('[portfolio] Failed to render project details', error);
+    });
   }, { once:true });
 
-  renderProjectDetails(active, detailsEl);
+  renderProjectDetails(active, detailsEl).catch((error) => {
+    console.error('[portfolio] Failed to render project details', error);
+  });
 }
 
 // Public init
