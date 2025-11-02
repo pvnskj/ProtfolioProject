@@ -42,6 +42,18 @@
     .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
 
     /* Project hero */
+    .project-breakout{
+      position:relative;
+      margin:0 calc(var(--panel-pad) * -1);
+    }
+    .project-breakout__inner{
+      max-width:1250px;
+      margin-inline:auto;
+      padding:0 var(--panel-pad);
+    }
+    .project-breakout--edge .project-hero{
+      border-radius:24px;
+    }
     .project-hero{
       display:grid;
       gap:1.75rem;
@@ -138,6 +150,11 @@
       font-size:clamp(.9rem, .86rem + .2vw, 1rem);
       color:var(--muted);
       max-width:52ch;
+    }
+    .project-section-stack{
+      display:flex;
+      flex-direction:column;
+      gap:2.5rem;
     }
     @media (prefers-color-scheme: dark){
       .project-hero__media::after{background:linear-gradient(180deg, rgba(17,24,39,.35), rgba(17,24,39,.65));}
@@ -744,15 +761,19 @@ function renderProjectDetails(project, container) {
   }
   const heroSubhead = project.hero?.subhead || project.hero?.subtitle || project.outcome || project.hook || '';
   const heroHtml = project.hero ? `
-      <section class="project-hero">
-        ${heroMediaHtml ? `<figure class="project-hero__media">${heroMediaHtml}</figure>` : ''}
-        <div class="project-hero__summary">
-          ${project.hero.eyebrow ? `<p class="project-hero__eyebrow">${project.hero.eyebrow}</p>` : ''}
-          <h2 class="project-hero__headline">${project.hero.headline || project.title}</h2>
-          ${heroSubhead ? `<p class="project-hero__subhead">${heroSubhead}</p>` : ''}
-          ${heroBulletsHtml}
+      <div class="project-breakout project-breakout--edge">
+        <div class="project-breakout__inner">
+          <section class="project-hero" data-slot="project-hero">
+            ${heroMediaHtml ? `<figure class="project-hero__media">${heroMediaHtml}</figure>` : ''}
+            <div class="project-hero__summary">
+              ${project.hero.eyebrow ? `<p class="project-hero__eyebrow">${project.hero.eyebrow}</p>` : ''}
+              <h2 class="project-hero__headline">${project.hero.headline || project.title}</h2>
+              ${heroSubhead ? `<p class="project-hero__subhead">${heroSubhead}</p>` : ''}
+              ${heroBulletsHtml}
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
   ` : '';
 
   const tabOrder = ['overview','methodology','analysis','results','media'];
@@ -760,11 +781,16 @@ function renderProjectDetails(project, container) {
   const tabButtonsHtml = tabs.map((t,i)=>
     `<button data-tab="${t}" class="${i===0?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`
   ).join('');
-  const tabContentHtml = tabs.map((key,i)=>`
+  const tabContentHtml = tabs.map((key,i)=>{
+    const inner = key === 'media'
+      ? project.content[key]
+      : `<div class="leading-relaxed">${project.content[key]}</div>`;
+    return `
       <div class="tab-content ${i===0?'active':''}" data-tab-content="${key}">
-        <div class="leading-relaxed">${project.content[key]}</div>
+        ${inner}
       </div>
-  `).join('');
+    `;
+  }).join('');
 
   panel.innerHTML = `
     <div class="panel-rail">
@@ -865,6 +891,10 @@ window.setupMediaCarousels = setupMediaCarousels;
 window.projects = [
   {
     id: 'guide',
+    slug: 'guide',
+    assetsPath: '/content/assets-guide.json',
+    sections: ['research','results'],
+    layout: { usesCarousel: true, edgeToEdge: true },
     title: "Reinventing The TV Guide",
     hook: "A strategic research initiative to unify user experiences across two major platforms, turning a point of friction into a driver for engagement and revenue.",
     outcome: "~$7.46M Estimated Annual Impact",
@@ -1051,12 +1081,17 @@ window.projects = [
           </div>
         </section>`;
       })(),
-      media: `<h4>Media Assets</h4>
-        <div class="grid grid-cols-2 gap-4 mt-4">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=User+Flow+Diagram" alt="User Flow Diagram">
-          <img class="project-image rounded-lg w-full h-full object-cover" src="https://placehold.co/800x450/111827/a3a3a3?text=Early+Prototypes" alt="Early Prototypes">
+      media: `
+        <div class="project-breakout project-breakout--edge">
+          <div class="project-breakout__inner">
+            <section class="project-hero" data-slot="project-hero">…</section>
+          </div>
         </div>
-        <p class="mt-4 text-sm text-center text-gray-400">Key visuals, user flows, and prototypes from the project.</p>`
+        <div class="project-section-stack">
+          <section id="research" data-slot="project-research"></section>
+          <section id="results" data-slot="project-results"></section>
+        </div>
+      `
     }
   },
   {
