@@ -158,6 +158,41 @@
             #project-details-expanded.visible { padding-top: 0; }
         }
     </style>
+<script>
+  // Prefix any bare filenames and any "/public/..." with the correct project path
+  (function () {
+    const BASE = './public/images/guide/';
+    const fix = (u) => {
+      if (!u) return u;
+      if (u.startsWith('/public/')) return '.' + u;          // → ./public/...
+      if (!u.includes('/'))       return BASE + u;           // → ./public/images/guide/<file>
+      return u;
+    };
+
+    // After DOM is ready, normalize all media URLs
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[src], [poster], [srcset]').forEach(el => {
+        if (el.hasAttribute('src'))    el.src    = fix(el.getAttribute('src'));
+        if (el.hasAttribute('poster')) el.poster = fix(el.getAttribute('poster'));
+        if (el.hasAttribute('srcset')) {
+          el.srcset = el.getAttribute('srcset').split(',')
+            .map(s => {
+              const [url, d] = s.trim().split(/\s+/);
+              return (fix(url) || url) + (d ? (' ' + d) : '');
+            })
+            .join(', ');
+        }
+      });
+      // inline background-image: url(...)
+      document.querySelectorAll('[style]').forEach(el => {
+        const s = el.getAttribute('style');
+        if (s && s.includes('url(') && s.includes('/public/')) {
+          el.setAttribute('style', s.replaceAll('url(/public/', 'url(./public/'));
+        }
+      });
+    });
+  })();
+</script>
 </head>
 <body class="antialiased">
     <canvas id="bg-canvas"></canvas>
