@@ -386,41 +386,83 @@
     }
 
     /* ========== NEW: hydrate Media tab from guide-manifest.json ========== */
-    async function hydrateGuideMedia(){
-      try{
-        const res = await fetch('./guide-manifest.json');
-        if(!res.ok) throw new Error('manifest fetch failed');
-        const data = await res.json(); // { entries: [...] }
-        const grid = document.querySelector('#guide-media-grid');
-        if(!grid) return;
+   <script>
+async function hydrateGuideMedia () {
+  // 1) Load manifest
+  const res = await fetch('./guide-manifest.json');
+  const data = await res.json();
+  const grid = document.querySelector('#guide-media-grid');
+  if (!grid) return;
 
-        grid.innerHTML = '';
-        data.entries.filter(e=>e.type==='image').forEach(e=>{
-          const fig = document.createElement('figure');
-          fig.className = 'rounded-lg overflow-hidden';
-          const img = document.createElement('img');
-          img.className = 'rounded-lg w-full h-full object-cover';
-          img.loading = 'lazy';
-          img.alt = e.alt || '';
-          img.src = guideImg(e.src);  // << key line: /ProtfolioProject/public/images/guide/<file>
-          const cap = document.createElement('figcaption');
-          cap.className = 'mt-2 text-xs text-gray-500';
-          cap.textContent = e.caption || '';
-          fig.appendChild(img); fig.appendChild(cap); grid.appendChild(fig);
-        });
-      } catch(err){
-        console.error('Guide media render error:', err);
+  // Helper: repo base (e.g., "/ProtfolioProject/")
+  const parts = location.pathname.split('/').filter(Boolean);
+  const base = parts.length ? `/${parts[0]}/` : '/';
+
+  // Try a set of candidate URLs for each filename, in order
+  function candidates(filename) {
+    const name = String(filename).replace(/^\.?\//, '');
+    const basePaths = [
+      `./public/images/guide/${name}`,
+      `public/images/guide/${name}`,
+      `${base}public/images/guide/${name}`
+    ];
+    // also try common extension/case fallbacks
+    const exts = ['', '', '']; // keep original first
+    const tries = [];
+    basePaths.forEach(p => {
+      tries.push(p);
+      if (p.endsWith('.png')) {
+        tries.push(p.replace(/\.png$/i, '.PNG'));
+        tries.push(p.replace(/\.png$/i, '.jpg'));
+        tries.push(p.replace(/\.png$/i, '.JPG'));
+        tries.push(p.replace(/\.png$/i, '.jpeg'));
       }
-    }
+      if (p.includes('%20')) tries.push(p.replaceAll('%20', ' ')); // space vs %20
+    });
+    return tries;
+  }
 
-    function initPage(){
-      renderProjectList();
-      renderProjectDetails(projects.find(p=>p.id===activeProjectId));
-      projectDetailsContainer.classList.add('visible');
-      createTestimonialScroller();
-      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  // Load first working src from the candidates
+  function resolveSrc(filename) {
+    const list = candidates(filename);
+    return new Promise(resolve => {
+      let i = 0;
+      const tryNext = () => {
+        if (i >= list.length) return resolve(null);
+        const test = new Image();
+        test.onload = () => resolve(list[i]);
+        test.onerror = () => { i += 1; tryNext(); };
+        test.src = list[i];
+      };
+      tryNext();
+    });
+  }
+
+  grid.innerHTML = '';
+  for (const e of data.entries.filter(x => x.type === 'image')) {
+    const fig = document.createElement('figure');
+    fig.className = 'rounded-lg overflow-hidden';
+    const img = document.createElement('img');
+    img.className = 'rounded-lg w-full h-full object-cover';
+    img.loading = 'lazy';
+    img.alt = e.alt || '';
+
+    const src = await resolveSrc(e.src);
+    if (!src) {
+      console.warn('Missing image for', e.src);
+      continue; // skip if nothing resolves
     }
-    initPage();
-  </script>
+    img.src = src;
+
+    const cap = document.createElement('figcaption');
+    cap.className = 'mt-2 text-xs text-gray-500';
+    cap.textContent = e.caption || '';
+
+    fig.append(img, cap);
+    grid.append(fig);
+  }
+}
+</script>
+
 </body>
 </html>
