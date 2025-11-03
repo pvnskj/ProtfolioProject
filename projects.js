@@ -233,6 +233,13 @@
     activeId: projects[0]?.id || null,
     carouselController: null,
     guideMediaSlides: null,
+    isCaseStudyOpen: false,
+    lastCaseStudyTrigger: null,
+    lightbox: {
+      projectId: null,
+      index: 0,
+      slides: [],
+    },
   };
 
   function asset(path) {
@@ -295,15 +302,34 @@
     }
 
     showcase.innerHTML = createShowcaseMarkup(active);
+    bindCaseStudyTrigger(showcase);
+
     catalog.innerHTML = projects
       .map((project) => createCatalogMarkup(project, project.id === active.id))
       .join("");
+
     depth.innerHTML = createDepthMarkup(active);
     activateDetailTabs(depth);
     hydrateMediaTab(active);
 
     if (active.gallery && active.gallery.length) {
       mountCarousel(active.id);
+    }
+
+    if (state.isCaseStudyOpen) {
+      depth.classList.remove("project-depth--hidden");
+      depth.classList.add("is-visible");
+      const modalTitle = document.getElementById("case-study-modal-title");
+      if (modalTitle && active?.title) {
+        modalTitle.textContent = `${active.title} — case study`;
+      }
+      const fallbackTrigger = showcase.querySelector("[data-case-study-open]");
+      if (fallbackTrigger) {
+        state.lastCaseStudyTrigger = fallbackTrigger;
+      }
+    } else {
+      depth.classList.add("project-depth--hidden");
+      state.lastCaseStudyTrigger = null;
     }
   }
 
@@ -337,14 +363,33 @@
         )}" loading="lazy" />
       </div>
       <div class="metrics-grid">${metricsHtml}</div>
-      <a class="project-showcase__cta" href="#project-depth">
+      <button
+        type="button"
+        class="project-showcase__cta"
+        data-case-study-open="${project.id}"
+        aria-haspopup="dialog"
+      >
         See how it came to life
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14" />
           <path d="M13 6l6 6-6 6" />
         </svg>
-      </a>
+      </button>
     `;
+  }
+
+  function bindCaseStudyTrigger(container) {
+    if (!container || container.dataset.caseStudyBound === "true") return;
+    container.addEventListener("click", handleCaseStudyTrigger);
+    container.dataset.caseStudyBound = "true";
+  }
+
+  function handleCaseStudyTrigger(event) {
+    const trigger = event.target.closest("[data-case-study-open]");
+    if (!trigger) return;
+    event.preventDefault();
+    const projectId = trigger.getAttribute("data-case-study-open") || state.activeId;
+    openCaseStudyModal(projectId, trigger);
   }
 
   function createCatalogMarkup(project, isActive) {
@@ -551,26 +596,61 @@
     if (!slides.length) {
       grid.innerHTML =
         '<p class="text-sm text-center text-gray-500">Media coming soon.</p>';
+      grid.removeAttribute("data-project-id");
       return;
     }
 
     const markup = slides
-      .map((slide) => {
+      .map((slide, index) => {
         const caption = slide.caption
           ? `<figcaption>${escapeHtml(slide.caption)}</figcaption>`
           : "";
         return `
-          <figure class="media-grid__item">
+          <figure
+            class="media-grid__item"
+            data-gallery-index="${index}"
+            tabindex="0"
+            role="group"
+            aria-label="Visual ${index + 1}"
+          >
             <img src="${asset(slide.src)}" alt="${escapeHtml(
               slide.alt || project.title,
             )}" loading="lazy" />
             ${caption}
           </figure>
-        `;
+      `;
       })
       .join("");
 
     grid.innerHTML = markup;
+    grid.setAttribute("data-project-id", project.id);
+    bindMediaGridLightbox(grid);
+  }
+
+  function bindMediaGridLightbox(grid) {
+    if (!grid || grid.dataset.lightboxBound === "true") return;
+
+    grid.addEventListener("click", (event) => {
+      const figure = event.target.closest("[data-gallery-index]");
+      if (!figure) return;
+      const projectId = grid.getAttribute("data-project-id") || state.activeId;
+      if (!projectId) return;
+      const index = Number(figure.getAttribute("data-gallery-index")) || 0;
+      openLightbox(projectId, index);
+    });
+
+    grid.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const figure = event.target.closest("[data-gallery-index]");
+      if (!figure) return;
+      event.preventDefault();
+      const projectId = grid.getAttribute("data-project-id") || state.activeId;
+      if (!projectId) return;
+      const index = Number(figure.getAttribute("data-gallery-index")) || 0;
+      openLightbox(projectId, index);
+    });
+
+    grid.dataset.lightboxBound = "true";
   }
 
   function createCarouselMarkup(project) {
@@ -588,11 +668,21 @@
       `;
     }
 
-    const slidesHtml = slides
-      .slice(0, 8)
+    const visibleSlides = slides.slice(0, 8);
+    const totalSlides = visibleSlides.length;
+
+    const slidesHtml = visibleSlides
       .map(
         (slide, index) => `
-          <figure class="media-slide${index === 0 ? " is-active" : ""}" aria-hidden="${index === 0 ? "false" : "true"}">
+          <figure
+            class="media-slide${index === 0 ? " is-active" : ""}"
+            aria-hidden="${index === 0 ? "false" : "true"}"
+            data-gallery-index="${index}"
+            data-project="${project.id}"
+            tabindex="${index === 0 ? "0" : "-1"}"
+            role="group"
+            aria-label="Visual ${index + 1} of ${totalSlides}"
+          >
             <img src="${asset(slide.src)}" alt="${escapeHtml(
               slide.alt || project.title,
             )}" loading="lazy" />
@@ -600,13 +690,13 @@
               slide.caption || "",
             )}</figcaption>
           </figure>
-        `,
+      `,
       )
       .join("");
 
     const dotsHtml =
-      slides.length > 1
-        ? `<div class="media-dots">${slides
+      visibleSlides.length > 1
+        ? `<div class="media-dots">${visibleSlides
             .map(
               (_, index) => `
               <button type="button" class="media-dot${
@@ -620,7 +710,7 @@
         : "";
 
     const controlsHtml =
-      slides.length > 1
+      visibleSlides.length > 1
         ? `<div class="media-controls">
           <button type="button" data-carousel-prev aria-label="Previous visual">‹</button>
           ${dotsHtml}
@@ -656,10 +746,13 @@
         const isActive = idx === index;
         slide.classList.toggle("is-active", isActive);
         slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        slide.setAttribute("tabindex", isActive ? "0" : "-1");
       });
-      dots.forEach((dot, idx) =>
-        dot.classList.toggle("is-active", idx === index),
-      );
+      dots.forEach((dot, idx) => {
+        const isDotActive = idx === index;
+        dot.classList.toggle("is-active", isDotActive);
+        dot.setAttribute("aria-pressed", isDotActive ? "true" : "false");
+      });
     };
 
     const next = () => setActive((index + 1) % slides.length);
@@ -701,12 +794,254 @@
     container.addEventListener("mouseenter", stopAuto);
     container.addEventListener("mouseleave", startAuto);
 
+    container.addEventListener("click", (event) => {
+      const slide = event.target.closest(".media-slide");
+      if (!slide || !slide.classList.contains("is-active")) return;
+      const targetIndex = Number(slide.getAttribute("data-gallery-index")) || 0;
+      openLightbox(projectId, targetIndex);
+    });
+
+    container.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const slide = event.target.closest(".media-slide");
+      if (!slide || !slide.classList.contains("is-active")) return;
+      event.preventDefault();
+      const targetIndex = Number(slide.getAttribute("data-gallery-index")) || 0;
+      openLightbox(projectId, targetIndex);
+    });
+
     setActive(0);
     startAuto();
 
     state.carouselController = {
       stop: stopAuto,
+      start: startAuto,
     };
+  }
+
+  function updateBodyScrollLock() {
+    const caseStudyOpen = document
+      .querySelector("[data-case-study-modal]")
+      ?.classList.contains("is-open");
+    const lightboxOpen = document
+      .querySelector("[data-lightbox]")
+      ?.classList.contains("is-open");
+    const shouldLock = Boolean(caseStudyOpen || lightboxOpen);
+    document.body.classList.toggle("modal-open", shouldLock);
+  }
+
+  function openCaseStudyModal(projectId, trigger) {
+    const modal = document.querySelector("[data-case-study-modal]");
+    const content = document.getElementById("case-study-modal-content");
+    const depth = document.getElementById("project-depth");
+    const host = document.getElementById("project-depth-host");
+    if (!modal || !content || !depth || !host) return;
+
+    const project =
+      projects.find((item) => item.id === projectId) ||
+      projects.find((item) => item.id === state.activeId);
+
+    state.isCaseStudyOpen = true;
+    if (trigger) {
+      state.lastCaseStudyTrigger = trigger;
+    }
+
+    content.innerHTML = "";
+    content.append(depth);
+    depth.classList.remove("project-depth--hidden");
+    depth.classList.add("is-visible");
+
+    const modalTitle = document.getElementById("case-study-modal-title");
+    if (modalTitle) {
+      modalTitle.textContent = project?.title
+        ? `${project.title} — case study`
+        : "Case study";
+    }
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    updateBodyScrollLock();
+
+    const closeButton = modal.querySelector("[data-case-study-close]");
+    closeButton?.focus();
+  }
+
+  function closeCaseStudyModal() {
+    const modal = document.querySelector("[data-case-study-modal]");
+    const depth = document.getElementById("project-depth");
+    const host = document.getElementById("project-depth-host");
+    if (!modal || !depth || !host) return;
+
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    state.isCaseStudyOpen = false;
+
+    depth.classList.add("project-depth--hidden");
+    depth.classList.remove("is-visible");
+    host.append(depth);
+
+    updateBodyScrollLock();
+
+    const modalTitle = document.getElementById("case-study-modal-title");
+    if (modalTitle) {
+      modalTitle.textContent = "Case study";
+    }
+
+    const trigger = state.lastCaseStudyTrigger;
+    state.lastCaseStudyTrigger = null;
+    if (trigger && document.body.contains(trigger)) {
+      trigger.focus();
+    }
+  }
+
+  function setupCaseStudyModal() {
+    const modal = document.querySelector("[data-case-study-modal]");
+    if (!modal) return;
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeCaseStudyModal();
+      }
+    });
+
+    const closeButtons = modal.querySelectorAll("[data-case-study-close]");
+    closeButtons.forEach((button) => {
+      button.addEventListener("click", closeCaseStudyModal);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) {
+        closeCaseStudyModal();
+      }
+    });
+  }
+
+  function openLightbox(projectId, startIndex = 0) {
+    const lightbox = document.querySelector("[data-lightbox]");
+    const image = lightbox?.querySelector(".lightbox__image");
+    const caption = lightbox?.querySelector(".lightbox__caption");
+    if (!lightbox || !image || !caption) return;
+
+    const project = projects.find((item) => item.id === projectId);
+    const slides = project?.gallery || [];
+    if (!slides.length) return;
+
+    state.lightbox.projectId = project.id;
+    state.lightbox.slides = slides.slice();
+    state.lightbox.index = Math.min(
+      Math.max(startIndex, 0),
+      state.lightbox.slides.length - 1,
+    );
+
+    lightbox.classList.add("is-open");
+    lightbox.setAttribute("aria-hidden", "false");
+    updateBodyScrollLock();
+
+    updateLightbox();
+    lightbox.querySelector("[data-lightbox-close]")?.focus();
+
+    if (state.carouselController?.stop) {
+      state.carouselController.stop();
+    }
+  }
+
+  function updateLightbox() {
+    const lightbox = document.querySelector("[data-lightbox]");
+    if (!lightbox || !lightbox.classList.contains("is-open")) return;
+
+    const image = lightbox.querySelector(".lightbox__image");
+    const caption = lightbox.querySelector(".lightbox__caption");
+    if (!image || !caption) return;
+
+    const slide = state.lightbox.slides[state.lightbox.index];
+    if (!slide) return;
+
+    image.src = asset(slide.src);
+    image.alt = slide.alt || "";
+    caption.textContent = slide.caption || "";
+
+    const dialog = lightbox.querySelector(".lightbox__dialog");
+    if (dialog) {
+      dialog.setAttribute(
+        "aria-label",
+        slide.alt
+          ? `${slide.alt} — enlarged visual`
+          : "Project visual preview",
+      );
+    }
+
+    const prevBtn = lightbox.querySelector("[data-lightbox-prev]");
+    const nextBtn = lightbox.querySelector("[data-lightbox-next]");
+    const hasMultiple = state.lightbox.slides.length > 1;
+    if (prevBtn) prevBtn.disabled = !hasMultiple;
+    if (nextBtn) nextBtn.disabled = !hasMultiple;
+  }
+
+  function stepLightbox(delta) {
+    const total = state.lightbox.slides.length;
+    if (total <= 1) return;
+    state.lightbox.index = (state.lightbox.index + delta + total) % total;
+    updateLightbox();
+  }
+
+  function closeLightbox() {
+    const lightbox = document.querySelector("[data-lightbox]");
+    if (!lightbox || !lightbox.classList.contains("is-open")) return;
+
+    lightbox.classList.remove("is-open");
+    lightbox.setAttribute("aria-hidden", "true");
+
+    const image = lightbox.querySelector(".lightbox__image");
+    const caption = lightbox.querySelector(".lightbox__caption");
+    if (image) {
+      image.removeAttribute("src");
+      image.alt = "";
+    }
+    if (caption) {
+      caption.textContent = "";
+    }
+
+    state.lightbox.projectId = null;
+    state.lightbox.index = 0;
+    state.lightbox.slides = [];
+
+    updateBodyScrollLock();
+
+    if (state.carouselController?.start) {
+      state.carouselController.start();
+    }
+  }
+
+  function setupLightbox() {
+    const lightbox = document.querySelector("[data-lightbox]");
+    if (!lightbox) return;
+
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    const closeBtn = lightbox.querySelector("[data-lightbox-close]");
+    const prevBtn = lightbox.querySelector("[data-lightbox-prev]");
+    const nextBtn = lightbox.querySelector("[data-lightbox-next]");
+
+    closeBtn?.addEventListener("click", closeLightbox);
+    prevBtn?.addEventListener("click", () => stepLightbox(-1));
+    nextBtn?.addEventListener("click", () => stepLightbox(1));
+
+    document.addEventListener("keydown", (event) => {
+      if (!lightbox.classList.contains("is-open")) return;
+      if (event.key === "Escape") {
+        closeLightbox();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        stepLightbox(1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        stepLightbox(-1);
+      }
+    });
   }
 
   function attachCatalogHandlers() {
@@ -914,6 +1249,8 @@
     attachCatalogHandlers();
     renderTestimonials();
     updateYear();
+    setupCaseStudyModal();
+    setupLightbox();
     setupMenuToggle();
 
     const guideProject = projects.find((project) => project.galleryManifest);
