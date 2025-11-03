@@ -5,6 +5,9 @@
     if (pathname.endsWith("/")) return pathname;
     const lastSlash = pathname.lastIndexOf("/");
     return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : "/";
+    const segments = window.location.pathname.split("/").filter(Boolean);
+    if (!segments.length) return "/";
+    return `/${segments[0]}/`;
   })();
 
   const prefersReducedMotion = window.matchMedia(
@@ -25,6 +28,9 @@
         { value: "~$7.46M", label: "Estimated annual value impact" },
         { value: "90%", label: "Target task success rate" },
         { value: "12%", label: "Reduction in CX complaints" },
+        { value: "90%", label: "Task success" },
+        { value: "-12%", label: "CX complaints" },
+        { value: "$7.46M", label: "Value impact" },
       ],
       focus: [
         "Unified discovery for Sling & DISH households",
@@ -622,6 +628,88 @@
         closeMenu();
       }
     });
+
+    if (active.gallery && active.gallery.length) {
+      mountCarousel(active.id);
+    }
+  }
+
+  function createShowcaseMarkup(project) {
+    const heroSrc = asset(
+      project.heroImage ||
+        project.gallery?.[0]?.src ||
+        "public/images/guide/guide-01.png",
+    );
+    const metricsHtml = (project.metrics || [])
+      .map(
+        (metric) => `
+        <div class="metric-tile">
+          <div class="metric-value">${escapeHtml(metric.value)}</div>
+          <div class="metric-label">${escapeHtml(metric.label)}</div>
+        </div>
+      `,
+      )
+      .join("");
+
+    return `
+      <div>
+        <p class="section-eyebrow">Featured case study</p>
+        <h3 class="project-showcase__title">${escapeHtml(project.title)}</h3>
+        <p class="project-showcase__summary">${escapeHtml(project.summary)}</p>
+        <p class="project-showcase__outcome">${escapeHtml(project.outcome)}</p>
+      </div>
+      <div class="project-showcase__visual">
+        <img src="${heroSrc}" alt="${escapeHtml(project.heroAlt || project.title)}" loading="lazy" />
+      </div>
+      <div class="metrics-grid">${metricsHtml}</div>
+      <a class="project-showcase__cta" href="#project-depth">
+        See how it came to life
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14" />
+          <path d="M13 6l6 6-6 6" />
+        </svg>
+      </a>
+    `;
+  }
+
+  function createCatalogMarkup(project, isActive) {
+    return `
+      <button type="button" class="catalog-card${isActive ? " active" : ""}" data-project="${project.id}" aria-pressed="${isActive}">
+        <span class="catalog-card__eyebrow">${escapeHtml(project.industry || "Case Study")}</span>
+        <h4>${escapeHtml(project.title)}</h4>
+        <p>${escapeHtml(project.tagline || project.summary)}</p>
+        <span class="catalog-card__cta">${isActive ? "Selected" : "View project"}</span>
+      </button>
+    `;
+  }
+
+  function createDepthMarkup(project) {
+    const focusHtml = (project.focus || [])
+      .map((item) => `<span>${escapeHtml(item)}</span>`)
+      .join("");
+
+    const insightsHtml = (project.story || [])
+      .map(
+        (item) => `
+          <div class="insight-card">
+            <strong><span class="insight-card__icon">${escapeHtml(item.icon || "✦")}</span>${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.copy)}</p>
+          </div>
+        `,
+      )
+      .join("");
+
+    return `
+      <div>
+        <p class="section-eyebrow">Focus areas</p>
+        <div class="focus-chips">${focusHtml}</div>
+      </div>
+      ${createCarouselMarkup(project)}
+      <div>
+        <p class="section-eyebrow">Strategic takeaways</p>
+        <div class="insight-grid">${insightsHtml}</div>
+      </div>
+    `;
   }
 
   function createCarouselMarkup(project) {
@@ -839,6 +927,7 @@
     const variations = Array.from(
       new Set([dashed, normalized].filter((value) => Boolean(value))),
     );
+    const variations = [normalized, dashed];
     const extensions = [
       ".png",
       ".PNG",
