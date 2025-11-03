@@ -1,7 +1,7 @@
 // theme.js — Magnolia light theme + visible pastel particle motion (Three.js required)
 (function () {
   // ---------- Global styles (Magnolia palette) ----------
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
   :root {
     --bg-color:#FAF8F5; --text-dark:#4F4A45; --text-medium:#756f6a; --text-light:#9e9690;
@@ -15,7 +15,7 @@
     border-radius:20px;border:1px solid var(--panel-border);box-shadow:0 4px 24px rgba(0,0,0,.05);transition:box-shadow .3s}
   .panel:hover{box-shadow:0 8px 32px rgba(0,0,0,.07)}
   .reveal{opacity:0;transform:translateY(50px);transition:opacity .8s ease-out,transform .8s ease-out}
-  .reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal.visible,.reveal.is-visible{opacity:1;transform:translateY(0)}
   .metric-card{background:rgba(0,0,0,.02);border-radius:12px;padding:1.25rem;text-align:center}
   .metric-card-value{font-size:2.25rem;line-height:1;font-weight:800;color:var(--accent-pink)}
   .metric-card-label{font-size:.9rem;color:var(--text-medium)}
@@ -29,55 +29,72 @@
   document.head.appendChild(style);
 
   // Ensure canvas exists
-  if (!document.getElementById('bg-canvas')) {
-    const canvas = document.createElement('canvas');
-    canvas.id = 'bg-canvas';
+  if (!document.getElementById("bg-canvas")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "bg-canvas";
     document.body.prepend(canvas);
   }
 
   // Reveal-on-scroll
   const onReady = () => {
-    const obs = new IntersectionObserver((entries)=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.1});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+    const obs = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("visible", "is-visible");
+        }),
+      { threshold: 0.1 },
+    );
+    document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onReady); else onReady();
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", onReady);
+  else onReady();
 
   // ---------- WebGL Particles (light/pastel, visible on hover) ----------
-  function initParticles(){
+  function initParticles() {
     if (!window.THREE) return;
-    const canvas = document.getElementById('bg-canvas');
+    const canvas = document.getElementById("bg-canvas");
 
     // Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      70,
+      innerWidth / innerHeight,
+      0.1,
+      1000,
+    );
     camera.position.z = 55;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+    });
     renderer.setPixelRatio(dpr);
     renderer.setSize(innerWidth, innerHeight);
 
     // Geometry
     const N = 9000; // plenty but performant
-    const positions = new Float32Array(N*3);
+    const positions = new Float32Array(N * 3);
     const rnd = new Float32Array(N);
     const size = new Float32Array(N);
     const phase = new Float32Array(N);
 
-    for (let i=0;i<N;i++){
-      positions[i*3+0] = (Math.random()-0.5)*110;
-      positions[i*3+1] = (Math.random()-0.5)*70;
-      positions[i*3+2] = (Math.random()-0.5)*110;
+    for (let i = 0; i < N; i++) {
+      positions[i * 3 + 0] = (Math.random() - 0.5) * 110;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 70;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 110;
       rnd[i] = Math.random();
-      size[i] = Math.random()*1.6 + 1.1; // slightly bigger base
-      phase[i] = Math.random()*Math.PI*2;
+      size[i] = Math.random() * 1.6 + 1.1; // slightly bigger base
+      phase[i] = Math.random() * Math.PI * 2;
     }
 
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
-    geo.setAttribute('aRandom', new THREE.BufferAttribute(rnd,1));
-    geo.setAttribute('aSize', new THREE.BufferAttribute(size,1));
-    geo.setAttribute('aPhase', new THREE.BufferAttribute(phase,1));
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute("aRandom", new THREE.BufferAttribute(rnd, 1));
+    geo.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
+    geo.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
 
     // Shaders: brighter, more responsive near mouse
     const vShader = `
@@ -142,32 +159,35 @@
       uniforms: {
         uTime: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.0, 0.0) }, // NDC coords
-        uScreenW: { value: innerWidth }
+        uScreenW: { value: innerWidth },
       },
       vertexShader: vShader,
       fragmentShader: fShader,
       transparent: true,
-      depthWrite: false
+      depthWrite: false,
     });
 
     const points = new THREE.Points(geo, mat);
     scene.add(points);
 
     // Mouse → NDC target; camera parallax follow
-    const mouseNDC = new THREE.Vector2(0,0);
-    const mouseTarget = new THREE.Vector2(0,0);
+    const mouseNDC = new THREE.Vector2(0, 0);
+    const mouseTarget = new THREE.Vector2(0, 0);
     let lastMove = performance.now();
     let idlePhase = 0;
 
-    function onMouse(e){
+    function onMouse(e) {
       lastMove = performance.now();
       // convert to NDC (-1..1)
-      mouseTarget.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+      mouseTarget.set(
+        (e.clientX / innerWidth) * 2 - 1,
+        -(e.clientY / innerHeight) * 2 + 1,
+      );
     }
-    window.addEventListener('mousemove', onMouse, { passive:true });
+    window.addEventListener("mousemove", onMouse, { passive: true });
 
     // Parallax camera follow (subtle but visible)
-    function updateCamera(){
+    function updateCamera() {
       // ease the NDC for shader + move camera a bit
       mouseNDC.lerp(mouseTarget, 0.15);
       mat.uniforms.uMouse.value.copy(mouseNDC);
@@ -175,30 +195,33 @@
       const parallax = 1.6; // increase if you want more
       camera.position.x = mouseNDC.x * parallax;
       camera.position.y = mouseNDC.y * parallax * 0.8;
-      camera.lookAt(0,0,0);
+      camera.lookAt(0, 0, 0);
     }
 
     // Idle auto-motion so background stays alive without input
-    function updateIdle(){
+    function updateIdle() {
       const idleFor = performance.now() - lastMove;
-      if (idleFor > 1800){
+      if (idleFor > 1800) {
         idlePhase += 0.01;
         const r = 0.4;
-        mouseTarget.set(Math.cos(idlePhase)*r, Math.sin(idlePhase*0.8)*r*0.7);
+        mouseTarget.set(
+          Math.cos(idlePhase) * r,
+          Math.sin(idlePhase * 0.8) * r * 0.7,
+        );
       }
     }
 
     // Resize
-    function onResize(){
-      camera.aspect = innerWidth/innerHeight;
+    function onResize() {
+      camera.aspect = innerWidth / innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
       mat.uniforms.uScreenW.value = innerWidth;
     }
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
 
     // Animate
-    function tick(){
+    function tick() {
       requestAnimationFrame(tick);
       mat.uniforms.uTime.value += 0.016;
       updateIdle();
@@ -208,7 +231,9 @@
     tick();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initParticles);
-  } else { initParticles(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initParticles);
+  } else {
+    initParticles();
+  }
 })();
