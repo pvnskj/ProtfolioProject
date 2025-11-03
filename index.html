@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -35,7 +35,7 @@
 
       body {
         margin: 0;
-        font-family: "Manrope", "Inter", sans-serif;
+        font-family: "Inter", sans-serif;
         color: var(--ink);
         background:
           radial-gradient(
@@ -85,52 +85,51 @@
 
       .site-header {
         position: sticky;
-        top: clamp(0.75rem, 2vw, 1.5rem);
-        width: min(1080px, 92vw);
-        margin: 0 auto;
-        display: flex;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(18px);
+        background: rgba(253, 249, 245, 0.82);
+        border-bottom: 1px solid rgba(216, 160, 168, 0.25);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 1.5rem;
-        z-index: 60;
-        padding: 0.35rem clamp(1.25rem, 4vw, 2.75rem);
-      }
-
-      .header-spacer {
-        flex: 1;
+        padding: 1.4rem clamp(1.5rem, 4vw, 3rem);
+        gap: 1rem;
       }
 
       .logo {
-        font-size: 1.05rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: var(--ink);
       }
 
       .menu-toggle {
-        width: 44px;
-        height: 44px;
+        position: relative;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 1px solid rgba(216, 160, 168, 0.4);
+        background: rgba(255, 255, 255, 0.75);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border: none;
-        border-radius: 8px;
-        background: transparent;
-        color: var(--ink);
         cursor: pointer;
         transition:
           transform 0.2s ease,
-          color 0.2s ease;
+          box-shadow 0.25s ease;
+        box-shadow: 0 12px 25px rgba(31, 27, 24, 0.14);
+      }
+
+      .menu-toggle:focus-visible,
+      .menu-close:focus-visible {
+        outline: 3px solid rgba(216, 160, 168, 0.65);
+        outline-offset: 3px;
       }
 
       .menu-toggle:hover {
-        color: rgba(120, 117, 255, 0.9);
-        transform: translateY(-1px);
-      }
-
-      .menu-toggle:focus-visible {
-        outline: 2px solid rgba(120, 117, 255, 0.55);
-        outline-offset: 4px;
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px rgba(31, 27, 24, 0.18);
       }
 
       .menu-toggle__line,
@@ -138,10 +137,10 @@
       .menu-toggle__line::after {
         content: "";
         display: block;
-        width: 22px;
+        width: 20px;
         height: 2px;
         border-radius: 999px;
-        background: currentColor;
+        background: var(--ink);
         position: relative;
         transition:
           transform 0.25s ease,
@@ -150,16 +149,12 @@
 
       .menu-toggle__line::before {
         position: absolute;
-        top: -7px;
+        top: -6px;
       }
 
       .menu-toggle__line::after {
         position: absolute;
-        top: 7px;
-      }
-
-      .menu-toggle[aria-expanded="true"] {
-        color: rgba(120, 117, 255, 0.9);
+        top: 6px;
       }
 
       .menu-toggle[aria-expanded="true"] .menu-toggle__line {
@@ -167,130 +162,94 @@
       }
 
       .menu-toggle[aria-expanded="true"] .menu-toggle__line::before {
-        transform: translateY(7px) rotate(45deg);
+        transform: translateY(6px) rotate(45deg);
       }
 
       .menu-toggle[aria-expanded="true"] .menu-toggle__line::after {
-        transform: translateY(-7px) rotate(-45deg);
+        transform: translateY(-6px) rotate(-45deg);
       }
 
       .site-nav {
         position: fixed;
-        top: clamp(4.75rem, 7vw, 6.5rem);
-        right: clamp(1rem, 5vw, 3rem);
-        width: min(280px, 88vw);
-        padding: 1.35rem 1.5rem;
-        background: rgba(255, 255, 255, 0.76);
-        backdrop-filter: blur(26px);
-        -webkit-backdrop-filter: blur(26px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.45);
-        box-shadow: 0 28px 60px rgba(31, 27, 24, 0.18);
+        inset: 0 0 0 auto;
+        width: min(320px, 80vw);
+        padding: clamp(4rem, 6vw, 5rem) clamp(1.8rem, 4vw, 2.5rem) 2.5rem;
+        background: rgba(253, 249, 245, 0.96);
+        border-left: 1px solid rgba(216, 160, 168, 0.3);
+        box-shadow: -12px 0 40px rgba(31, 27, 24, 0.16);
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-12px);
-        pointer-events: none;
-        transition:
-          opacity 0.25s ease,
-          transform 0.25s ease,
-          visibility 0.25s ease;
-        z-index: 55;
+        gap: 1.2rem;
+        transform: translateX(105%);
+        transition: transform 0.35s ease;
+        z-index: 40;
       }
 
       body.menu-open .site-nav {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-        pointer-events: auto;
-      }
-
-      .site-nav__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
+        transform: translateX(0);
       }
 
       .site-nav__title {
-        font-size: 0.7rem;
-        letter-spacing: 0.28em;
+        font-size: 0.78rem;
+        letter-spacing: 0.3em;
         text-transform: uppercase;
-        color: rgba(63, 56, 48, 0.6);
+        color: rgba(63, 56, 48, 0.55);
       }
 
-      .site-nav__close {
-        border: none;
-        background: transparent;
-        color: rgba(63, 56, 48, 0.65);
-        font-size: 1.15rem;
-        line-height: 1;
-        cursor: pointer;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.2s ease;
-      }
-
-      .site-nav__close:hover,
-      .site-nav__close:focus-visible {
-        color: rgba(120, 117, 255, 0.9);
-      }
-
-      .site-nav__close:focus-visible {
-        outline: 2px solid rgba(120, 117, 255, 0.45);
-        outline-offset: 4px;
-      }
-
-      .site-nav__list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-      }
-
-      .site-nav__link {
+      .site-nav a {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ink);
         text-decoration: none;
+        padding-block: 0.6rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: var(--ink);
-        padding: 0.4rem 0;
-        font-weight: 600;
+        border-bottom: 1px solid rgba(216, 160, 168, 0.25);
         transition: color 0.2s ease;
       }
 
-      .site-nav__link-meta {
-        font-size: 0.72rem;
+      .site-nav a span {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
         color: rgba(63, 56, 48, 0.5);
       }
 
-      .site-nav__link:hover {
-        color: rgba(120, 117, 255, 0.9);
+      .site-nav a:hover,
+      .site-nav a:focus {
+        color: rgba(120, 117, 255, 1);
       }
 
-      .site-nav__link:focus-visible {
-        outline: 2px solid rgba(120, 117, 255, 0.45);
-        outline-offset: 4px;
+      .menu-close {
+        align-self: flex-end;
+        border: none;
+        background: rgba(255, 255, 255, 0.65);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+        color: var(--ink);
+        box-shadow: 0 10px 24px rgba(31, 27, 24, 0.16);
+        transition: transform 0.2s ease;
+      }
+
+      .menu-close:hover {
+        transform: translateY(-2px);
       }
 
       .menu-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(253, 249, 245, 0.55);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+        background: rgba(31, 27, 24, 0.35);
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.25s ease;
-        z-index: 40;
+        transition: opacity 0.35s ease;
+        z-index: 30;
       }
 
       body.menu-open {
@@ -300,22 +259,6 @@
       body.menu-open .menu-backdrop {
         opacity: 1;
         pointer-events: auto;
-      }
-
-      @media (max-width: 640px) {
-        .site-header {
-          padding: 0.35rem clamp(1rem, 6vw, 1.75rem);
-        }
-
-        .logo {
-          font-size: 0.95rem;
-          letter-spacing: 0.12em;
-        }
-
-        .site-nav {
-          right: clamp(0.75rem, 6vw, 2rem);
-          width: min(300px, 92vw);
-        }
       }
 
       .sr-only {
@@ -926,278 +869,6 @@
         display: block;
       }
 
-      .portfolio-hybrid {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(1.75rem, 3vw, 2.4rem);
-        margin-top: clamp(2.4rem, 4vw, 3rem);
-      }
-
-      .project-rail {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        padding: clamp(1.6rem, 2vw, 2.1rem);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .project-rail__viewport {
-        position: relative;
-        overflow: hidden;
-        height: clamp(260px, 32vw, 340px);
-      }
-
-      .project-rail__list {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        transition: transform 0.45s ease;
-        will-change: transform;
-      }
-
-      .project-card {
-        position: relative;
-        border: none;
-        border-radius: 22px;
-        padding: 0;
-        min-height: clamp(240px, 28vw, 320px);
-        cursor: pointer;
-        overflow: hidden;
-        text-align: left;
-        display: block;
-        background-size: cover;
-        background-position: center;
-        color: var(--ink);
-        box-shadow: 0 18px 32px rgba(31, 27, 24, 0.14);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .project-card:focus-visible {
-        outline: 3px solid rgba(216, 160, 168, 0.6);
-        outline-offset: 3px;
-      }
-
-      .project-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          165deg,
-          rgba(255, 255, 255, 0.92) 0%,
-          rgba(253, 249, 245, 0.62) 45%,
-          rgba(253, 249, 245, 0.2) 100%
-        );
-        transition: opacity 0.3s ease;
-      }
-
-      .project-card:hover,
-      .project-card:is(.is-active) {
-        transform: translateY(-6px);
-        box-shadow: 0 26px 46px rgba(31, 27, 24, 0.18);
-      }
-
-      .project-card.is-active::before {
-        background: linear-gradient(
-          160deg,
-          rgba(255, 255, 255, 0.95) 0%,
-          rgba(216, 160, 168, 0.25) 45%,
-          rgba(120, 117, 255, 0.2) 100%
-        );
-      }
-
-      .project-card__body {
-        position: relative;
-        z-index: 1;
-        padding: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
-        display: grid;
-        gap: 0.75rem;
-        backdrop-filter: blur(4px);
-      }
-
-      .project-card__title {
-        font-size: clamp(1.4rem, 1.1rem + 0.6vw, 1.75rem);
-        margin: 0;
-        color: var(--ink);
-      }
-
-      .project-card__summary {
-        font-size: 0.9rem;
-        color: rgba(63, 56, 48, 0.78);
-        margin: 0;
-        line-height: 1.55;
-      }
-
-      .project-card__outcome {
-        font-weight: 600;
-        font-size: 0.9rem;
-        color: rgba(120, 117, 255, 0.9);
-      }
-
-      .project-card__tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.45rem;
-      }
-
-      .project-card__tags span {
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid rgba(216, 160, 168, 0.35);
-        border-radius: 999px;
-        padding: 0.35rem 0.75rem;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: rgba(63, 56, 48, 0.62);
-        font-weight: 600;
-      }
-
-      .project-rail__controls {
-        display: flex;
-        justify-content: center;
-        gap: 0.9rem;
-      }
-
-      .project-rail__button {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        border: 1px solid rgba(216, 160, 168, 0.35);
-        background: rgba(255, 255, 255, 0.82);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: rgba(63, 56, 48, 0.68);
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      }
-
-      .project-rail__button svg {
-        width: 18px;
-        height: 18px;
-      }
-
-      .project-rail__button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        border-color: rgba(216, 160, 168, 0.6);
-        box-shadow: 0 14px 30px rgba(31, 27, 24, 0.16);
-      }
-
-      .project-rail__button:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
-
-      .project-detail-wrapper {
-        position: relative;
-        flex: 1;
-        min-width: 0;
-      }
-
-      .project-detail {
-        min-height: clamp(320px, 36vw, 520px);
-        padding: clamp(1.8rem, 1.4rem + 1vw, 2.4rem);
-        display: grid;
-        gap: 2rem;
-        opacity: 0;
-        transform: translateY(18px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
-      }
-
-      .project-detail.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .project-detail__header {
-        display: grid;
-        gap: 0.6rem;
-      }
-
-      .project-detail__eyebrow {
-        font-size: 0.78rem;
-        letter-spacing: 0.28em;
-        text-transform: uppercase;
-        color: rgba(63, 56, 48, 0.55);
-        font-weight: 700;
-      }
-
-      .project-detail__title {
-        margin: 0;
-        font-size: clamp(1.9rem, 1.4rem + 1vw, 2.35rem);
-        color: var(--ink);
-      }
-
-      .project-detail__summary {
-        margin: 0;
-        color: rgba(63, 56, 48, 0.74);
-        line-height: 1.6;
-      }
-
-      .project-detail__outcome {
-        margin: 0;
-        font-weight: 600;
-        color: rgba(216, 160, 168, 0.95);
-      }
-
-      .project-detail__placeholder {
-        margin: 0;
-        color: rgba(63, 56, 48, 0.55);
-        line-height: 1.6;
-      }
-
-      .project-detail__header .project-card__tags {
-        margin-top: 0.6rem;
-      }
-
-      .project-detail__footer {
-        display: flex;
-        justify-content: center;
-      }
-
-      .project-detail__close {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.65rem 1.1rem;
-        border-radius: 999px;
-        border: 1px solid rgba(216, 160, 168, 0.35);
-        background: rgba(255, 255, 255, 0.82);
-        color: rgba(63, 56, 48, 0.68);
-        font-weight: 600;
-        font-size: 0.85rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      }
-
-      .project-detail__close svg {
-        width: 16px;
-        height: 16px;
-      }
-
-      .project-detail__close:hover {
-        transform: translateY(-1px);
-        border-color: rgba(216, 160, 168, 0.6);
-        box-shadow: 0 12px 22px rgba(31, 27, 24, 0.14);
-      }
-
-      @media (min-width: 980px) {
-        .portfolio-hybrid {
-          flex-direction: row;
-          align-items: stretch;
-        }
-
-        .project-rail {
-          flex-basis: min(38%, 420px);
-        }
-
-        .project-rail__viewport {
-          height: clamp(320px, 36vw, 380px);
-        }
-
-        .project-detail {
-          min-height: clamp(420px, 45vw, 560px);
-        }
-      }
-
       .methodology-container {
         display: grid;
         gap: 1.4rem;
@@ -1545,33 +1216,14 @@
         data-menu-panel
         aria-hidden="true"
       >
-        <div class="site-nav__header">
-          <span class="site-nav__title">Navigate</span>
-          <button type="button" class="site-nav__close" data-menu-close>
-            <span class="sr-only">Close navigation</span>
-            &times;
-          </button>
-        </div>
-        <ul class="site-nav__list">
-          <li>
-            <a class="site-nav__link" href="#about">
-              <span>About</span>
-              <span class="site-nav__link-meta">Journey</span>
-            </a>
-          </li>
-          <li>
-            <a class="site-nav__link" href="#portfolio">
-              <span>Portfolio</span>
-              <span class="site-nav__link-meta">Case studies</span>
-            </a>
-          </li>
-          <li>
-            <a class="site-nav__link" href="#why-me-contact">
-              <span>Contact</span>
-              <span class="site-nav__link-meta">Partner</span>
-            </a>
-          </li>
-        </ul>
+        <button type="button" class="menu-close" data-menu-close>
+          <span class="sr-only">Close navigation</span>
+          &times;
+        </button>
+        <div class="site-nav__title">Navigate</div>
+        <a href="#about">About<span>Journey</span></a>
+        <a href="#portfolio">Portfolio<span>Case studies</span></a>
+        <a href="#why-me-contact">Contact<span>Partner</span></a>
       </nav>
       <div class="menu-backdrop" data-menu-backdrop></div>
 
@@ -1631,48 +1283,24 @@
             </p>
           </div>
 
-          <div class="portfolio-hybrid">
+          <div class="portfolio-shell">
+            <article
+              id="project-showcase"
+              class="glass-panel project-showcase"
+              aria-live="polite"
+            ></article>
             <aside
-              id="project-rail"
-              class="glass-panel project-rail"
+              id="project-catalog"
+              class="glass-panel project-catalog"
               aria-label="Project selector"
-            >
-              <div id="project-list-container" class="project-rail__viewport">
-                <div id="project-list" class="project-rail__list"></div>
-              </div>
-              <div class="project-rail__controls" aria-hidden="true">
-                <button
-                  id="project-prev"
-                  class="project-rail__button"
-                  type="button"
-                  aria-label="Previous project"
-                  disabled
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 4l8 8-8 8" />
-                  </svg>
-                </button>
-                <button
-                  id="project-next"
-                  class="project-rail__button"
-                  type="button"
-                  aria-label="Next project"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 4l-8 8 8 8" />
-                  </svg>
-                </button>
-              </div>
-            </aside>
-
-            <div id="project-detail-wrapper" class="project-detail-wrapper">
-              <section
-                id="project-detail"
-                class="glass-panel project-detail"
-                aria-live="polite"
-              ></section>
-            </div>
+            ></aside>
           </div>
+
+          <section
+            id="project-depth"
+            class="glass-panel project-depth reveal"
+            aria-live="polite"
+          ></section>
         </section>
 
         <section id="why-me-contact" class="cta-section reveal">
