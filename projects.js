@@ -1,766 +1,667 @@
-// projects.js — Jelly theme + alignment fixes + readable sections (no text removed)
+(() => {
+  const repoBase = (() => {
+    const segments = window.location.pathname.split("/").filter(Boolean);
+    if (!segments.length) return "/";
+    return `/${segments[0]}/`;
+  })();
 
-// 1) ---- Jelly Theme + Layout Styles ----
-(function injectPortfolioStyles(){
-  if (document.getElementById('portfolio-style-jelly')) return;
-  const style = document.createElement('style');
-  style.id = 'portfolio-style-jelly';
-  style.innerHTML = `
-    :root{
-      --accent:#ec4899;
-      --accent-2:#a855f7;
-      --panel-radius:18px; --panel-pad:20px;
-      --chip-br:9999px;
-      --fg:#1f2937; --fg-d:#e5e7eb;
-      --muted:#6b7280; --muted-d:#c7cad1;
-      --border:rgba(0,0,0,.08); --border-d:rgba(255,255,255,.12);
-      --bg:rgba(255,255,255,.75); --bg-d:rgba(31,41,55,.6);
-      --glow:0 10px 30px rgba(236,72,153,.15), 0 6px 12px rgba(168,85,247,.12);
-      --glow-strong:0 18px 45px rgba(236,72,153,.22), 0 10px 22px rgba(168,85,247,.18);
-      --ring:0 0 0 2px rgba(236,72,153,.6);
-    }
-    html.theme-jelly body, body.theme-jelly { background: radial-gradient(1200px 1200px at 10% -10%, rgba(236,72,153,.06), transparent 60%) no-repeat; }
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
 
-    /* Core panel look (glassy jelly) */
-    .panel{
-      background:var(--bg);
-      -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
-      border-radius:var(--panel-radius);
-      border:1px solid var(--border);
-      box-shadow: var(--glow);
-      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
-    }
-    .panel:hover{ transform: translateY(-1px); box-shadow: var(--glow-strong); }
-    @media (prefers-color-scheme: dark){
-      .panel{ background:var(--bg-d); border-color:var(--border-d); }
-    }
+  const projects = [
+    {
+      id: "guide",
+      title: "Reinventing the TV Guide",
+      industry: "Streaming · Media",
+      summary:
+        "Unified Sling TV and DISH TV discovery into one adaptive experience using multi-surface research.",
+      outcome: "$7.46M annualized upside projected",
+      heroImage: "public/images/guide/guide-03.png",
+      heroAlt: "Unified TV guide concept across multiple devices",
+      metrics: [
+        { value: "90%", label: "Task success" },
+        { value: "-12%", label: "CX complaints" },
+        { value: "$7.46M", label: "Value impact" },
+      ],
+      focus: [
+        "Unified discovery for Sling & DISH households",
+        "Personalization powered by behavioral telemetry",
+        "Accessibility-ready motion & density system",
+      ],
+      story: [
+        {
+          icon: "🧭",
+          title: "Opportunity framing",
+          copy: "Mapped the end-to-end service blueprint to expose cross-platform friction and align executives.",
+        },
+        {
+          icon: "🧪",
+          title: "Evidence mix",
+          copy: "Diary studies, 18 deep interviews, and 2M session analytics to triangulate everyday behaviors.",
+        },
+        {
+          icon: "🚀",
+          title: "Strategic outcome",
+          copy: "Delivered a phased rollout playbook with KPI ladders and accessibility guardrails.",
+        },
+      ],
+      gallery: [],
+      galleryManifest: true,
+      tagline:
+        "Designing a unified discovery experience for Sling & DISH households.",
+    },
+    {
+      id: "gundersen",
+      title: "Gundersen Health Virtual Care OS",
+      industry: "Healthcare · SaaS",
+      summary:
+        "Reimagined intake and triage flows for clinicians and patients inside a unified virtual care operating system.",
+      outcome: "32% faster intake & triage across clinics",
+      heroImage:
+        "https://images.unsplash.com/photo-1580281658629-26036f899014?auto=format&fit=crop&w=1600&q=80",
+      heroAlt: "Clinician using a digital health dashboard",
+      metrics: [
+        { value: "32%", label: "Faster intake" },
+        { value: "4.7★", label: "Clinician satisfaction" },
+        { value: "3 mos", label: "Launch acceleration" },
+      ],
+      focus: [
+        "Cross-clinic workflow mapping",
+        "Multi-role dashboard prototyping",
+        "HIPAA-compliant experimentation",
+      ],
+      story: [
+        {
+          icon: "🩺",
+          title: "Field immersion",
+          copy: "Shadowed 6 clinics and captured 40+ hours of intake footage to surface friction and opportunities.",
+        },
+        {
+          icon: "🧬",
+          title: "Quantified impact",
+          copy: "Mapped EMR logs to pain points and prioritized backlog based on throughput and readmission risk.",
+        },
+        {
+          icon: "🤝",
+          title: "Operational adoption",
+          copy: "Coached nurse champions and product leads on rolling out evidence-backed workflow changes.",
+        },
+      ],
+      gallery: [
+        {
+          src: "https://images.unsplash.com/photo-1587614382346-4ec892f9aca3?auto=format&fit=crop&w=1600&q=80",
+          alt: "Telehealth dashboard interface",
+          caption:
+            "Concept dashboard enabling clinicians to triage multi-channel visits.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1580894894513-d75ec1c5c5a1?auto=format&fit=crop&w=1600&q=80",
+          alt: "Patient using a tablet at home",
+          caption:
+            "Home-based participant testing the simplified intake journey.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1581090700227-1e37b190418e?auto=format&fit=crop&w=1600&q=80",
+          alt: "Research team co-creating a journey map",
+          caption:
+            "Co-creation lab aligning clinical and product stakeholders on future workflows.",
+        },
+      ],
+      tagline:
+        "Accelerating virtual care with evidence-backed workflow orchestration.",
+    },
+    {
+      id: "live-rooms",
+      title: "Live Rooms Interactive Watch Parties",
+      industry: "Streaming · Social",
+      summary:
+        "Launched a co-watching and commerce layer that extends live broadcasts into interactive communities.",
+      outcome: "18% lift in session length across pilot cohorts",
+      heroImage:
+        "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
+      heroAlt: "Friends enjoying a streaming session with neon lighting",
+      metrics: [
+        { value: "+18%", label: "Session length" },
+        { value: "94%", label: "Feature adoption" },
+        { value: "6 wks", label: "Insight to beta" },
+      ],
+      focus: [
+        "Real-time engagement loops",
+        "Commerce & conversion experiments",
+        "Accessibility for shared experiences",
+      ],
+      story: [
+        {
+          icon: "🎙️",
+          title: "Audience listening",
+          copy: "Ran rolling diary studies with superfans to translate rituals into product behaviors.",
+        },
+        {
+          icon: "📊",
+          title: "Signal instrumentation",
+          copy: "Designed telemetry to measure co-watching retention, sentiment, and conversion moments.",
+        },
+        {
+          icon: "✨",
+          title: "Launch craft",
+          copy: "Partnered with design to define choreography, moderation tools, and revenue-ready pathways.",
+        },
+      ],
+      gallery: [
+        {
+          src: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1600&q=80",
+          alt: "People streaming together with devices",
+          caption:
+            "Prototype testing of synchronized playback and chat overlays.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1525182008051-d4d6360c81e5?auto=format&fit=crop&w=1600&q=80",
+          alt: "Interactive live room interface exploration",
+          caption:
+            "Hi-fi interface exploration for layered interactive controls.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1512427691650-1e0c0a1db8f1?auto=format&fit=crop&w=1600&q=80",
+          alt: "UX researcher facilitating a workshop",
+          caption:
+            "Cross-functional workshop mapping monetization and moderation scenarios.",
+        },
+      ],
+      tagline:
+        "Transforming passive viewing into vibrant, revenue-ready communities.",
+    },
+  ];
 
-    /* Left tile ↔ right details alignment */
-    .active-project-panel{margin:0}
-    .active-project-panel .panel{padding:var(--panel-pad)}
-    .panel-rail{max-width:1250px;margin-inline:auto}
-    .project-details-content.panel{padding:calc(var(--panel-pad) + 4px)}
+  const testimonials = [
+    {
+      quote:
+        "Sphoorthy translated fragmented data into a narrative the exec team rallied around. Her work sharpened our roadmap in under a quarter.",
+      author: "Gary S.",
+      role: "EVP & Group President, Video Services",
+    },
+    {
+      quote:
+        "Every engagement with Sphoorthy raised the bar for how we use research. Her insights were precise, fast, and always tied to business levers.",
+      author: "AL Shanmugam",
+      role: "Head of Product · AI, Personalization & Platform Growth",
+    },
+    {
+      quote:
+        "She created a research practice that designers and engineers trusted. Shipping high-impact work became significantly easier.",
+      author: "Erik Jonathan Nava",
+      role: "Lead Design System Designer · AXS",
+    },
+    {
+      quote:
+        "Sphoorthy has a gift for making insight storytelling magnetic. Our leadership team still references her frameworks months later.",
+      author: "Emily K.",
+      role: "Director of Product Management",
+    },
+    {
+      quote:
+        "Her strategic instinct is matched by rigor. We saw measurable retention and revenue gains because of her research programs.",
+      author: "Anish Raul",
+      role: "Generative AI & Personalisation Leader",
+    },
+    {
+      quote:
+        "Working with Sphoorthy is like adding a compass to your product team. She keeps momentum without sacrificing depth.",
+      author: "Michael B.",
+      role: "Senior Product Designer",
+    },
+  ];
 
-    /* Project hero */
-    .project-breakout{
-      position:relative;
-      margin:0 calc(var(--panel-pad) * -1);
-    }
-    .project-breakout__inner{
-      max-width:1250px;
-      margin-inline:auto;
-      padding:0 var(--panel-pad);
-    }
-    .project-breakout--edge .project-hero{
-      border-radius:24px;
-    }
-    .project-hero{
-      display:grid;
-      gap:1.75rem;
-      margin-bottom:2.25rem;
-      align-items:stretch;
-    }
-    .project-hero--breakout{
-      position:relative;
-      padding:clamp(1rem, 1.2rem + 0.8vw, 1.9rem);
-      border-radius:28px;
-      background:linear-gradient(120deg, rgba(236,72,153,.14), rgba(168,85,247,.08));
-      border:1px solid rgba(236,72,153,.18);
-      box-shadow:0 22px 60px rgba(236,72,153,.14);
-      overflow:hidden;
-    }
-    .project-hero--breakout::before{
-      content:"";
-      position:absolute;
-      inset:-40% -10% 40% -10%;
-      background:radial-gradient(60% 120% at 0% 0%, rgba(236,72,153,.32), transparent 70%);
-      opacity:.65;
-      pointer-events:none;
-    }
-    @media (min-width: 900px){
-      .project-hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:2.25rem;}
-    }
-    .project-hero__media{
-      position:relative;
-      border-radius:24px;
-      overflow:hidden;
-      min-height:220px;
-      background:linear-gradient(135deg, rgba(236,72,153,.65), rgba(168,85,247,.55));
-      box-shadow:var(--glow-strong);
-      isolation:isolate;
-    }
-    .project-hero__media--interactive::after{display:none;}
-    .project-hero__media::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg, rgba(17,24,39,.15), rgba(17,24,39,.45));
-      mix-blend-mode:multiply;
-      pointer-events:none;
-      z-index:3;
-    }
-    .scanline-overlay{
-      position:absolute;
-      inset:0;
-      background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.15) 0, rgba(255,255,255,.15) 1px, transparent 1px, transparent 4px);
-      mix-blend-mode:screen;
-      opacity:.3;
-      pointer-events:none;
-      z-index:2;
-    }
-    .project-hero__media > img,
-    .project-hero__media > video{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      z-index:1;
-    }
-    [data-media-carousel]{
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      gap:clamp(.9rem, .8rem + 1vw, 1.4rem);
-      scroll-snap-type:x mandatory;
-    }
-    [data-media-carousel-track]{
-      display:flex;
-      gap:clamp(.9rem, .8rem + 1vw, 1.3rem);
-      overflow-x:auto;
-      padding-inline:clamp(.25rem, .5vw + .5rem, 1rem);
-      padding-block:.25rem .75rem;
-      scroll-snap-type:x mandatory;
-      scroll-padding:clamp(.75rem, .5rem + .5vw, 1.25rem);
-      scrollbar-width:none;
-      -ms-overflow-style:none;
-    }
-    [data-media-carousel-track]::-webkit-scrollbar{display:none;}
-    [data-media-carousel-item]{
-      flex:0 0 calc(90.9%);
-      scroll-snap-align:center;
-      scroll-snap-stop:always;
-      position:relative;
-    }
-    [data-media-carousel-item] > *{
-      width:100%;
-      height:100%;
-      border-radius:22px;
-      overflow:hidden;
-      display:block;
-      background:linear-gradient(135deg, rgba(236,72,153,.16), rgba(168,85,247,.12));
-      box-shadow:var(--glow);
-      transition:transform .25s ease, opacity .25s ease;
-      opacity:.94;
-    }
-    [data-media-carousel-item] > *:hover{
-      transform:translateY(-6px);
-      opacity:1;
-      box-shadow:var(--glow-strong);
-    }
-    [data-media-carousel-item] > *:focus-visible{
-      outline:none;
-      box-shadow:0 0 0 3px rgba(236,72,153,.55), var(--glow);
-    }
-    [data-carousel-prev],
-    [data-carousel-next]{
-      appearance:none;
-      border:none;
-      border-radius:999px;
-      padding:.55rem;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:.35rem;
-      background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.58));
-      color:var(--fg);
-      cursor:pointer;
-      box-shadow:0 10px 20px rgba(15,23,42,.12);
-      position:relative;
-      transition:transform .2s ease, opacity .2s ease;
-    }
-    [data-carousel-prev]:hover,
-    [data-carousel-next]:hover{
-      transform:translateY(-3px);
-      opacity:.96;
-      box-shadow:var(--glow);
-    }
-    [data-carousel-prev]::after,
-    [data-carousel-next]::after{
-      content:"";
-      display:block;
-      width:10px;
-      height:10px;
-      border-top:2px solid currentColor;
-      border-right:2px solid currentColor;
-      transform:rotate(45deg);
-    }
-    [data-carousel-prev]::after{ transform:rotate(225deg); }
-    [data-carousel-prev]:focus-visible,
-    [data-carousel-next]:focus-visible{
-      outline:none;
-      box-shadow:0 0 0 3px rgba(236,72,153,.55), var(--glow);
-    }
-    [data-carousel-index]{
-      border-radius:999px;
-      border:1px solid rgba(236,72,153,.3);
-      padding:.3rem .7rem;
-      background:linear-gradient(180deg, rgba(236,72,153,.08), rgba(168,85,247,.08));
-      color:var(--accent);
-      font-weight:600;
-      cursor:pointer;
-      transition:transform .2s ease, opacity .2s ease;
-    }
-    [data-carousel-index]:hover{transform:translateY(-2px);opacity:.96;}
-    [data-carousel-index]:focus-visible{
-      outline:none;
-      box-shadow:0 0 0 3px rgba(236,72,153,.55), var(--glow);
-    }
-    .hero-carousel{
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      gap:1rem;
-      height:100%;
-    }
-    .hero-carousel__track{
-      --snap-gap:1rem;
-      display:flex;
-      gap:var(--snap-gap);
-      overflow-x:auto;
-      padding:1.25rem 1.75rem 1.75rem;
-      margin:-1.25rem -1.75rem -1.75rem;
-      scroll-snap-type:x mandatory;
-      scroll-behavior:smooth;
-      scrollbar-width:thin;
-    }
-    .hero-carousel__track:focus-visible{outline:var(--ring);outline-offset:6px;}
-    .hero-carousel__slide{
-      position:relative;
-      flex:0 0 100%;
-      scroll-snap-align:center;
-      border-radius:20px;
-      overflow:hidden;
-      background:rgba(15,23,42,.3);
-      min-height:220px;
-    }
-    .hero-carousel__slide[aria-hidden="true"]{opacity:.5;}
-    .hero-carousel__slide img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .hero-carousel__slide figcaption{
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:0;
-      padding:1rem 1.25rem;
-      background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(15,23,42,.68) 100%);
-      color:#f9fafb;
-      font-size:.85rem;
-      line-height:1.4;
-    }
-    .hero-carousel__nav{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      border:none;
-      background:rgba(15,23,42,.72);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 10px 30px rgba(15,23,42,.35);
-      cursor:pointer;
-      transition:background .2s ease, transform .2s ease;
-      z-index:2;
-    }
-    .hero-carousel__nav:hover{background:rgba(15,23,42,.85);transform:translateY(calc(-50% - 1px));}
-    .hero-carousel__nav:focus-visible{outline:var(--ring);outline-offset:3px;}
-    .hero-carousel__nav[disabled]{opacity:.4;cursor:not-allowed;}
-    .hero-carousel__nav--prev{left:1rem;}
-    .hero-carousel__nav--next{right:1rem;}
-    .hero-carousel__nav svg{width:20px;height:20px;}
-    .hero-carousel--reduced .hero-carousel__track{
-      scroll-behavior:auto;
-      scroll-snap-type:none;
-    }
-    .hero-carousel--reduced .hero-carousel__slide[aria-hidden="true"]{opacity:1;}
-    .project-gallery{
-      margin:2.5rem 0 0;
-      display:flex;
-      flex-direction:column;
-      gap:1.25rem;
-    }
-    .project-gallery__title{
-      font-weight:800;
-      font-size:clamp(1.15rem,1.05rem + .35vw,1.35rem);
-      color:var(--fg);
-    }
-    .project-gallery__grid{
-      display:grid;
-      gap:1rem;
-      grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
-    }
-    .project-gallery__figure{
-      position:relative;
-      border-radius:18px;
-      overflow:hidden;
-      background:linear-gradient(180deg, rgba(15,23,42,.7), rgba(15,23,42,.85));
-      color:#f3f4f6;
-      box-shadow:var(--glow);
-    }
-    .project-gallery__figure img{
-      display:block;
-      width:100%;
-      height:auto;
-    }
-    .project-gallery__figure figcaption{
-      padding:1rem 1.25rem;
-      font-size:.9rem;
-      line-height:1.5;
-      background:linear-gradient(180deg, rgba(15,23,42,.35), rgba(15,23,42,.82));
-    }
-    .project-gallery.is-empty{display:none;}
-    .project-hero__summary{
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
-      border-radius:22px;
-      padding:2rem clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
-      box-shadow:var(--glow-strong);
-      border:1px solid var(--border);
-      display:flex;
-      flex-direction:column;
-      gap:1.25rem;
-    }
-    .project-hero__eyebrow{
-      font-size:.72rem;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-weight:800;
-      color:var(--accent);
-    }
-    .project-hero__headline{
-      font-weight:900;
-      font-size:clamp(1.8rem, 1.4rem + 1.8vw, 2.5rem);
-      color:var(--fg);
-      line-height:1.15;
-    }
-    .project-hero__subhead{
-      font-size:clamp(1rem, .95rem + .4vw, 1.22rem);
-      color:var(--muted);
-      max-width:48ch;
-    }
-    .project-hero__bullets{
-      list-style:none;
-      margin:0;
-      padding:0;
-      display:grid;
-      gap:1.1rem;
-    }
-    .project-hero__bullet{
-      position:relative;
-      padding-left:2.6rem;
-      color:var(--fg);
-    }
-    .project-hero__bullet::before{
-      content:"";
-      position:absolute;
-      left:0;
-      top:.3rem;
-      width:1.8rem;
-      height:1.8rem;
-      border-radius:50%;
-      background:linear-gradient(135deg, rgba(236,72,153,.9), rgba(168,85,247,.9));
-      opacity:.85;
-      box-shadow:0 10px 25px rgba(236,72,153,.28);
-    }
-    .project-hero__bullet-title{
-      font-size:clamp(1.02rem, .98rem + .35vw, 1.28rem);
-      font-weight:800;
-      display:block;
-    }
-    .project-hero__bullet-copy{
-      display:block;
-      margin-top:.25rem;
-      font-size:clamp(.9rem, .86rem + .2vw, 1rem);
-      color:var(--muted);
-      max-width:52ch;
-    }
-    .project-section-stack{
-      display:flex;
-      flex-direction:column;
-      gap:2.5rem;
-    }
-    @media (prefers-color-scheme: dark){
-      .project-hero--breakout{background:linear-gradient(120deg, rgba(236,72,153,.18), rgba(168,85,247,.12));border-color:var(--border-d);box-shadow:0 22px 60px rgba(15,23,42,.45);}
-      .scanline-overlay{opacity:.22;}
-      .project-hero__media::after{background:linear-gradient(180deg, rgba(17,24,39,.35), rgba(17,24,39,.65));}
-      .project-hero__summary{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72));border-color:var(--border-d);}
-      .project-hero__headline{color:var(--fg-d);}
-      .project-hero__bullet{color:var(--fg-d);} 
-      .project-hero__bullet-copy{color:var(--fg-d);} 
-      [data-carousel-prev],
-      [data-carousel-next]{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72));color:var(--fg-d);box-shadow:0 12px 30px rgba(0,0,0,.45);} 
-      [data-carousel-index]{background:linear-gradient(180deg, rgba(236,72,153,.18), rgba(168,85,247,.18));color:var(--accent);border-color:rgba(236,72,153,.4);} 
-    }
+  const state = {
+    activeId: projects[0]?.id || null,
+    carouselController: null,
+  };
 
-    /* Tabs (pills) */
-    .details-tabs{ gap:.5rem; }
-    .details-tabs button{
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));
-      border-radius:12px;
-      padding:.45rem .8rem;
-      box-shadow: inset 0 -1px 0 rgba(0,0,0,.05);
-      transition: transform .12s ease, box-shadow .15s ease;
-      font-weight:700;
-      color:var(--fg);
-    }
-    .details-tabs button:hover{ transform: translateY(-1px); }
-    .details-tabs button:focus-visible{
-      outline:none;
-      box-shadow:0 0 0 3px rgba(236,72,153,.55), inset 0 -1px 0 rgba(0,0,0,.05);
-    }
-    .details-tabs button.active{
-      outline:2px solid transparent;
-      box-shadow: var(--ring), inset 0 -1px 0 rgba(0,0,0,.05);
-      background:linear-gradient(180deg, rgba(236,72,153,.16), rgba(168,85,247,.16));
-    }
-    @media (prefers-color-scheme: dark){
-      .details-tabs button{
-        border-color:var(--border-d);
-        background:linear-gradient(180deg, rgba(31,41,55,.9), rgba(31,41,55,.7));
-        color:var(--fg-d);
+  function asset(path) {
+    if (!path) return "";
+    if (/^https?:/i.test(path)) return path;
+    if (path.startsWith(repoBase)) return path;
+    if (path.startsWith("/")) return path;
+    const clean = path.replace(/^\/+/, "");
+    return `${repoBase}${clean}`;
+  }
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function applyLocalImages() {
+    document.querySelectorAll("[data-local-src]").forEach((img) => {
+      const original = img.getAttribute("data-local-src");
+      if (original) {
+        img.src = asset(original);
       }
-      .details-tabs button.active{ box-shadow: var(--ring); }
+    });
+  }
+
+  function attachRevealObserver() {
+    const elements = document.querySelectorAll(".reveal");
+    if (!elements.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    elements.forEach((el) => observer.observe(el));
+  }
+
+  function renderProjects() {
+    const showcase = document.getElementById("project-showcase");
+    const catalog = document.getElementById("project-catalog");
+    const depth = document.getElementById("project-depth");
+    if (!showcase || !catalog || !depth || !projects.length) return;
+
+    const active =
+      projects.find((project) => project.id === state.activeId) || projects[0];
+    state.activeId = active.id;
+
+    showcase.innerHTML = createShowcaseMarkup(active);
+    catalog.innerHTML = projects
+      .map((project) => createCatalogMarkup(project, project.id === active.id))
+      .join("");
+    depth.innerHTML = createDepthMarkup(active);
+
+    if (active.gallery && active.gallery.length) {
+      mountCarousel(active.id);
+    }
+  }
+
+  function createShowcaseMarkup(project) {
+    const heroSrc = asset(
+      project.heroImage ||
+        project.gallery?.[0]?.src ||
+        "public/images/guide/guide-01.png",
+    );
+    const metricsHtml = (project.metrics || [])
+      .map(
+        (metric) => `
+        <div class="metric-tile">
+          <div class="metric-value">${escapeHtml(metric.value)}</div>
+          <div class="metric-label">${escapeHtml(metric.label)}</div>
+        </div>
+      `,
+      )
+      .join("");
+
+    return `
+      <div>
+        <p class="section-eyebrow">Featured case study</p>
+        <h3 class="project-showcase__title">${escapeHtml(project.title)}</h3>
+        <p class="project-showcase__summary">${escapeHtml(project.summary)}</p>
+        <p class="project-showcase__outcome">${escapeHtml(project.outcome)}</p>
+      </div>
+      <div class="project-showcase__visual">
+        <img src="${heroSrc}" alt="${escapeHtml(project.heroAlt || project.title)}" loading="lazy" />
+      </div>
+      <div class="metrics-grid">${metricsHtml}</div>
+      <a class="project-showcase__cta" href="#project-depth">
+        See how it came to life
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14" />
+          <path d="M13 6l6 6-6 6" />
+        </svg>
+      </a>
+    `;
+  }
+
+  function createCatalogMarkup(project, isActive) {
+    return `
+      <button type="button" class="catalog-card${isActive ? " active" : ""}" data-project="${project.id}" aria-pressed="${isActive}">
+        <span class="catalog-card__eyebrow">${escapeHtml(project.industry || "Case Study")}</span>
+        <h4>${escapeHtml(project.title)}</h4>
+        <p>${escapeHtml(project.tagline || project.summary)}</p>
+        <span class="catalog-card__cta">${isActive ? "Selected" : "View project"}</span>
+      </button>
+    `;
+  }
+
+  function createDepthMarkup(project) {
+    const focusHtml = (project.focus || [])
+      .map((item) => `<span>${escapeHtml(item)}</span>`)
+      .join("");
+
+    const insightsHtml = (project.story || [])
+      .map(
+        (item) => `
+          <div class="insight-card">
+            <strong><span class="insight-card__icon">${escapeHtml(item.icon || "✦")}</span>${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.copy)}</p>
+          </div>
+        `,
+      )
+      .join("");
+
+    return `
+      <div>
+        <p class="section-eyebrow">Focus areas</p>
+        <div class="focus-chips">${focusHtml}</div>
+      </div>
+      ${createCarouselMarkup(project)}
+      <div>
+        <p class="section-eyebrow">Strategic takeaways</p>
+        <div class="insight-grid">${insightsHtml}</div>
+      </div>
+    `;
+  }
+
+  function createCarouselMarkup(project) {
+    const slides = project.gallery || [];
+    if (!slides.length) {
+      const placeholder = project.galleryManifest
+        ? '<div class="media-caption">Loading visuals from the research vault…</div>'
+        : '<div class="media-caption">Visual narrative coming soon.</div>';
+      return `
+        <div class="media-carousel" data-project="${project.id}" data-empty="true">
+          <div class="media-carousel__slides">
+            <div class="media-slide is-active" aria-hidden="false">${placeholder}</div>
+          </div>
+        </div>
+      `;
     }
 
-    /* Content readability */
-    .tab-content{ display:none }
-    .tab-content.active{ display:block }
+    const slidesHtml = slides
+      .slice(0, 8)
+      .map(
+        (slide, index) => `
+          <figure class="media-slide${index === 0 ? " is-active" : ""}" aria-hidden="${index === 0 ? "false" : "true"}">
+            <img src="${asset(slide.src)}" alt="${escapeHtml(slide.alt || project.title)}" loading="lazy" />
+            <figcaption class="media-caption">${escapeHtml(slide.caption || "")}</figcaption>
+          </figure>
+        `,
+      )
+      .join("");
 
-    .project-details-content .tab-content{
-      color:var(--fg);
-      line-height:1.75;
-      font-size: clamp(.92rem, .92rem + .15vw, 1rem);
-    }
-    @media (prefers-color-scheme: dark){ .project-details-content .tab-content{ color:var(--fg-d) } }
+    const dotsHtml =
+      slides.length > 1
+        ? `<div class="media-dots">${slides
+            .map(
+              (_, index) => `
+              <button type="button" class="media-dot${index === 0 ? " is-active" : ""}" data-carousel-dot="${index}" aria-label="Go to visual ${index + 1}"></button>
+            `,
+            )
+            .join("")}</div>`
+        : "";
 
-    /* Structured tab layout */
-    .project-details-content h4{font-weight:800;font-size: clamp(1.05rem,1rem + .2vw,1.18rem);margin:.1rem 0 .4rem}
-    .project-details-content h5{font-weight:700;margin:.15rem 0;font-size:1rem}
-    .project-details-content p{margin:.25rem 0;color:var(--muted);word-break:break-word;hyphens:auto}
-    .project-details-content .tab-section strong{color:var(--fg);}
+    const controlsHtml =
+      slides.length > 1
+        ? `<div class="media-controls">
+          <button type="button" data-carousel-prev aria-label="Previous visual">‹</button>
+          ${dotsHtml}
+          <button type="button" data-carousel-next aria-label="Next visual">›</button>
+        </div>`
+        : "";
 
-    .tab-section{display:flex;flex-direction:column;gap:1.75rem;container-type:inline-size;container-name:tab-section}
-    .tab-section__header{display:flex;flex-direction:column;gap:.6rem}
-    .tab-section__header + .tab-section__header{margin-top:1.25rem}
-    .tab-eyebrow{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);}
-    .tab-section__lede{color:var(--muted);font-size:clamp(.88rem,.86rem + .1vw,.96rem);max-width:60ch}
+    return `
+      <div class="media-carousel" data-project="${project.id}">
+        <div class="media-carousel__slides">${slidesHtml}</div>
+        ${controlsHtml}
+      </div>
+    `;
+  }
 
-    .tab-grid{display:grid;gap:clamp(1rem, .6rem + 1vw, 1.5rem);grid-template-columns:repeat(12,minmax(0,1fr))}
-    .tab-card{
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      gap:.55rem;
-      padding:1.2rem 1.35rem;
-      border-radius:22px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.66));
-      box-shadow:var(--glow);
-      backdrop-filter:saturate(140%) blur(10px);
-      grid-column:span 12;
-      transition:transform .28s ease, opacity .28s ease;
-      opacity:.96;
-    }
-    .tab-card:hover{
-      transform:translateY(-6px);
-      opacity:1;
-      border-color:rgba(236,72,153,.45);
-      box-shadow:var(--glow-strong);
-    }
-    .tab-card:focus-within{
-      box-shadow:var(--glow),0 0 0 2px rgba(236,72,153,.55);
-    }
-    .tab-card::after{
-      content:"";
-      position:absolute;
-      inset:auto 0 0 0;
-      height:4px;
-      border-radius:0 0 22px 22px;
-      background:linear-gradient(90deg, rgba(236,72,153,.55), rgba(168,85,247,.45));
-      opacity:.85;
-    }
-    .tab-card h5{color:var(--fg);font-weight:800;font-size:1rem}
-    .tab-card__meta{font-size:.82rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+  function mountCarousel(projectId) {
+    const container = document.querySelector(
+      `.media-carousel[data-project="${projectId}"]`,
+    );
+    if (!container) return;
+    const slides = Array.from(container.querySelectorAll(".media-slide"));
+    if (slides.length <= 1) return;
 
-    .tab-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
-    .tab-list li{display:flex;gap:.55rem;align-items:flex-start;color:var(--muted);font-size:.9rem}
-    .tab-list li::before{content:"•";color:var(--accent);font-weight:700;line-height:1;margin-top:.1rem}
-
-    .tab-chip-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}
-    .tab-chip-row .tag-badge{margin:0;font-size:.72rem;padding:.24rem .6rem;border-radius:var(--chip-br);border:1px solid var(--border);background:rgba(255,255,255,.72)}
-
-    .timeline{position:relative;display:flex;flex-direction:column;gap:1rem;counter-reset:timeline}
-    .timeline::before{content:"";position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg, rgba(236,72,153,.2), rgba(168,85,247,.25))}
-    .timeline-step{
-      position:relative;
-      margin-left:0;
-      padding:1rem 1.2rem 1rem 3.5rem;
-      border-radius:18px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.7));
-      box-shadow:var(--glow);
-      display:flex;
-      flex-direction:column;
-      gap:.5rem;
-    }
-    .timeline-step::before{
-      counter-increment:timeline;
-      content:counter(timeline);
-      position:absolute;
-      left:0;
-      top:1rem;
-      width:38px;
-      height:38px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:800;
-      color:#fff;
-      background:linear-gradient(135deg, rgba(236,72,153,.9), rgba(168,85,247,.9));
-      box-shadow:0 6px 16px rgba(236,72,153,.3);
+    if (
+      state.carouselController &&
+      typeof state.carouselController.stop === "function"
+    ) {
+      state.carouselController.stop();
     }
 
-    .insight-grid{display:grid;gap:clamp(1rem, .6rem + 1vw, 1.5rem);grid-template-columns:repeat(12,minmax(0,1fr))}
-    .insight-card{
-      position:relative;
-      border-radius:22px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.72));
-      padding:1.1rem 1.35rem;
-      box-shadow:var(--glow);
-      display:flex;
-      flex-direction:column;
-      gap:.75rem;
-      backdrop-filter:saturate(140%) blur(10px);
-      grid-column:span 12;
-      transition:transform .28s ease, opacity .28s ease;
-      opacity:.96;
-    }
-    .insight-card:hover{
-      transform:translateY(-6px);
-      opacity:1;
-      border-color:rgba(236,72,153,.45);
-      box-shadow:var(--glow-strong);
-    }
-    .insight-card:focus-within{
-      box-shadow:var(--glow),0 0 0 2px rgba(236,72,153,.55);
-    }
-    .insight-card__chip{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      background:linear-gradient(135deg, rgba(236,72,153,.95), rgba(168,85,247,.85));
-      color:#fff;
-      font-size:.9rem;
-      box-shadow:0 8px 16px rgba(236,72,153,.28);
-    }
-    .insight-card__metric{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
-    .insight-card__value{font-size:1.35rem;font-weight:800;color:var(--accent)}
-    .insight-card__delta{
-      font-size:.78rem;
-      font-weight:700;
-      padding:.2rem .55rem;
-      border-radius:999px;
-      background:rgba(236,72,153,.12);
-      color:var(--accent);
-      letter-spacing:.01em;
-    }
-    .insight-card__delta.positive{background:rgba(16,185,129,.12);color:#10b981;box-shadow:inset 0 0 0 1px rgba(16,185,129,.18)}
-    .insight-card__delta.negative{background:rgba(248,113,113,.12);color:#ef4444;box-shadow:inset 0 0 0 1px rgba(248,113,113,.18)}
-    .insight-card__label{font-size:.88rem;font-weight:700;color:var(--fg)}
-    .insight-card__support{font-size:.8rem;color:var(--muted);line-height:1.4}
-    .insight-progress{
-      position:relative;
-      height:6px;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,.45));
-      overflow:hidden;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
-    }
-    .insight-progress__fill{
-      position:absolute;
-      inset:0;
-      width:var(--progress,0%);
-      background:linear-gradient(90deg, rgba(236,72,153,.92), rgba(168,85,247,.88));
-      border-radius:inherit;
-      box-shadow:0 0 12px rgba(236,72,153,.35);
-    }
+    const dots = Array.from(container.querySelectorAll("[data-carousel-dot]"));
+    const prevBtn = container.querySelector("[data-carousel-prev]");
+    const nextBtn = container.querySelector("[data-carousel-next]");
+    let index = 0;
+    let timerId = null;
 
-    .result-board{display:grid;gap:clamp(1rem, .6rem + 1vw, 1.5rem);grid-template-columns:repeat(12,minmax(0,1fr))}
-    .result-card{
-      border-radius:22px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
-      box-shadow:var(--glow);
-      padding:1.1rem 1.35rem;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:.6rem;
-      text-align:center;
-      backdrop-filter:saturate(140%) blur(10px);
-      grid-column:span 12;
-      transition:transform .28s ease, opacity .28s ease;
-      opacity:.96;
-    }
-    .result-card:hover{
-      transform:translateY(-6px);
-      opacity:1;
-      border-color:rgba(236,72,153,.45);
-      box-shadow:var(--glow-strong);
-    }
-    .result-card:focus-within{
-      box-shadow:var(--glow),0 0 0 2px rgba(236,72,153,.55);
-    }
-    @container tab-section (min-width: 36rem){
-      .tab-grid > .tab-card,
-      .insight-grid > .insight-card,
-      .result-board > .result-card{grid-column:span 6;}
-    }
-    @container tab-section (min-width: 64rem){
-      .tab-grid > .tab-card,
-      .insight-grid > .insight-card,
-      .result-board > .result-card{grid-column:span 4;}
-    }
-    .result-card__icon{
-      width:40px;
-      height:40px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(140deg, rgba(236,72,153,.22), rgba(168,85,247,.18));
-      color:var(--accent);
-      font-size:1.1rem;
-      box-shadow:inset 0 0 0 1px rgba(236,72,153,.25);
-    }
-    .result-card__gauge{
-      --gauge:0;
-      --gauge-color:rgba(236,72,153,.85);
-      position:relative;
-      width:96px;
-      aspect-ratio:1/1;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.38), rgba(255,255,255,.05) 60%, transparent 61%),
-        conic-gradient(var(--gauge-color) calc(var(--gauge) * 1%), rgba(236,72,153,.16) calc(var(--gauge) * 1%));
-      display:grid;
-      place-items:center;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.3);
-    }
-    .result-card__gauge::before{
-      content:"";
-      position:absolute;
-      inset:14px;
-      border-radius:50%;
-      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82));
-      box-shadow:0 8px 16px rgba(236,72,153,.12), inset 0 0 0 1px rgba(0,0,0,.05);
-    }
-    .result-card__delta{
-      position:relative;
-      font-size:.82rem;
-      font-weight:800;
-      color:var(--accent);
-      letter-spacing:.02em;
-    }
-    .result-card__delta.negative{color:#ef4444}
-    .result-card__value{font-size:1.28rem;font-weight:800;color:var(--accent)}
-    .result-card__label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
-    .result-card__support,
-    .result-card__hint{font-size:.82rem;color:var(--muted);line-height:1.4}
+    const setActive = (nextIndex) => {
+      index = nextIndex;
+      slides.forEach((slide, idx) => {
+        const isActive = idx === index;
+        slide.classList.toggle("is-active", isActive);
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+      });
+      dots.forEach((dot, idx) =>
+        dot.classList.toggle("is-active", idx === index),
+      );
+    };
 
-    .callout-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
-    .callout-card{border-radius:18px;border:1px solid var(--border);padding:1rem 1.2rem;background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.68));box-shadow:var(--glow);display:[...]
-    .callout-card ul{margin:0;padding-left:1rem;display:flex;flex-direction:column;gap:.35rem;color:var(--muted)}
+    const next = () => setActive((index + 1) % slides.length);
+    const prev = () => setActive((index - 1 + slides.length) % slides.length);
 
-    @media (prefers-color-scheme: dark){
-      .tab-card,
-      .timeline-step,
-      .insight-card,
-      .result-card,
-      .callout-card{background:linear-gradient(180deg, rgba(31,41,55,.88), rgba(31,41,55,.64));border-color:var(--border-d)}
-      .tab-card::after{background:linear-gradient(90deg, rgba(236,72,153,.55), rgba(168,85,247,.55));opacity:.6}
-      .tab-chip-row .tag-badge{background:rgba(255,255,255,.08);border-color:var(--border-d)}
-      .timeline::before{background:linear-gradient(180deg, rgba(236,72,153,.28), rgba(168,85,247,.32))}
-      .project-details-content p{color:var(--fg-d)}
-      .tab-list li{color:var(--fg-d)}
-      .callout-card ul{color:var(--fg-d)}
-      .insight-card__label{color:var(--fg-d)}
-      .insight-card__support{color:var(--fg-d)}
-      .insight-progress{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-      .insight-progress__fill{box-shadow:0 0 12px rgba(236,72,153,.45)}
-      .result-card__icon{background:linear-gradient(140deg, rgba(236,72,153,.32), rgba(168,85,247,.28));box-shadow:inset 0 0 0 1px rgba(236,72,153,.35)}
-      .result-card__gauge{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
-      .result-card__gauge::before{background:linear-gradient(180deg, rgba(31,41,55,.92), rgba(31,41,55,.72));box-shadow:0 8px 16px rgba(236,72,153,.2), inset 0 0 0 1px rgba(255,255,255,.04)}
-      .result-card__support,
-      .result-card__hint{color:var(--fg-d)}
-      .result-card__label{color:var(--muted-d)}
-    }
-
-    /* Long-form content toggles */
-    .collapsible-block{
-      position:relative;
-      max-height:360px;
-      overflow:hidden;
-      transition:max-height .3s ease;
-    }
-    .collapsible-block::after{
-      content:"";
-      position:absolute;
-      inset:auto 0 0 0;
-      height:96px;
-      background:linear-gradient(180deg, rgba(250,248,245,0), rgba(250,248,245,.94));
-      pointer-events:none;
-      transition:opacity .25s ease;
-    }
-    @media (prefers-color-scheme: dark){
-      .collapsible-block::after{
-        background:linear-gradient(180deg, rgba(17,24,39,0), rgba(17,24,39,.9));
+    const stopAuto = () => {
+      if (timerId) {
+        window.clearInterval(timerId);
+        timerId = null;
       }
-    }
-    .collapsible-block.expanded{max-height:none; overflow:visible;}
-    .collapsible-block.expanded::after{opacity:0;}
+    };
 
-    .collapsible-toggle{
-      display:inline-flex;
-      align-items:center;
-      gap:.4rem;
-      margin-top:.85rem;
-      padding:.45rem .85rem;
-      border-radius:999px;
-      border:1px solid rgba(236,72,153,.35);
-      background:linear-gradient(180deg, rgba(236,72,153,.08), rgba(168,85,247,.08));
-      color:var(--accent);
-      font-weight:700;
-      font-size:.88rem;
-      transition:transform .12s ease, box-shadow .15s ease, background .2s ease;
-    }
-    .collapsible-toggle:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
-    .collapsible-toggle svg{width:16px;height:16px;transition:transform .2s ease;}
-    .collapsible-toggle[aria-expanded="true"] svg{ transform:rotate(180deg); }
+    const startAuto = () => {
+      if (prefersReducedMotion || slides.length < 2) return;
+      stopAuto();
+      timerId = window.setInterval(next, 6000);
+    };
 
-    /* Normalize colors from legacy Tailwind classes so copy looks consistent */
-    .project-details-content .text-white{color:var(--fg);\n  `;
-  document.head.appendChild(style);
+    nextBtn?.addEventListener("click", () => {
+      stopAuto();
+      next();
+      startAuto();
+    });
+
+    prevBtn?.addEventListener("click", () => {
+      stopAuto();
+      prev();
+      startAuto();
+    });
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener("click", () => {
+        stopAuto();
+        setActive(idx);
+        startAuto();
+      });
+    });
+
+    container.addEventListener("mouseenter", stopAuto);
+    container.addEventListener("mouseleave", startAuto);
+
+    setActive(0);
+    startAuto();
+
+    state.carouselController = {
+      stop: stopAuto,
+    };
+  }
+
+  function attachCatalogHandlers() {
+    const catalog = document.getElementById("project-catalog");
+    if (!catalog) return;
+    catalog.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-project]");
+      if (!button) return;
+      const id = button.getAttribute("data-project");
+      if (id && id !== state.activeId) {
+        state.activeId = id;
+        renderProjects();
+      }
+    });
+
+    catalog.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const button = event.target.closest("[data-project]");
+      if (!button) return;
+      event.preventDefault();
+      const id = button.getAttribute("data-project");
+      if (id && id !== state.activeId) {
+        state.activeId = id;
+        renderProjects();
+      }
+    });
+  }
+
+  async function loadGuideGallery(project) {
+    try {
+      const response = await fetch(asset("guide-manifest.json"), {
+        cache: "no-cache",
+      });
+      if (!response.ok)
+        throw new Error(
+          `Unable to load guide-manifest.json (${response.status})`,
+        );
+      const manifest = await response.json();
+      if (!manifest?.entries) return;
+
+      const slides = [];
+      for (const entry of manifest.entries) {
+        if (entry.type !== "image") continue;
+        const resolved = await resolveGuideImage(entry.src);
+        if (!resolved) continue;
+        slides.push({ src: resolved, alt: entry.alt, caption: entry.caption });
+      }
+
+      if (slides.length) {
+        project.gallery = slides;
+        if (!project.heroImage) {
+          project.heroImage = slides[0].src;
+        }
+        if (project.id === state.activeId) {
+          renderProjects();
+        }
+      }
+    } catch (error) {
+      console.warn("Unable to hydrate guide media", error);
+    }
+  }
+
+  function resolveGuideImage(rawSrc) {
+    const decoded = decodeURIComponent(rawSrc || "").trim();
+    const fileName = decoded.split(/[\/]/).pop() || "";
+    const lower = fileName.toLowerCase();
+    const base = lower.replace(/\.[^.]+$/, "");
+    const extMatch = lower.match(/\.[^.]+$/);
+    const defaultExt = extMatch ? extMatch[0] : ".png";
+    const normalized = base.replace(/\s+/g, "-").replace(/_/g, "-");
+    const dashed = normalized.replace(
+      /^(guide|gr)(-?)(\d{1,2})$/,
+      (_, prefix, __, digits) => `${prefix}-${digits.padStart(2, "0")}`,
+    );
+
+    const candidates = new Set();
+    const variations = [normalized, dashed];
+    const extensions = [
+      ".png",
+      ".PNG",
+      ".jpg",
+      ".JPG",
+      ".jpeg",
+      ".JPEG",
+      defaultExt,
+    ];
+
+    variations.forEach((variant) => {
+      extensions.forEach((ext) => {
+        candidates.add(`${variant}${ext}`);
+      });
+    });
+    candidates.add(fileName);
+
+    const prefix = `${repoBase}public/images/guide/`;
+    const list = Array.from(candidates).map(
+      (name) => `${prefix}${name.replace(/^\/+/, "")}`,
+    );
+
+    return new Promise((resolve) => {
+      if (!list.length) {
+        resolve(null);
+        return;
+      }
+      let index = 0;
+      const tryNext = () => {
+        if (index >= list.length) {
+          resolve(null);
+          return;
+        }
+        const testImage = new Image();
+        testImage.onload = () => resolve(list[index]);
+        testImage.onerror = () => {
+          index += 1;
+          tryNext();
+        };
+        testImage.src = list[index];
+      };
+      tryNext();
+    });
+  }
+
+  function renderTestimonials() {
+    const container = document.getElementById("testimonial-track");
+    if (!container || !testimonials.length) return;
+    const row = document.createElement("div");
+    row.className = "testimonial-row";
+    row.innerHTML = testimonials.map(createTestimonialCard).join("");
+    const clone = row.cloneNode(true);
+    container.innerHTML = "";
+    container.append(row, clone);
+  }
+
+  function createTestimonialCard(testimonial) {
+    return `
+      <article class="testimonial-card">
+        <p>“${escapeHtml(testimonial.quote)}”</p>
+        <div>
+          <div class="testimonial-author">${escapeHtml(testimonial.author)}</div>
+          <div class="testimonial-role">${escapeHtml(testimonial.role)}</div>
+        </div>
+      </article>
+    `;
+  }
+
+  function updateYear() {
+    const year = document.getElementById("copyright-year");
+    if (year) {
+      year.textContent = new Date().getFullYear();
+    }
+  }
+
+  function init() {
+    applyLocalImages();
+    attachRevealObserver();
+    renderProjects();
+    attachCatalogHandlers();
+    renderTestimonials();
+    updateYear();
+
+    const guideProject = projects.find((project) => project.galleryManifest);
+    if (guideProject) {
+      loadGuideGallery(guideProject);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 })();
