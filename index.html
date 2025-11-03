@@ -86,15 +86,14 @@
       .site-header {
         position: sticky;
         top: 0;
-        z-index: 50;
+        z-index: 10;
         backdrop-filter: blur(18px);
-        background: rgba(253, 249, 245, 0.82);
+        background: rgba(253, 249, 245, 0.75);
         border-bottom: 1px solid rgba(216, 160, 168, 0.25);
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 1.4rem clamp(1.5rem, 4vw, 3rem);
-        gap: 1rem;
       }
 
       .logo {
@@ -104,342 +103,46 @@
         text-transform: uppercase;
       }
 
-      .header-spacer {
-        height: 1px;
-      }
-
-      .menu-toggle {
-        position: relative;
-        width: 46px;
-        height: 46px;
-        border-radius: 50%;
-        border: 1px solid rgba(216, 160, 168, 0.4);
-        background: rgba(255, 255, 255, 0.75);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.25s ease;
-        box-shadow: 0 12px 25px rgba(31, 27, 24, 0.14);
-      }
-
-      .menu-toggle:focus-visible,
-      .menu-close:focus-visible {
-        outline: 3px solid rgba(216, 160, 168, 0.65);
-        outline-offset: 3px;
-      }
-
-      .menu-toggle:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 30px rgba(31, 27, 24, 0.18);
-      }
-
-      .menu-toggle__line,
-      .menu-toggle__line::before,
-      .menu-toggle__line::after {
-        content: "";
-        display: block;
-        width: 20px;
-        height: 2px;
-        border-radius: 999px;
-        background: var(--ink);
-        position: relative;
-        transition:
-          transform 0.25s ease,
-          opacity 0.25s ease;
-      }
-
-      .menu-toggle__line::before {
-        position: absolute;
-        top: -6px;
-      }
-
-      .menu-toggle__line::after {
-        position: absolute;
-        top: 6px;
-      }
-
-      .menu-toggle[aria-expanded="true"] .menu-toggle__line {
-        background: transparent;
-      }
-
-      .menu-toggle[aria-expanded="true"] .menu-toggle__line::before {
-        transform: translateY(6px) rotate(45deg);
-      }
-
-      .menu-toggle[aria-expanded="true"] .menu-toggle__line::after {
-        transform: translateY(-6px) rotate(-45deg);
-      }
-
       .site-nav {
-        position: fixed;
-        inset: 0 0 0 auto;
-        width: min(320px, 80vw);
-        padding: clamp(4rem, 6vw, 5rem) clamp(1.8rem, 4vw, 2.5rem) 2.5rem;
-        background: rgba(253, 249, 245, 0.96);
-        border-left: 1px solid rgba(216, 160, 168, 0.3);
-        box-shadow: -12px 0 40px rgba(31, 27, 24, 0.16);
         display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        transform: translateX(105%);
-        transition: transform 0.35s ease;
-        z-index: 40;
-      }
-
-      body.menu-open .site-nav {
-        transform: translateX(0);
-      }
-
-      .site-nav__title {
-        font-size: 0.78rem;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: rgba(63, 56, 48, 0.55);
+        gap: 1.5rem;
+        align-items: center;
       }
 
       .site-nav a {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
-        color: var(--ink);
+        color: var(--muted);
         text-decoration: none;
-        padding-block: 0.6rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid rgba(216, 160, 168, 0.25);
+        position: relative;
         transition: color 0.2s ease;
       }
 
-      .site-nav a span {
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: rgba(63, 56, 48, 0.5);
+      .site-nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -0.35rem;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          rgba(216, 160, 168, 0.9),
+          rgba(120, 117, 255, 0.6)
+        );
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s ease;
       }
 
       .site-nav a:hover,
       .site-nav a:focus {
-        color: rgba(120, 117, 255, 1);
-      }
-
-      .menu-close {
-        align-self: flex-end;
-        border: none;
-        background: rgba(255, 255, 255, 0.65);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin-bottom: 1.5rem;
-        color: var(--ink);
-        box-shadow: 0 10px 24px rgba(31, 27, 24, 0.16);
-        transition: transform 0.2s ease;
-      }
-
-      .menu-close:hover {
-        transform: translateY(-2px);
-      }
-
-      .menu-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(31, 27, 24, 0.35);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.35s ease;
-        z-index: 30;
-      }
-
-      body.menu-open {
-        overflow: hidden;
-      }
-
-      body.menu-open .menu-backdrop {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      .detail-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 1.75rem;
-        padding: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
-      }
-
-      .detail-metrics {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      }
-
-      .detail-metric {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        padding: 1rem 1.2rem;
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        background: rgba(255, 255, 255, 0.55);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-      }
-
-      .detail-metric__value {
-        font-size: 1.15rem;
-        font-weight: 700;
         color: var(--ink);
       }
 
-      .detail-metric__label {
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: rgba(63, 56, 48, 0.55);
-      }
-
-      .detail-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
-      }
-
-      .detail-tab {
-        border: 1px solid rgba(216, 160, 168, 0.35);
-        background: rgba(255, 255, 255, 0.75);
-        border-radius: 999px;
-        padding: 0.45rem 0.95rem;
-        font-weight: 600;
-        font-size: 0.85rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: var(--muted);
-        cursor: pointer;
-        transition:
-          transform 0.18s ease,
-          box-shadow 0.25s ease,
-          background 0.25s ease;
-      }
-
-      .detail-tab.is-active {
-        color: var(--ink);
-        background: linear-gradient(
-          135deg,
-          rgba(216, 160, 168, 0.22),
-          rgba(120, 117, 255, 0.18)
-        );
-        box-shadow: 0 10px 25px rgba(31, 27, 24, 0.15);
-      }
-
-      .detail-tab:hover {
-        transform: translateY(-1px);
-      }
-
-      .detail-content {
-        display: block;
-      }
-
-      .detail-pane {
-        display: none;
-        color: rgba(63, 56, 48, 0.78);
-        line-height: 1.7;
-      }
-
-      .detail-pane.is-active {
-        display: block;
-      }
-
-      #guide-media-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1.25rem;
-      }
-
-      .media-grid__item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        background: rgba(255, 255, 255, 0.75);
-        box-shadow: 0 14px 32px rgba(31, 27, 24, 0.12);
-      }
-
-      .media-grid__item img {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-
-      .media-grid__item figcaption {
-        padding: 0.85rem 1rem;
-        font-size: 0.85rem;
-        color: rgba(63, 56, 48, 0.65);
-      }
-
-      .methodology-container {
-        display: grid;
-        gap: 1.4rem;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      }
-
-      .methodology-item {
-        padding: 1.1rem 1.25rem;
-        border-radius: 18px;
-        border: 1px solid rgba(216, 160, 168, 0.25);
-        background: rgba(255, 255, 255, 0.78);
-        box-shadow: 0 12px 28px rgba(31, 27, 24, 0.14);
-      }
-
-      .tag-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-        border: 1px solid rgba(216, 160, 168, 0.35);
-        background: rgba(255, 255, 255, 0.85);
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: rgba(63, 56, 48, 0.68);
-      }
-
-      .stat-card {
-        border-radius: 18px;
-        border: 1px solid rgba(216, 160, 168, 0.25);
-        padding: 1.1rem 1.25rem;
-        background: rgba(255, 255, 255, 0.75);
-        text-align: center;
-        box-shadow: 0 12px 28px rgba(31, 27, 24, 0.14);
-      }
-
-      .stat-number {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--ink);
-      }
-
-      .stat-description {
-        font-size: 0.85rem;
-        color: rgba(63, 56, 48, 0.6);
+      .site-nav a:hover::after,
+      .site-nav a:focus::after {
+        transform: scaleX(1);
       }
 
       .site-main {
@@ -493,6 +196,13 @@
         font-size: 1.05rem;
         color: var(--muted);
         line-height: 1.65;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
       }
 
       .btn {
@@ -753,14 +463,18 @@
         aspect-ratio: 16 / 9;
         border: 1px solid rgba(255, 255, 255, 0.45);
         box-shadow: 0 25px 45px rgba(31, 27, 24, 0.22);
-        background: rgba(253, 249, 245, 0.75);
       }
 
       .project-showcase__visual img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        background: rgba(216, 160, 168, 0.1);
+        object-fit: cover;
+        transform: scale(1.02);
+        transition: transform 1.8s ease;
+      }
+
+      .project-showcase:hover .project-showcase__visual img {
+        transform: scale(1.07);
       }
 
       .project-showcase__title {
@@ -1251,36 +965,13 @@
     <div class="content-layer">
       <header class="site-header">
         <div class="logo">Sphoorthy Masa</div>
-        <div class="header-spacer" aria-hidden="true"></div>
-        <button
-          class="menu-toggle"
-          type="button"
-          data-menu-toggle
-          aria-expanded="false"
-          aria-controls="primary-nav"
-        >
-          <span class="sr-only">Toggle navigation</span>
-          <span class="menu-toggle__line" aria-hidden="true"></span>
-        </button>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#skills">Toolkit</a>
+          <a href="#why-me-contact">Contact</a>
+        </nav>
       </header>
-      <nav
-        id="primary-nav"
-        class="site-nav"
-        aria-label="Primary navigation"
-        data-menu-panel
-        aria-hidden="true"
-      >
-        <button type="button" class="menu-close" data-menu-close>
-          <span class="sr-only">Close navigation</span>
-          &times;
-        </button>
-        <div class="site-nav__title">Navigate</div>
-        <a href="#about">About<span>Journey</span></a>
-        <a href="#portfolio">Portfolio<span>Case studies</span></a>
-        <a href="#skills">Toolkit<span>Expertise</span></a>
-        <a href="#why-me-contact">Contact<span>Partner</span></a>
-      </nav>
-      <div class="menu-backdrop" data-menu-backdrop></div>
 
       <main class="site-main">
         <section id="about" class="hero reveal">
@@ -1293,6 +984,14 @@
               platforms, I build the insight engines that keep teams aligned on
               what users need next.
             </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#portfolio"
+                >View signature work</a
+              >
+              <a class="btn btn-secondary" href="skills-contact.html"
+                >See research toolkit</a
+              >
+            </div>
             <dl class="hero-stats">
               <div class="hero-stat">
                 <dt>Impact delivered</dt>
@@ -1320,6 +1019,57 @@
               <span>Latest</span>
               <span>Unified TV discovery research for Sling &amp; DISH</span>
             </div>
+            <div class="hero-visual__badge">
+              <span>Latest</span>
+              <span>Unified TV discovery research for Sling &amp; DISH</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="portfolio" class="reveal">
+          <div>
+            <p class="section-eyebrow">Signature engagements</p>
+            <h2 class="section-title">
+              Research that accelerates bold product bets.
+            </h2>
+            <p class="section-lede">
+              Explore how integrated qualitative and quantitative programs
+              unlock clear direction, measurable value, and frictionless
+              hand-offs to product delivery.
+            </p>
+          </div>
+
+          <div class="portfolio-shell">
+            <article
+              id="project-showcase"
+              class="glass-panel project-showcase"
+              aria-live="polite"
+            ></article>
+            <aside
+              id="project-catalog"
+              class="glass-panel project-catalog"
+              aria-label="Project selector"
+            ></aside>
+          </div>
+
+          <section
+            id="project-depth"
+            class="glass-panel project-depth reveal"
+            aria-live="polite"
+          ></section>
+        </section>
+
+        <section id="skills" class="skills-section reveal">
+          <div>
+            <p class="section-eyebrow">Toolkit</p>
+            <h2 class="section-title">
+              Methodologies tuned for clarity and velocity.
+            </h2>
+            <p class="section-lede">
+              I orchestrate mixed-method programs tailored to each product
+              milestone—from exploratory vision work to evaluative testing and
+              post-launch instrumentation.
+            </p>
           </div>
         </section>
 
@@ -1408,6 +1158,18 @@
             </p>
             <a class="btn btn-primary" href="mailto:sphoorthy.masa@example.com"
               >Partner with me</a
+            >
+          </div>
+          <div class="glass-panel">
+            <h3 class="section-title" style="font-size: 1.55rem">
+              Ready for a deeper dive?
+            </h3>
+            <p class="section-lede" style="margin-top: 0">
+              Explore detailed case studies, frameworks, and measurement
+              dashboards tailored for executive stakeholders.
+            </p>
+            <a class="btn btn-secondary" href="skills-contact.html"
+              >Open the research library</a
             >
           </div>
         </section>
