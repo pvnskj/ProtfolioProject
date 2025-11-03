@@ -8,7 +8,7 @@
     --accent-pink:#D8A0A8; --accent-pink-dark:#B88088; --accent-pink-light:#E8C0C8;
     --panel-border:rgba(0,0,0,0.08); --panel-bg:rgba(255,255,255,0.7);
   }
-  body{font-family:'Inter',sans-serif;color:var(--text-dark);background-color:var(--bg-color)}
+  body{font-family:'Manrope','Inter',sans-serif;color:var(--text-dark);background-color:var(--bg-color)}
   #bg-canvas{position:fixed;inset:0;z-index:-1;display:block}
   .content-container{position:relative;z-index:1}
   .panel{background:var(--panel-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
