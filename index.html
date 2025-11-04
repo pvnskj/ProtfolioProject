@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    
     <style>
       :root{
         /* Light Apple-glass tokens */
@@ -227,7 +226,19 @@
       .reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease }
       .reveal.is-visible{ opacity:1; transform:none }
 
-      @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important } } /* ===== Modern data presentation patterns ===== */ /* Make each chunk inside Overview/Methodology/Analysis/Results a card */ .detail-copy > div, .detail-copy > ul, .detail-copy > p { background:#fff; border:1px solid var(--glass-border); border-radius:14px; padding:1rem 1.1rem; box-shadow:var(--shadow-2); }
+      @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important } }
+      /* ===== Modern data presentation patterns ===== */
+
+/* Make each chunk inside Overview/Methodology/Analysis/Results a card */
+.detail-copy > div,
+.detail-copy > ul,
+.detail-copy > p {
+  background:#fff;
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:1rem 1.1rem;
+  box-shadow:var(--shadow-2);
+}
 
 /* tighter list rhythm inside cards */
 .detail-copy > ul { padding:0.9rem 1.1rem 1rem 1.2rem; }
