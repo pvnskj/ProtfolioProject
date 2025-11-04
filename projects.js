@@ -7,186 +7,297 @@
     return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : "/";
   })();
 
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-
   const projects = [
     {
       id: "guide",
       title: "Reinventing the TV Guide",
-      industry: "Streaming · Media",
       summary:
-        "Unified Sling TV and DISH TV discovery into one adaptive experience using multi-surface research.",
-      outcome: "$7.46M annualized upside projected",
-      heroImage: "public/images/guide/guide-03.png",
-      heroAlt: "Unified TV guide concept across multiple devices",
-      metrics: [
-        { value: "~$7.46M", label: "Estimated annual value impact" },
-        { value: "90%", label: "Target task success" },
-        { value: "-12%", label: "CX complaints" },
-      ],
-      focus: [
-        "Unified discovery for Sling & DISH households",
-        "Personalization powered by behavioral telemetry",
-        "Accessibility-ready motion & density system",
-      ],
-      story: [
-        {
-          icon: "🧭",
-          title: "Opportunity framing",
-          copy: "Mapped the end-to-end service blueprint to expose cross-platform friction and align executives.",
-        },
-        {
-          icon: "🧪",
-          title: "Evidence mix",
-          copy: "Diary studies, 18 deep interviews, and 2M session analytics to triangulate everyday behaviors.",
-        },
-        {
-          icon: "🚀",
-          title: "Strategic outcome",
-          copy: "Delivered a phased rollout playbook with KPI ladders and accessibility guardrails.",
-        },
-      ],
-      gallery: [],
-      galleryManifest: true,
-      tagline:
-        "Designing a unified discovery experience for Sling & DISH households.",
+        "Unified Sling TV and DISH discovery into one adaptive experience using multi-surface research.",
+      background:
+        "A strategic research initiative to unify Sling TV and DISH TV guide experiences and turn friction into engagement.",
+      outcome: "~$7.46M estimated annual impact",
+      tileImage: "public/images/guide/guide-03.png",
+      tileImageAlt: "Unified TV guide concept across multiple devices",
       content: {
         metrics: [
-          {
-            value: "~$7.46M",
-            label: "Estimated Annual Value Impact",
-          },
-          { value: "90%", label: "Target Task Success Rate" },
-          { value: "12%", label: "Reduction in CX Complaints" },
+          { value: "~$7.46M", label: "Estimated annual value impact" },
+          { value: "90%", label: "Target task success rate" },
+          { value: "-12%", label: "CX complaints" },
         ],
-        overview: `<div class="text-left space-y-6"><div><h5 class="font-bold text-gray-800 text-lg">Background</h5><p class="text-gray-700 mt-1">The guide sits at the heart of content discovery, but had evolved in parallel across Sling TV and Dish TV, creating fragmented experiences.</p></div><div><h5 class="font-bold text-gray-800 text-lg">The Challenge</h5><p class="text-gray-700 mt-1">How can we unify the guide experience to enhance usability and personalization without alienating loyal users on two very different platforms?</p></div><div><h5 class="font-bold text-gray-800 text-lg">Key Objectives</h5><ul class="list-disc list-inside pl-4 space-y-2 mt-2 text-gray-700"><li>Identify user frustrations and unmet needs across both platforms.</li><li>Uncover shared pain points to guide a unified design strategy.</li><li>Deliver actionable recommendations that balance user needs and business goals.</li></ul></div></div>`,
-        methodology: `<h4>Research Process & Tools</h4><div class="methodology-container mt-6"> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">1. Discovery & Planning</h5> <p>Stakeholder interviews, data analysis, and defining project scope.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserZoom</span><span class="tag-badge">Google Analytics</span><span class="tag-badge">JIRA</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">2. Generative Research</h5> <p>In-depth user interviews to uncover behaviors and motivations.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">User Interviews</span><span class="tag-badge">Lookback</span><span class="tag-badge">Google Meet</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">3. Synthesis & Ideation</h5> <p>Mapping insights and collaborating with design and product teams.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">Miro</span><span class="tag-badge">Figma</span></div> </div> <div class="methodology-item"> <h5 style="color:var(--accent-pink-dark);">4. Validation & Delivery</h5> <p>Usability testing and handoff to engineering teams.</p> <div class="mt-4 flex flex-wrap gap-2"><span class="tag-badge">UserTesting.com</span><span class="tag-badge">Figma Prototypes</span><span class="tag-badge">Confluence</span></div> </div> </div>`,
-        analysis: `<h4>Target Audience & Segments</h4><div class="flex flex-col md:flex-row gap-4 mt-4 text-left"><div class="flex-1 p-4 bg-black/5 rounded-lg border border-black/5"><h5 class="font-bold text-gray-800">DISH TV Subscribers (65+)</h5><p class="text-sm text-gray-600">Tolerate outdated UI but struggle with hidden features; often have accessibility needs.</p></div><div class="flex-1 p-4 bg-black/5 rounded-lg border border-black/5"><h5 class="font-bold text-gray-800">Sling TV Subscribers (~35)</h5><p class="text-sm text-gray-600">Tech-savvy, expect fast, intuitive interfaces and quick content access.</p></div></div><h4 class="mt-8">Key Quantitative Insights</h4><div class="grid md:grid-cols-2 gap-4 mt-4 text-gray-700 text-left"><div class="insight-card"><h5>1. High Engagement, Low Conversion</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li><b>Sling TV:</b> 79% engagement → 56% playback</li><li><b>DISH TV:</b> 86% engagement → 48% playback</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Strong adoption, but poor discoverability leads to drop-offs.</p></div><div class="insight-card"><h5>2. Underutilized Features</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>73% of sessions used the default "ALL" filter.</li><li>"Favorites" users had a 64% playback rate vs. 55% for others.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Personalization improves engagement but is underused.</p></div><div class="insight-card"><h5>3. High Drop-Offs in Short Sessions</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>44% of Sling guide sessions ended without playback.</li><li>Most of these non-playback sessions lasted &lt;20 seconds.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Users abandon quickly, suggesting poor content surfacing.</p></div><div class="insight-card"><h5>4. Habitual Navigation (DISH)</h5><ul class="text-sm list-disc list-inside my-2 space-y-1"><li>46% of users navigated vertically by habit.</li><li>Only 8% used faster horizontal navigation by time.</li></ul><p class="text-sm" style="color: var(--accent-pink-dark);">🔍 Insight: Users may not be aware of more efficient navigation options.</p></div></div>`,
-        results: `<p class="text-center text-lg">The research insights directly led to iterative design improvements, validating each solution through rigorous testing to ensure it met user needs and business goals.</p><h4 class="mt-8">Financial Impact</h4><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-gray-700"><div class="stat-card"><div class="stat-number">~$5.83M</div><div class="stat-description">from Increased Retention</div></div><div class="stat-card"><div class="stat-number">~$1.94M</div><div class="stat-description">from Feature Upsells</div></div><div class="stat-card"><div class="stat-number">~$193k</div><div class="stat-description">from Ad Revenue</div></div><div class="stat-card"><div class="stat-number">~$63k</div><div class="stat-description">from Ops Savings</div></div></div>`,
-        media: `<h4>Media Assets</h4><div id="guide-media-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4"></div><p class="mt-4 text-sm text-center text-gray-500">Key visuals, user flows, and prototypes from the project.</p>`,
+        overview: `
+          <div class="detail-copy">
+            <div>
+              <h4>Background</h4>
+              <p>The guide sits at the heart of content discovery but had evolved in parallel across Sling TV and DISH TV, creating fragmented experiences.</p>
+            </div>
+            <div>
+              <h4>The challenge</h4>
+              <p>Unify the guide experience to enhance usability and personalization without alienating loyal users on two very different platforms.</p>
+            </div>
+            <div>
+              <h4>Objectives</h4>
+              <ul>
+                <li>Identify user frustrations and unmet needs across platforms.</li>
+                <li>Uncover shared pain points to guide a unified design strategy.</li>
+                <li>Deliver actionable recommendations that balance user and business goals.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        methodology: `
+          <div class="detail-copy">
+            <div>
+              <h4>Discovery &amp; planning</h4>
+              <p>Partnered with product and ops leads to frame the opportunity, synthesize data, and establish decision criteria.</p>
+              <p><strong>Tools:</strong> UserZoom, Google Analytics, JIRA</p>
+            </div>
+            <div>
+              <h4>Generative research</h4>
+              <p>In-depth interviews revealed how households navigate content, why favorites lists stall, and what trust signals are missing.</p>
+              <p><strong>Tools:</strong> Lookback, remote moderated sessions</p>
+            </div>
+            <div>
+              <h4>Synthesis &amp; ideation</h4>
+              <p>Mapped journeys and service blueprints to expose systemic friction, co-creating with design and engineering.</p>
+              <p><strong>Tools:</strong> FigJam, Figma</p>
+            </div>
+            <div>
+              <h4>Validation &amp; delivery</h4>
+              <p>Iterative usability testing and launch playbooks ensured accessibility and operational readiness.</p>
+              <p><strong>Tools:</strong> UserTesting, Confluence</p>
+            </div>
+          </div>
+        `,
+        analysis: `
+          <div class="detail-copy">
+            <div>
+              <h4>Audience segments</h4>
+              <p><strong>DISH subscribers:</strong> rely on legacy navigation, need clarity and accessibility. <strong>Sling subscribers:</strong> expect speed, personalization, and cross-device parity.</p>
+            </div>
+            <div>
+              <h4>Quantitative signals</h4>
+              <ul>
+                <li>High engagement but lower playback (79% engagement → 56% playback on Sling).</li>
+                <li>Personalization features were underutilized despite clear retention gains.</li>
+                <li>44% of Sling guide sessions ended within 20 seconds without playback.</li>
+                <li>Navigation habits masked faster, time-based browsing patterns.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        results: `
+          <div class="detail-copy">
+            <p>Evidence-backed recommendations delivered measurable value across retention, upsell, and ad revenue channels.</p>
+            <ul>
+              <li><strong>$5.83M</strong> projected from retention uplift.</li>
+              <li><strong>$1.94M</strong> from feature upsells tied to personalization.</li>
+              <li><strong>$193K</strong> in incremental ad revenue.</li>
+              <li><strong>$63K</strong> in operational savings through workflow clarity.</li>
+            </ul>
+          </div>
+        `,
+        media: {
+          featured: {
+            src: "public/images/guide/guide-05.png",
+            alt: "Channel grid concept with tuned information density",
+          },
+          carousel: [
+            {
+              src: "public/images/guide/guide-07.png",
+              alt: "Transition storyboard for the guide redesign",
+            },
+            {
+              src: "public/images/guide/gr-01.png",
+              alt: "Discovery synthesis mural highlighting pain points",
+            },
+            {
+              src: "public/images/guide/gr-02.png",
+              alt: "Persona snapshots aligning Sling and DISH audiences",
+            },
+            {
+              src: "public/images/guide/gr-03.png",
+              alt: "Service blueprint mapping current and future states",
+            },
+          ],
+          caption: "Key visuals, flows, and prototypes that shaped the unified guide vision.",
+        },
       },
     },
     {
       id: "gundersen",
       title: "Gundersen Health Virtual Care OS",
-      industry: "Healthcare · SaaS",
       summary:
         "Reimagined intake and triage flows for clinicians and patients inside a unified virtual care operating system.",
-      outcome: "32% faster intake & triage across clinics",
+      background:
+        "Streamlining prescription refills by empowering patients and reducing manual work for pharmacy staff.",
+      outcome: "12,334+ active app users within 6 months",
       heroImage:
         "https://images.unsplash.com/photo-1580281658629-26036f899014?auto=format&fit=crop&w=1600&q=80",
-      heroAlt: "Clinician using a digital health dashboard",
-      metrics: [
-        { value: "32%", label: "Faster intake" },
-        { value: "4.7★", label: "Clinician satisfaction" },
-        { value: "3 mos", label: "Launch acceleration" },
-      ],
-      focus: [
-        "Cross-clinic workflow mapping",
-        "Multi-role dashboard prototyping",
-        "HIPAA-compliant experimentation",
-      ],
-      story: [
-        {
-          icon: "🩺",
-          title: "Field immersion",
-          copy: "Shadowed 6 clinics and captured 40+ hours of intake footage to surface friction and opportunities.",
+      heroAlt: "Clinician reviewing a virtual care dashboard",
+      content: {
+        metrics: [
+          { value: "12,334+", label: "Active app users" },
+          { value: "36%", label: "Refill volume via app" },
+          { value: "$702K+", label: "Annual labor savings" },
+        ],
+        overview: `
+          <div class="detail-copy">
+            <div>
+              <h4>Background</h4>
+              <p>The mobile refill app aimed to reduce repetitive pharmacy work and enable patients to manage medications independently.</p>
+            </div>
+            <div>
+              <h4>Research goals</h4>
+              <ul>
+                <li>Drive awareness and adoption across clinics.</li>
+                <li>Shift 25% of monthly refills into the app experience.</li>
+                <li>Automate refill reminders and status updates at scale.</li>
+                <li>Reduce inbound call volume and manual outreach.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        methodology: `
+          <div class="detail-copy">
+            <div>
+              <h4>Workflow &amp; stakeholder analysis</h4>
+              <p>Shadowed pharmacists, RNs, and MAs to map the manual refill process and quantify hidden labor costs.</p>
+            </div>
+            <div>
+              <h4>Usability &amp; heuristic evaluation</h4>
+              <p>Evaluated the existing app with patients and staff to surface friction, accessibility gaps, and trust barriers.</p>
+            </div>
+            <div>
+              <h4>Discovery synthesis</h4>
+              <p>Reframed the problem around awareness and education, pairing messaging experiments with product refinements.</p>
+            </div>
+          </div>
+        `,
+        analysis: `
+          <div class="detail-copy">
+            <ul>
+              <li><strong>Minimalist UI delivered 95% task success</strong> but lacked emotional engagement.</li>
+              <li><strong>Awareness, not usability, blocked adoption</strong>—most patients didn’t know the app existed.</li>
+              <li><strong>Clinicians sought automation</strong> to reduce outbound calls and status updates.</li>
+            </ul>
+          </div>
+        `,
+        results: `
+          <div class="detail-copy">
+            <p>Marketing pilots plus in-clinic coaching exceeded every launch metric within six months.</p>
+            <ul>
+              <li><strong>12,334</strong> active users vs. the 10,000 target.</li>
+              <li><strong>16,476</strong> monthly refills vs. the 11,250 goal.</li>
+              <li><strong>$702K+</strong> in recovered labor time by reducing manual calls.</li>
+            </ul>
+          </div>
+        `,
+        media: {
+          featured: {
+            src: "https://images.unsplash.com/photo-1587614382346-4ec892f9aca3?auto=format&fit=crop&w=1600&q=80",
+            alt: "Telehealth dashboard interface concept",
+          },
+          carousel: [
+            {
+              src: "https://images.unsplash.com/photo-1580894894513-d75ec1c5c5a1?auto=format&fit=crop&w=1600&q=80",
+              alt: "Patient testing the simplified refill journey",
+            },
+            {
+              src: "https://images.unsplash.com/photo-1581090700227-1e37b190418e?auto=format&fit=crop&w=1600&q=80",
+              alt: "Co-creation workshop with clinical stakeholders",
+            },
+          ],
+          caption: "Pilot campaigns, usability labs, and co-creation sessions that drove adoption.",
         },
-        {
-          icon: "🧬",
-          title: "Quantified impact",
-          copy: "Mapped EMR logs to pain points and prioritized backlog based on throughput and readmission risk.",
-        },
-        {
-          icon: "🤝",
-          title: "Operational adoption",
-          copy: "Coached nurse champions and product leads on rolling out evidence-backed workflow changes.",
-        },
-      ],
-      gallery: [
-        {
-          src: "https://images.unsplash.com/photo-1587614382346-4ec892f9aca3?auto=format&fit=crop&w=1600&q=80",
-          alt: "Telehealth dashboard interface",
-          caption:
-            "Concept dashboard enabling clinicians to triage multi-channel visits.",
-        },
-        {
-          src: "https://images.unsplash.com/photo-1580894894513-d75ec1c5c5a1?auto=format&fit=crop&w=1600&q=80",
-          alt: "Patient using a tablet at home",
-          caption:
-            "Home-based participant testing the simplified intake journey.",
-        },
-        {
-          src: "https://images.unsplash.com/photo-1581090700227-1e37b190418e?auto=format&fit=crop&w=1600&q=80",
-          alt: "Research team co-creating a journey map",
-          caption:
-            "Co-creation lab aligning clinical and product stakeholders on future workflows.",
-        },
-      ],
-      tagline:
-        "Accelerating virtual care with evidence-backed workflow orchestration.",
+      },
     },
     {
       id: "live-rooms",
-      title: "Live Rooms Interactive Watch Parties",
-      industry: "Streaming · Social",
+      title: "Validating Live Rooms",
       summary:
         "Launched a co-watching and commerce layer that extends live broadcasts into interactive communities.",
-      outcome: "18% lift in session length across pilot cohorts",
+      background:
+        "Validating a social TV concept by understanding how people want to engage during live content.",
+      outcome: "Guided go/no-go decision",
       heroImage:
         "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
-      heroAlt: "Friends enjoying a streaming session with neon lighting",
-      metrics: [
-        { value: "+18%", label: "Session length" },
-        { value: "94%", label: "Feature adoption" },
-        { value: "6 wks", label: "Insight to beta" },
-      ],
-      focus: [
-        "Real-time engagement loops",
-        "Commerce & conversion experiments",
-        "Accessibility for shared experiences",
-      ],
-      story: [
-        {
-          icon: "🎙️",
-          title: "Audience listening",
-          copy: "Ran rolling diary studies with superfans to translate rituals into product behaviors.",
+      heroAlt: "Friends enjoying an illuminated streaming session",
+      content: {
+        metrics: [
+          { value: "87%", label: "Liked interactive features" },
+          { value: "76%", label: "Preferred second-screen" },
+          { value: "56%", label: "Engaged with emoji reactions" },
+          { value: "41%", label: "Enjoyed live quizzes" },
+        ],
+        overview: `
+          <div class="detail-copy">
+            <div>
+              <h4>Background</h4>
+              <p>Live Rooms explored how social chat, reactions, and interactive moments could elevate live TV viewing across genres.</p>
+            </div>
+            <div>
+              <h4>Research goals</h4>
+              <ul>
+                <li>Gauge desirability of interactive layers across sports and entertainment.</li>
+                <li>Understand how social features impact attention and enjoyment.</li>
+                <li>Ensure experimentation doesn’t disrupt core viewing.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        methodology: `
+          <div class="detail-copy">
+            <div>
+              <h4>Concept tests</h4>
+              <p>Eight in-depth sessions balanced experienced streamers and newcomers to probe baseline expectations.</p>
+            </div>
+            <div>
+              <h4>Live pilots</h4>
+              <p>Ran NBA and reality TV watch parties with 100+ participants, capturing telemetry and survey feedback.</p>
+            </div>
+            <div>
+              <h4>Signal instrumentation</h4>
+              <p>Tracked engagement loops, moderation needs, and conversion moments to inform roadmap bets.</p>
+            </div>
+          </div>
+        `,
+        analysis: `
+          <div class="detail-copy">
+            <ul>
+              <li><strong>Control is essential:</strong> 87% wanted the ability to toggle chat and reactions.</li>
+              <li><strong>Second-screen behavior:</strong> 76% preferred interacting on mobile while watching on TV.</li>
+              <li><strong>Feature fit varies by genre:</strong> Sports fans embraced fast chat; reality TV fans favored polls and quizzes.</li>
+            </ul>
+          </div>
+        `,
+        results: `
+          <div class="detail-copy">
+            <p>Engagement lifts across pilots informed a confident recommendation to proceed with phased investment.</p>
+            <ul>
+              <li><strong>3.1 hrs</strong> average viewing time during Jersey Shore Family Vacation pilots.</li>
+              <li><strong>94%</strong> feature adoption during BET Awards experiments.</li>
+              <li><strong>18%</strong> lift in session length across all cohorts.</li>
+            </ul>
+          </div>
+        `,
+        media: {
+          featured: {
+            src: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1600&q=80",
+            alt: "Prototype testing synchronized playback and chat",
+          },
+          carousel: [
+            {
+              src: "https://images.unsplash.com/photo-1525182008051-d4d6360c81e5?auto=format&fit=crop&w=1600&q=80",
+              alt: "Interactive live room interface exploration",
+            },
+            {
+              src: "https://images.unsplash.com/photo-1512427691650-1e0c0a1db8f1?auto=format&fit=crop&w=1600&q=80",
+              alt: "Researcher facilitating a live viewing workshop",
+            },
+          ],
+          caption: "Concept explorations, live pilots, and team workshops guiding the go/no-go decision.",
         },
-        {
-          icon: "📊",
-          title: "Signal instrumentation",
-          copy: "Designed telemetry to measure co-watching retention, sentiment, and conversion moments.",
-        },
-        {
-          icon: "✨",
-          title: "Launch craft",
-          copy: "Partnered with design to define choreography, moderation tools, and revenue-ready pathways.",
-        },
-      ],
-      gallery: [
-        {
-          src: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1600&q=80",
-          alt: "People streaming together with devices",
-          caption:
-            "Prototype testing of synchronized playback and chat overlays.",
-        },
-        {
-          src: "https://images.unsplash.com/photo-1525182008051-d4d6360c81e5?auto=format&fit=crop&w=1600&q=80",
-          alt: "Interactive live room interface exploration",
-          caption:
-            "Hi-fi interface exploration for layered interactive controls.",
-        },
-        {
-          src: "https://images.unsplash.com/photo-1512427691650-1e0c0a1db8f1?auto=format&fit=crop&w=1600&q=80",
-          alt: "UX researcher facilitating a workshop",
-          caption:
-            "Cross-functional workshop mapping monetization and moderation scenarios.",
-        },
-      ],
-      tagline:
-        "Transforming passive viewing into vibrant, revenue-ready communities.",
+      },
     },
   ];
 
@@ -230,9 +341,7 @@
   ];
 
   const state = {
-    activeId: projects[0]?.id || null,
-    carouselController: null,
-    guideMediaSlides: null,
+    activeId: projects[0]?.id ?? null,
   };
 
   function asset(path) {
@@ -245,7 +354,7 @@
   }
 
   function escapeHtml(value) {
-    return String(value || "")
+    return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -269,7 +378,7 @@
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            entry.target.classList.add("visible", "is-visible");
             observer.unobserve(entry.target);
           }
         });
@@ -279,549 +388,186 @@
     elements.forEach((el) => observer.observe(el));
   }
 
-  function renderProjects() {
-    const showcase = document.getElementById("project-showcase");
-    const catalog = document.getElementById("project-catalog");
-    const depth = document.getElementById("project-depth");
-    if (!showcase || !catalog || !depth || !projects.length) return;
-
-    const active =
-      projects.find((project) => project.id === state.activeId) || projects[0];
-    state.activeId = active.id;
-
-    if (state.carouselController?.stop) {
-      state.carouselController.stop();
-      state.carouselController = null;
-    }
-
-    showcase.innerHTML = createShowcaseMarkup(active);
-    catalog.innerHTML = projects
-      .map((project) => createCatalogMarkup(project, project.id === active.id))
-      .join("");
-    depth.innerHTML = createDepthMarkup(active);
-    activateDetailTabs(depth);
-    hydrateMediaTab(active);
-
-    if (active.gallery && active.gallery.length) {
-      mountCarousel(active.id);
-    }
-  }
-
-  function createShowcaseMarkup(project) {
-    const heroSrc = asset(
-      project.heroImage ||
-        project.gallery?.[0]?.src ||
-        "public/images/guide/guide-01.png",
-    );
-    const metricsHtml = (project.metrics || [])
-      .map(
-        (metric) => `
-        <div class="metric-tile">
-          <div class="metric-value">${escapeHtml(metric.value)}</div>
-          <div class="metric-label">${escapeHtml(metric.label)}</div>
-        </div>
-      `,
-      )
-      .join("");
-
-    return `
-      <div>
-        <p class="section-eyebrow">Featured case study</p>
-        <h3 class="project-showcase__title">${escapeHtml(project.title)}</h3>
-        <p class="project-showcase__summary">${escapeHtml(project.summary)}</p>
-        <p class="project-showcase__outcome">${escapeHtml(project.outcome)}</p>
-      </div>
-      <div class="project-showcase__visual">
-        <img src="${heroSrc}" alt="${escapeHtml(
-          project.heroAlt || project.title,
-        )}" loading="lazy" />
-      </div>
-      <div class="metrics-grid">${metricsHtml}</div>
-      <a class="project-showcase__cta" href="#project-depth">
-        See how it came to life
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14" />
-          <path d="M13 6l6 6-6 6" />
-        </svg>
-      </a>
-    `;
-  }
-
-  function createCatalogMarkup(project, isActive) {
-    return `
-      <button type="button" class="catalog-card${isActive ? " active" : ""}" data-project="${project.id}" aria-pressed="${isActive}">
-        <span class="catalog-card__eyebrow">${escapeHtml(
-          project.industry || "Case Study",
-        )}</span>
-        <h4>${escapeHtml(project.title)}</h4>
-        <p>${escapeHtml(project.tagline || project.summary)}</p>
-        <span class="catalog-card__cta">${isActive ? "Selected" : "View project"}</span>
-      </button>
-    `;
-  }
-
-  function createDepthMarkup(project) {
-    const detailMarkup = createDetailPanel(project);
-
-    const focusHtml = (project.focus || [])
-      .map((item) => `<span>${escapeHtml(item)}</span>`)
-      .join("");
-
-    const focusSection = focusHtml
-      ? `
-      <div>
-        <p class="section-eyebrow">Focus areas</p>
-        <div class="focus-chips">${focusHtml}</div>
-      </div>
-    `
-      : "";
-
-    const carouselMarkup = createCarouselMarkup(project);
-
-    const insightsHtml = (project.story || [])
-      .map(
-        (item) => `
-          <div class="insight-card">
-            <strong><span class="insight-card__icon">${escapeHtml(
-              item.icon || "✦",
-            )}</span>${escapeHtml(item.title)}</strong>
-            <p>${escapeHtml(item.copy)}</p>
-          </div>
-        `,
-      )
-      .join("");
-
-    const insightsSection = insightsHtml
-      ? `
-      <div>
-        <p class="section-eyebrow">Strategic takeaways</p>
-        <div class="insight-grid">${insightsHtml}</div>
-      </div>
-    `
-      : "";
-
-    return [detailMarkup, focusSection, carouselMarkup, insightsSection]
-      .filter(Boolean)
-      .join("");
-  }
-
-  function createDetailPanel(project) {
-    const content = project.content;
-    if (!content) return "";
-
-    const metrics = Array.isArray(content.metrics) ? content.metrics : [];
-    const metricMarkup = metrics
-      .map(
-        (metric) => `
-          <div class="detail-metric">
-            <div class="detail-metric__value">${escapeHtml(metric.value)}</div>
-            <div class="detail-metric__label">${escapeHtml(metric.label)}</div>
-          </div>
-        `,
-      )
-      .join("");
-
-    const tabOrder = ["overview", "methodology", "analysis", "results", "media"];
-    const tabs = tabOrder.filter((key) => content[key]);
-    if (!tabs.length && !metricMarkup) {
-      return "";
-    }
-
-    const buttons = tabs
-      .map((tab, index) => {
-        const label = tab.charAt(0).toUpperCase() + tab.slice(1);
-        const panelId = `${project.id}-${tab}-panel`;
-        const tabId = `${project.id}-${tab}-tab`;
+  function renderProjectTiles() {
+    const container = document.getElementById("project-tiles");
+    if (!container || !projects.length) return;
+    container.innerHTML = projects
+      .map((project) => {
+        const isActive = project.id === state.activeId;
+        const imageSrc = asset(
+          project.tileImage ||
+            project.heroImage ||
+            project.content?.media?.featured?.src ||
+            "",
+        );
+        const imageAlt = project.tileImageAlt || project.heroAlt || project.title;
         return `
-          <button
-            type="button"
-            class="detail-tab${index === 0 ? " is-active" : ""}"
-            role="tab"
-            id="${tabId}"
-            aria-selected="${index === 0 ? "true" : "false"}"
-            aria-controls="${panelId}"
-            tabindex="${index === 0 ? "0" : "-1"}"
-            data-tab="${tab}"
-          >${label}</button>
+          <button type="button" class="project-tile${
+            isActive ? " active" : ""
+          }" data-project-id="${project.id}">
+            <h3>${escapeHtml(project.title)}</h3>
+            <p>${escapeHtml(project.background)}</p>
+            <p class="project-outcome"><strong>Results</strong> ${escapeHtml(
+              project.outcome,
+            )}</p>
+            ${
+              imageSrc
+                ? `<figure><img src="${imageSrc}" alt="${escapeHtml(
+                    imageAlt,
+                  )}" loading="lazy" /></figure>`
+                : ""
+            }
+          </button>
         `;
       })
       .join("");
-
-    const panels = tabs
-      .map((tab, index) => {
-        const panelId = `${project.id}-${tab}-panel`;
-        const tabId = `${project.id}-${tab}-tab`;
-        const hiddenAttr = index === 0 ? "" : " hidden";
-        return `
-          <div
-            class="detail-pane${index === 0 ? " is-active" : ""}"
-            role="tabpanel"
-            id="${panelId}"
-            aria-labelledby="${tabId}"
-            data-tab-panel="${tab}"${hiddenAttr}
-          >${content[tab]}</div>
-        `;
-      })
-      .join("");
-
-    return `
-      <section class="detail-panel glass-panel" data-detail-tabs>
-        ${metricMarkup ? `<div class="detail-metrics">${metricMarkup}</div>` : ""}
-        ${
-          buttons
-            ? `<div class="detail-tabs" role="tablist" aria-label="${escapeHtml(
-                project.title,
-              )} details">${buttons}</div>`
-            : ""
-        }
-        <div class="detail-content">${panels}</div>
-      </section>
-    `;
   }
 
-  function activateDetailTabs(root) {
-    const container = root.querySelector("[data-detail-tabs]");
+  function renderProjectDetail() {
+    const container = document.getElementById("project-detail");
     if (!container) return;
-
-    const buttons = Array.from(container.querySelectorAll("[data-tab]"));
-    const panels = Array.from(container.querySelectorAll("[data-tab-panel]"));
-    if (!buttons.length || !panels.length) return;
-
-    const setActive = (tab) => {
-      buttons.forEach((button) => {
-        const isActive = button.getAttribute("data-tab") === tab;
-        button.classList.toggle("is-active", isActive);
-        button.setAttribute("aria-selected", isActive ? "true" : "false");
-        button.setAttribute("tabindex", isActive ? "0" : "-1");
-      });
-
-      panels.forEach((panel) => {
-        const isActive = panel.getAttribute("data-tab-panel") === tab;
-        panel.classList.toggle("is-active", isActive);
-        if (isActive) {
-          panel.removeAttribute("hidden");
-        } else {
-          panel.setAttribute("hidden", "true");
-        }
-      });
-    };
-
-    container.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-tab]");
-      if (!button) return;
-      event.preventDefault();
-      setActive(button.getAttribute("data-tab"));
-    });
-
-    container.addEventListener("keydown", (event) => {
-      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
-        return;
-      }
-      const current = document.activeElement.closest("[data-tab]");
-      if (!current) return;
-      event.preventDefault();
-      const currentIndex = buttons.indexOf(current);
-      if (currentIndex === -1) return;
-      let nextIndex = currentIndex;
-      if (event.key === "ArrowRight") {
-        nextIndex = (currentIndex + 1) % buttons.length;
-      } else if (event.key === "ArrowLeft") {
-        nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
-      } else if (event.key === "Home") {
-        nextIndex = 0;
-      } else if (event.key === "End") {
-        nextIndex = buttons.length - 1;
-      }
-      const nextButton = buttons[nextIndex];
-      setActive(nextButton.getAttribute("data-tab"));
-      nextButton.focus();
-    });
-  }
-
-  function hydrateMediaTab(project) {
-    if (!project?.content?.media) return;
-    const grid = document.getElementById("guide-media-grid");
-    if (!grid) return;
-
-    const slides =
-      (project.id === "guide" && state.guideMediaSlides?.length
-        ? state.guideMediaSlides
-        : project.gallery) || [];
-
-    if (!slides.length) {
-      grid.innerHTML =
-        '<p class="text-sm text-center text-gray-500">Media coming soon.</p>';
+    const project = projects.find((item) => item.id === state.activeId);
+    if (!project) {
+      container.innerHTML = "";
       return;
     }
 
-    const markup = slides
-      .map((slide) => {
-        const caption = slide.caption
-          ? `<figcaption>${escapeHtml(slide.caption)}</figcaption>`
-          : "";
+    const metricsMarkup = (project.content?.metrics || [])
+      .map(
+        (metric) => `
+          <div class="metric-card">
+            <div class="metric-card-value">${escapeHtml(metric.value)}</div>
+            <div class="metric-card-label">${escapeHtml(metric.label)}</div>
+          </div>
+        `,
+      )
+      .join("");
+
+    const sections = [
+      { key: "overview", label: "Overview" },
+      { key: "methodology", label: "Methodology" },
+      { key: "analysis", label: "Analysis" },
+      { key: "results", label: "Results" },
+      { key: "media", label: "Media" },
+    ].filter((section) => project.content?.[section.key]);
+
+    const tabButtons = sections
+      .map(
+        (section, index) => `
+          <button type="button" data-tab="${section.key}"${
+          index === 0 ? " class=\"active\"" : ""
+        }>${section.label}</button>
+        `,
+      )
+      .join("");
+
+    const tabPanels = sections
+      .map((section, index) => {
+        const html =
+          section.key === "media"
+            ? renderMediaSection(project.content?.media)
+            : project.content?.[section.key];
         return `
-          <figure class="media-grid__item">
-            <img src="${asset(slide.src)}" alt="${escapeHtml(
-              slide.alt || project.title,
-            )}" loading="lazy" />
-            ${caption}
-          </figure>
+          <div class="tab-content${index === 0 ? " active" : ""}" data-tab-panel="${
+            section.key
+          }">${html ?? ""}</div>
         `;
       })
       .join("");
 
-    grid.innerHTML = markup;
+    container.innerHTML = `
+      <header>
+        <span class="section-eyebrow">Case study</span>
+        <h3>${escapeHtml(project.title)}</h3>
+        ${project.summary ? `<p>${escapeHtml(project.summary)}</p>` : ""}
+      </header>
+      ${metricsMarkup ? `<div class="detail-metrics">${metricsMarkup}</div>` : ""}
+      ${
+        sections.length
+          ? `<div class="details-tabs">${tabButtons}</div><div class="tab-panels">${tabPanels}</div>`
+          : ""
+      }
+    `;
+
+    initTabInteractions(container);
   }
 
-  function createCarouselMarkup(project) {
-    const slides = project.gallery || [];
-    if (!slides.length) {
-      const placeholder = project.galleryManifest
-        ? '<div class="media-caption">Loading visuals from the research vault…</div>'
-        : '<div class="media-caption">Visual narrative coming soon.</div>';
-      return `
-        <div class="media-carousel" data-project="${project.id}" data-empty="true">
-          <div class="media-carousel__slides">
-            <div class="media-slide is-active" aria-hidden="false">${placeholder}</div>
-          </div>
+  function renderMediaSection(media) {
+    if (!media) {
+      return `<div class="detail-copy"><p>Media assets coming soon.</p></div>`;
+    }
+
+    const featured = media.featured
+      ? `
+        <div class="media-featured">
+          <img src="${asset(media.featured.src)}" alt="${escapeHtml(
+          media.featured.alt || "Project media",
+        )}" loading="lazy" />
+        </div>
+      `
+      : "";
+
+    let carousel = "";
+    if (Array.isArray(media.carousel) && media.carousel.length) {
+      const items = media.carousel
+        .map(
+          (item) => `
+            <div class="media-carousel__item">
+              <img src="${asset(item.src)}" alt="${escapeHtml(
+            item.alt || "Project gallery",
+          )}" loading="lazy" />
+            </div>
+          `,
+        )
+        .join("");
+      carousel = `
+        <div class="media-carousel">
+          <div class="media-carousel__track">${items}${items}</div>
         </div>
       `;
     }
 
-    const slidesHtml = slides
-      .slice(0, 8)
-      .map(
-        (slide, index) => `
-          <figure class="media-slide${index === 0 ? " is-active" : ""}" aria-hidden="${index === 0 ? "false" : "true"}">
-            <img src="${asset(slide.src)}" alt="${escapeHtml(
-              slide.alt || project.title,
-            )}" loading="lazy" />
-            <figcaption class="media-caption">${escapeHtml(
-              slide.caption || "",
-            )}</figcaption>
-          </figure>
-        `,
-      )
-      .join("");
+    const caption = media.caption
+      ? `<p>${escapeHtml(media.caption)}</p>`
+      : "";
 
-    const dotsHtml =
-      slides.length > 1
-        ? `<div class="media-dots">${slides
-            .map(
-              (_, index) => `
-              <button type="button" class="media-dot${
-                index === 0 ? " is-active" : ""
-              }" data-carousel-dot="${index}" aria-label="Go to visual ${
-                index + 1
-              }"></button>
-            `,
-            )
-            .join("")}</div>`
-        : "";
-
-    const controlsHtml =
-      slides.length > 1
-        ? `<div class="media-controls">
-          <button type="button" data-carousel-prev aria-label="Previous visual">‹</button>
-          ${dotsHtml}
-          <button type="button" data-carousel-next aria-label="Next visual">›</button>
-        </div>`
-        : "";
-
-    return `
-      <div class="media-carousel" data-project="${project.id}">
-        <div class="media-carousel__slides">${slidesHtml}</div>
-        ${controlsHtml}
-      </div>
-    `;
+    return `<div class="detail-copy">${featured}${carousel}${caption}</div>`;
   }
 
-  function mountCarousel(projectId) {
-    const container = document.querySelector(
-      `.media-carousel[data-project="${projectId}"]`,
-    );
+  function initTabInteractions(container) {
+    const buttons = Array.from(container.querySelectorAll(".details-tabs button"));
+    const panels = Array.from(container.querySelectorAll(".tab-content"));
+    if (!buttons.length || !panels.length) return;
+
+    const setActive = (tab) => {
+      buttons.forEach((button) => {
+        const isActive = button.dataset.tab === tab;
+        button.classList.toggle("active", isActive);
+      });
+      panels.forEach((panel) => {
+        const isActive = panel.dataset.tabPanel === tab;
+        panel.classList.toggle("active", isActive);
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setActive(button.dataset.tab);
+      });
+    });
+  }
+
+  function mountProjectInteractions() {
+    const container = document.getElementById("project-tiles");
     if (!container) return;
-    const slides = Array.from(container.querySelectorAll(".media-slide"));
-    if (slides.length <= 1) return;
-
-    const dots = Array.from(container.querySelectorAll("[data-carousel-dot]"));
-    const prevBtn = container.querySelector("[data-carousel-prev]");
-    const nextBtn = container.querySelector("[data-carousel-next]");
-    let index = 0;
-    let timerId = null;
-
-    const setActive = (nextIndex) => {
-      index = nextIndex;
-      slides.forEach((slide, idx) => {
-        const isActive = idx === index;
-        slide.classList.toggle("is-active", isActive);
-        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
-      });
-      dots.forEach((dot, idx) =>
-        dot.classList.toggle("is-active", idx === index),
-      );
-    };
-
-    const next = () => setActive((index + 1) % slides.length);
-    const prev = () => setActive((index - 1 + slides.length) % slides.length);
-
-    const stopAuto = () => {
-      if (timerId) {
-        window.clearInterval(timerId);
-        timerId = null;
-      }
-    };
-
-    const startAuto = () => {
-      if (prefersReducedMotion || slides.length < 2) return;
-      stopAuto();
-      timerId = window.setInterval(next, 6000);
-    };
-
-    nextBtn?.addEventListener("click", () => {
-      stopAuto();
-      next();
-      startAuto();
-    });
-
-    prevBtn?.addEventListener("click", () => {
-      stopAuto();
-      prev();
-      startAuto();
-    });
-
-    dots.forEach((dot, idx) => {
-      dot.addEventListener("click", () => {
-        stopAuto();
-        setActive(idx);
-        startAuto();
-      });
-    });
-
-    container.addEventListener("mouseenter", stopAuto);
-    container.addEventListener("mouseleave", startAuto);
-
-    setActive(0);
-    startAuto();
-
-    state.carouselController = {
-      stop: stopAuto,
-    };
-  }
-
-  function attachCatalogHandlers() {
-    const catalog = document.getElementById("project-catalog");
-    if (!catalog) return;
-    catalog.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-project]");
-      if (!button) return;
-      const id = button.getAttribute("data-project");
-      if (id && id !== state.activeId) {
-        state.activeId = id;
-        renderProjects();
-      }
-    });
-
-    catalog.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      const button = event.target.closest("[data-project]");
-      if (!button) return;
-      event.preventDefault();
-      const id = button.getAttribute("data-project");
-      if (id && id !== state.activeId) {
-        state.activeId = id;
-        renderProjects();
-      }
-    });
-  }
-
-  async function loadGuideGallery(project) {
-    try {
-      const response = await fetch(asset("guide-manifest.json"), {
-        cache: "no-cache",
-      });
-      if (!response.ok)
-        throw new Error(
-          `Unable to load guide-manifest.json (${response.status})`,
-        );
-      const manifest = await response.json();
-      if (!manifest?.entries) return;
-
-      const slides = [];
-      for (const entry of manifest.entries) {
-        if (entry.type !== "image") continue;
-        const resolved = await resolveGuideImage(entry.src);
-        if (!resolved) continue;
-        slides.push({ src: resolved, alt: entry.alt, caption: entry.caption });
-      }
-
-      if (slides.length) {
-        project.gallery = slides;
-        if (project.id === "guide") {
-          state.guideMediaSlides = slides;
-        }
-        if (!project.heroImage) {
-          project.heroImage = slides[0].src;
-        }
-        if (project.id === state.activeId) {
-          renderProjects();
-        }
-      }
-    } catch (error) {
-      console.warn("Unable to hydrate guide media", error);
-    }
-  }
-
-  function resolveGuideImage(rawSrc) {
-    const decoded = decodeURIComponent(rawSrc || "").trim();
-    const fileName = decoded.split(/[\\/]/).pop() || "";
-    const lower = fileName.toLowerCase();
-    const base = lower.replace(/\.[^.]+$/, "");
-    const extMatch = lower.match(/\.[^.]+$/);
-    const defaultExt = extMatch ? extMatch[0] : ".png";
-    const normalized = base.replace(/\s+/g, "-").replace(/_/g, "-");
-    const dashed = normalized.replace(
-      /^(guide|gr)(-?)(\d{1,2})$/,
-      (_, prefix, __, digits) => `${prefix}-${digits.padStart(2, "0")}`,
-    );
-
-    const candidates = new Set();
-    [normalized, dashed]
-      .filter((value) => Boolean(value))
-      .forEach((variant) => {
-        [".png", ".PNG", ".jpg", ".JPG", ".jpeg", ".JPEG", defaultExt].forEach(
-          (ext) => {
-            candidates.add(`${variant}${ext}`);
-          },
-        );
-      });
-    candidates.add(fileName);
-
-    const prefix = `${repoBase}public/images/guide/`;
-    const list = Array.from(candidates).map(
-      (name) => `${prefix}${name.replace(/^\/+/, "")}`,
-    );
-
-    return new Promise((resolve) => {
-      if (!list.length) {
-        resolve(null);
-        return;
-      }
-      let index = 0;
-      const tryNext = () => {
-        if (index >= list.length) {
-          resolve(null);
-          return;
-        }
-        const testImage = new Image();
-        testImage.onload = () => resolve(list[index]);
-        testImage.onerror = () => {
-          index += 1;
-          tryNext();
-        };
-        testImage.src = list[index];
-      };
-      tryNext();
+    container.addEventListener("click", (event) => {
+      const tile = event.target.closest(".project-tile");
+      if (!tile) return;
+      const projectId = tile.getAttribute("data-project-id");
+      if (!projectId || projectId === state.activeId) return;
+      state.activeId = projectId;
+      renderProjectTiles();
+      renderProjectDetail();
     });
   }
 
@@ -888,9 +634,7 @@
     };
 
     toggle.addEventListener("click", toggleMenu);
-    closeButtons.forEach((button) =>
-      button.addEventListener("click", closeMenu),
-    );
+    closeButtons.forEach((button) => button.addEventListener("click", closeMenu));
     backdrop?.addEventListener("click", closeMenu);
     panel.addEventListener("click", (event) => {
       if (event.target.matches("a")) {
@@ -898,10 +642,7 @@
       }
     });
     document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        document.body.classList.contains("menu-open")
-      ) {
+      if (event.key === "Escape" && document.body.classList.contains("menu-open")) {
         closeMenu();
       }
     });
@@ -910,16 +651,12 @@
   function init() {
     applyLocalImages();
     attachRevealObserver();
-    renderProjects();
-    attachCatalogHandlers();
+    renderProjectTiles();
+    renderProjectDetail();
+    mountProjectInteractions();
     renderTestimonials();
     updateYear();
     setupMenuToggle();
-
-    const guideProject = projects.find((project) => project.galleryManifest);
-    if (guideProject) {
-      loadGuideGallery(guideProject);
-    }
   }
 
   if (document.readyState === "loading") {
