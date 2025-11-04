@@ -571,15 +571,47 @@
     });
   }
 
-  function renderTestimonials() {
-    const container = document.getElementById("testimonial-track");
-    if (!container || !testimonials.length) return;
-    const row = document.createElement("div");
-    row.className = "testimonial-row";
-    row.innerHTML = testimonials.map(createTestimonialCard).join("");
-    const clone = row.cloneNode(true);
-    container.innerHTML = "";
-    container.append(row, clone);
+  function renderTestimonials(){
+  const container = document.getElementById("testimonial-track");
+  if (!container || !testimonials.length) return;
+
+  const row = document.createElement("div");
+  row.className = "testimonial-row";
+  row.innerHTML = testimonials.map(t => `
+    <article class="testimonial-card" tabindex="0">
+      <p>“${escapeHtml(t.quote)}”</p>
+      <div class="testimonial-author">${escapeHtml(t.author)}</div>
+      <div class="testimonial-role">${escapeHtml(t.role)}</div>
+    </article>
+  `).join("");
+
+  const clone = row.cloneNode(true);
+  container.innerHTML = "";
+  container.append(row, clone);
+
+  let offset = 0;
+  let playing = true;
+  const speed = 0.35;
+
+  function step(){
+    if (!playing) return requestAnimationFrame(step);
+    offset -= speed;
+    const rowWidth = row.getBoundingClientRect().width + 14;
+    if (Math.abs(offset) >= rowWidth) offset += rowWidth;
+    container.firstElementChild.style.transform = `translateX(${offset}px)`;
+    container.lastElementChild.style.transform = `translateX(${offset + rowWidth}px)`;
+    requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+
+  const pause = () => playing = false;
+  const resume = () => playing = true;
+  container.addEventListener("mouseenter", pause);
+  container.addEventListener("mouseleave", resume);
+  container.addEventListener("focusin", pause);
+  container.addEventListener("focusout", resume);
+}
+
   }
 
   function createTestimonialCard(testimonial) {
