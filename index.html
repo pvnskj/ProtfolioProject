@@ -227,6 +227,71 @@
       .reveal.is-visible{ opacity:1; transform:none }
 
       @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important } }
+      /* ===== Modern data presentation patterns ===== */
+
+/* Make each chunk inside Overview/Methodology/Analysis/Results a card */
+.detail-copy > div,
+.detail-copy > ul,
+.detail-copy > p {
+  background:#fff;
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:1rem 1.1rem;
+  box-shadow:var(--shadow-2);
+}
+
+/* tighter list rhythm inside cards */
+.detail-copy > ul { padding:0.9rem 1.1rem 1rem 1.2rem; }
+
+/* “Chip” style for inline highlights you might add later */
+.chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+.chip {
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.28rem .6rem; border-radius:999px;
+  border:1px solid rgba(15,23,42,.08); background:#fff; font-weight:600; font-size:.8rem; color:#0f172a;
+}
+
+/* Timeline list (if any <ol> appears inside .detail-copy) */
+.detail-copy ol {
+  counter-reset: step; list-style:none; margin:0; padding:0;
+  display:grid; gap:.8rem;
+}
+.detail-copy ol > li {
+  counter-increment: step;
+  background:#fff; border:1px solid var(--glass-border); border-radius:14px; padding: .9rem 1.1rem;
+  box-shadow:var(--shadow-2); position:relative; padding-left:3rem;
+}
+.detail-copy ol > li::before{
+  content: counter(step);
+  position:absolute; left:1rem; top:.9rem; width:1.6rem; height:1.6rem;
+  display:grid; place-items:center; border-radius:999px;
+  background:rgba(59,130,246,.1); color:#0b3b86; font-weight:800;
+}
+
+/* KPI row (your metrics already map here visually) */
+.detail-metrics .metric-card{ transition: transform .18s ease; }
+.detail-metrics .metric-card:hover{ transform: translateY(-2px); }
+
+/* ===== Testimonials: animated carousel (marquee-like), pause on hover ===== */
+.testimonial-wrapper { overflow:hidden; }
+#testimonial-track {
+  position:relative; overflow:hidden;
+}
+.testimonial-row {
+  display:flex; gap:.9rem; will-change: transform;
+}
+.testimonial-card {
+  min-width: clamp(280px, 36vw, 380px);
+  padding:1.1rem 1.3rem;
+  background:#fff; border:1px solid var(--glass-border); border-radius:16px; box-shadow:var(--shadow-2);
+}
+.testimonial-author { font-weight:800; margin-top:.4rem; color:#0f172a; }
+.testimonial-role { color:#64748b; font-size:.9rem; }
+
+/* Accessibility: when user prefers reduced motion, disable auto-scroll */
+@media (prefers-reduced-motion: reduce){
+  #testimonial-track .testimonial-row { transform:none !important; }
+}
     </style>
   </head>
   <body class="antialiased">
