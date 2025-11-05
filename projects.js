@@ -499,10 +499,10 @@
 
     const featured = media.featured
       ? `
-        <div class="media-featured">
+        <div class="media-featured" style="margin-bottom: 1rem; border-radius: 18px; overflow: hidden; border: 1px solid var(--glass-border); background: #fff;">
           <img src="${asset(media.featured.src)}" alt="${escapeHtml(
           media.featured.alt || "Project media",
-        )}" loading="lazy" />
+        )}" loading="lazy" style="width: 100%; display: block; object-fit: cover;" />
         </div>
       `
       : "";
@@ -520,6 +520,7 @@
           `,
         )
         .join("");
+      // Duplicating items for the CSS marquee animation
       carousel = `
         <div class="media-carousel">
           <div class="media-carousel__track">${items}${items}</div>
@@ -566,8 +567,8 @@
       const projectId = tile.getAttribute("data-project-id");
       if (!projectId || projectId === state.activeId) return;
       state.activeId = projectId;
-      renderProjectTiles();
-      renderProjectDetail();
+      renderProjectTiles(); // Re-render to update active state
+      renderProjectDetail(); // Re-render detail panel
     });
   }
 
@@ -647,6 +648,28 @@
       }
     });
   }
+  
+  /**
+   * NEW FUNCTION
+   * Sets up the subtle pointer glow effect.
+   * Respects prefers-reduced-motion media query.
+   */
+  function setupPointerGlow() {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionQuery.matches) {
+      return; // Do not add glow if motion is reduced
+    }
+    
+    const glow = document.getElementById('pointer-glow');
+    if (!glow) return;
+
+    document.addEventListener('mousemove', (e) => {
+      // Use requestAnimationFrame for performance
+      window.requestAnimationFrame(() => {
+        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      });
+    }, { passive: true });
+  }
 
   function init() {
     applyLocalImages();
@@ -657,6 +680,7 @@
     renderTestimonials();
     updateYear();
     setupMenuToggle();
+    setupPointerGlow(); // ADDED: Initialize the new effect
   }
 
   if (document.readyState === "loading") {
